@@ -12,23 +12,37 @@ export default function Expenses({ user }) {
   const [formFilter, setFormFilter] = useState({
     category: "", sortBy: "newest", date: { start: getFirstDayOfMonth(), end: getLastDayOfMonth() }
   });
-  const [applyButton, setApplyButton] = useState(false);
+  const [applyButton, setApplyButton] = useState(true);
 
   useEffect(() => {
-    loadExpenses();
-    let updatedExpenses = expenses
-    // setFiltered(expenses);
+    const fetchData = async () => {
+      let updatedExpenses = [];
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if (snap.exists()) {
+        updatedExpenses = snap.data().expenses;
+        setExpenses(snap.data().expenses)
+      }
+      
+      // console.log(updatedExpenses);
 
-    const filterStart = new Date(getFirstDayOfMonth()).getTime()
-    const filterEnd = new Date(getLastDayOfMonth()).getTime()
+      const filterStart = new Date(getFirstDayOfMonth()).getTime();
+      const filterEnd = new Date(getLastDayOfMonth()).getTime();
 
-    updatedExpenses = updatedExpenses.filter(e => {
-        const dbDate = new Date(e.date).getTime()
+      setFormFilter({...formFilter, date: {...formFilter.date, start: getFirstDayOfMonth(), end: getLastDayOfMonth()}});
+
+      updatedExpenses = updatedExpenses.filter((e) => {
+        const dbDate = new Date(e.date).getTime();
         return (filterStart && dbDate >= filterStart) || (filterEnd && dbDate <= filterEnd);
-    })
+      });
 
-    setFiltered(updatedExpenses)
-  }, []);
+      setFiltered(updatedExpenses);
+    };
+    fetchData();
+  }, [expenses, filtered]);
+
+  async function loadExpenses() {
+    
+  }
 
   function getFirstDayOfMonth() {
     const today = new Date();
@@ -38,11 +52,6 @@ export default function Expenses({ user }) {
   function getLastDayOfMonth() {
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
-  }
-
-  async function loadExpenses() {
-    const snap = await getDoc(doc(db, "users", user.uid));
-    if (snap.exists()) setExpenses(snap.data().expenses || []);
   }
 
   // add new expense
@@ -63,7 +72,7 @@ export default function Expenses({ user }) {
   const handleSave = async (id) => {
     const updated = expenses.map(e => {
         if (e.id === id) {
-            return {e, ...editForm}
+            return {...e, ...editForm}
         }
         return e;
     })
@@ -71,9 +80,14 @@ export default function Expenses({ user }) {
     setExpenses(updated);
   }
 
+  // display form filter
+  const showFormFilter = () => {
+
+  }
+
   // update sortBy in formFilter
   const handleRadioChange = (e) => {
-    setApplyButton(true)
+    setApplyButton(false)
     setFormFilter({...formFilter, sortBy: e.target.value})
   }
 
@@ -139,13 +153,16 @@ export default function Expenses({ user }) {
       <button onClick={addExpense}>Add Expense</button>
 
       {/* filter */}
-      <button onClick={formFilter}>Filters</button>
+      <button onClick={showFormFilter}>Filters</button>
       <form>
         <label htmlFor="category">Category: </label>
-        <select id="category" value={formFilter.category} onChange={(e) => {
-          setApplyButton(true)
-          setFormFilter({ ...formFilter, category: e.target.value })
-        }}>
+        <select
+          id="category"
+          value={formFilter.category}
+          onChange={(e) => {
+            setApplyButton(false);
+            setFormFilter({...formFilter, category: e.target.value});
+          }}>
           <option value="">Select Category</option>
           <option value="Food">Food</option>
           <option value="Rent">Rent</option>
@@ -156,29 +173,37 @@ export default function Expenses({ user }) {
 
         {sortByList.map((opt) => (
           <label key={opt}>
-            <input
-              type="radio"
-              name="opt"
-              value={opt}
-              checked={formFilter.sortBy === opt}
-              onChange={handleRadioChange}
-            />
+            <input type="radio" name="opt" value={opt} checked={formFilter.sortBy === opt} onChange={handleRadioChange} />
             {opt}
           </label>
         ))}
 
         <label htmlFor="start">Start Date</label>
-        <input type="date" name="" id="start" onChange={(e) => {
-          setApplyButton(true)
-          setFormFilter({ ...formFilter, date: { ...formFilter.date, start: e.target.value } })
-        }} />
-        
+        <input
+          type="date"
+          name=""
+          id="start"
+          value={formFilter.date.start}
+          onChange={(e) => {
+            setApplyButton(false);
+            setFormFilter({...formFilter, date: {...formFilter.date, start: e.target.value}});
+          }}
+        />
+
         <label htmlFor="end">End Date</label>
-        <input type="date" name="" id="end" onChange={(e) => {
-          setApplyButton(true)
-          setFormFilter({ ...formFilter, date: { ...formFilter.date, end: e.target.value } })
-        }} />
-        <button onClick={saveFilters} disabled={applyButton === true}>Apply</button>
+        <input
+          type="date"
+          name=""
+          id="end"
+          value={formFilter.date.end}
+          onChange={(e) => {
+            setApplyButton(false);
+            setFormFilter({...formFilter, date: {...formFilter.date, end: e.target.value}});
+          }}
+        />
+        <button onClick={saveFilters} disabled={applyButton === true}>
+          Apply
+        </button>
         <button onClick={defaultFilter}>Reset to Default</button>
       </form>
 
@@ -197,10 +222,22 @@ export default function Expenses({ user }) {
       {/* expenses list */}
       {filtered.map((e, idx) => (
         <div key={idx}>
-          {e.category} - ₦{e.amount} ({e.description})<button onClick={() => deleteExpense(e.id)}>Delete</button>
-          
-          {/* edit form */}
+          <span>{e.category}</span> - <span>₦{e.amount}</span>
+          <div>{e.description}</div>
+          {/* <p>{new Date (e.date).toISOString().slice(0, 16).replace("T", " ")}</p> */}
+          <p>
+            {new Date(e.date).toLocaleString("en-US", {
+              timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+              year: "numeric",
+              month: "short",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </p>
+          <button onClick={() => deleteExpense(e.id)}>Delete</button>
           <button onClick={() => editExpense(e)}>Edit</button>
+          {/* edit form */}
           <form>
             <input placeholder="Category" value={editForm.category} onChange={(e) => setEditForm({...editForm, category: e.target.value})} />
             <input placeholder="Description" value={editForm.description} onChange={(e) => setEditForm({...editForm, description: e.target.value})} />

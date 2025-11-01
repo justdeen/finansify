@@ -7,6 +7,8 @@ export default function Dashboard({ user }) {
   const [expenses, setExpenses] = useState([]);
   const [display, setDisplay] = useState({exp: 0, inc: 0})
   const [formFilter, setFormFilter] = useState({start: getFirstDayOfMonth(), end: getLastDayOfMonth()})
+  const [firstName, setFirstName] = useState("")
+  const [applyButton, setApplyButton] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,6 +16,7 @@ export default function Dashboard({ user }) {
       const snap = await getDoc(docRef);
       if (snap.exists()) {
         const data = snap.data();
+        setFirstName(data.firstName)
         setIncome(data.income)
         setExpenses(data.expenses)
         let updatedExpenses = data.expenses
@@ -21,6 +24,8 @@ export default function Dashboard({ user }) {
 
         const filterStart = new Date(getFirstDayOfMonth()).getTime();
         const filterEnd = new Date(getLastDayOfMonth()).getTime();
+
+        setFormFilter({...formFilter, start: getFirstDayOfMonth(), end: getLastDayOfMonth()});
 
         updatedExpenses = updatedExpenses.filter((e) => {
           const dbDate = new Date(e.date).getTime();
@@ -37,7 +42,7 @@ export default function Dashboard({ user }) {
       }
     };
     fetchData();
-  }, [user]);
+  }, []);
 
   function getFirstDayOfMonth() {
     const today = new Date();
@@ -101,14 +106,21 @@ export default function Dashboard({ user }) {
   return (
     <div>
       <h2>Dashboard</h2>
+      <p>Hello, {firstName}</p>
       <div>
         <form>
           <label htmlFor="start">Start Date</label>
-          <input type="date" name="" id="start" onChange={(e) => setFormFilter({...formFilter, start: e.target.value})} />
+          <input type="date" name="" id="start" value={formFilter.start} onChange={(e) => {
+            setFormFilter({...formFilter, start: e.target.value})
+            setApplyButton(false)
+          }} />
 
           <label htmlFor="end">End Date</label>
-          <input type="date" name="" id="end" onChange={(e) => setFormFilter({...formFilter, end: e.target.value})} />
-          <button onClick={applyFilter}>Apply</button>
+          <input type="date" name="" id="end" value={formFilter.end} onChange={(e) => {
+            setFormFilter({...formFilter, end: e.target.value})
+            setApplyButton(false)
+          }} />
+          <button disabled={applyButton === true} onClick={applyFilter}>Apply</button>
           <button onClick={defaultFilter}>Reset to Default</button>
         </form>
         <button>Filter by date</button>

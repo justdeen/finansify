@@ -9,19 +9,20 @@ import Income from "./pages/Income";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [logOrReg, setLogOrReg] = useState(true);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUser(u));
     return () => unsub();
   }, []);
 
-  if (!user) return <Login />;
-
-  return (
-    <Router>
+  // Authenticated user UI
+  const AuthenticatedApp = () => (
+    <>
       <Navbar />
       <Routes>
         <Route path="/" element={<Dashboard user={user} />} />
@@ -30,6 +31,19 @@ export default function App() {
         <Route path="/reports" element={<Reports user={user} />} />
         <Route path="/settings" element={<Settings user={user} />} />
       </Routes>
+    </>
+  );
+
+  // Unauthenticated user UI
+  const UnauthenticatedApp = () => (
+    <>
+      {logOrReg ? <Login setLogOrReg={setLogOrReg} /> : <Register setLogOrReg={setLogOrReg} />}
+    </>
+  );
+
+  return (
+    <Router>
+      {user ? <AuthenticatedApp /> : <UnauthenticatedApp />}
     </Router>
   );
 }
