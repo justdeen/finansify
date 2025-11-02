@@ -13,6 +13,7 @@ export default function Expenses({ user }) {
     category: "", sortBy: "newest", date: { start: getFirstDayOfMonth(), end: getLastDayOfMonth() }
   });
   const [applyButton, setApplyButton] = useState(true);
+  const [editingId, setEditingId] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,7 +29,7 @@ export default function Expenses({ user }) {
       const filterStart = new Date(getFirstDayOfMonth()).getTime();
       const filterEnd = new Date(getLastDayOfMonth()).getTime();
 
-      setFormFilter({...formFilter, date: {...formFilter.date, start: getFirstDayOfMonth(), end: getLastDayOfMonth()}});
+      // setFormFilter({...formFilter, date: {...formFilter.date, start: getFirstDayOfMonth(), end: getLastDayOfMonth()}});
 
       updatedExpenses = updatedExpenses.filter((e) => {
         const dbDate = new Date(e.date).getTime();
@@ -38,11 +39,7 @@ export default function Expenses({ user }) {
       setFiltered(updatedExpenses);
     };
     fetchData();
-  }, [expenses, filtered]);
-
-  async function loadExpenses() {
-    
-  }
+  }, []);
 
   function getFirstDayOfMonth() {
     const today = new Date();
@@ -63,9 +60,16 @@ export default function Expenses({ user }) {
   }
   
   // edit expense
-  const editExpense = async (e) =>{
-    setEditForm({...e})
+  const editExpense = async (id) =>{
+    const expenseToEdit = filtered.find(e => e.id === id);
+    setEditForm({ ...expenseToEdit });
+    setEditingId(id)
     // set display of edit form
+  }
+
+  const applyEditChanges = (e) =>{
+    e.preventDefault();
+    handleSave();
   }
   
   // save edited expense
@@ -76,8 +80,10 @@ export default function Expenses({ user }) {
         }
         return e;
     })
-    await updateDoc(doc(db, "users", user.uid), { expenses: updated });
+    setFiltered(updated);
     setExpenses(updated);
+    saveFilters();
+    await updateDoc(doc(db, "users", user.uid), { expenses: updated });
   }
 
   // display form filter
@@ -91,9 +97,13 @@ export default function Expenses({ user }) {
     setFormFilter({...formFilter, sortBy: e.target.value})
   }
 
+  const applyFilterChanges = (e) => {
+    e.preventDefault();
+  }
+
   // save form filter changes
   const saveFilters = () => {
-    let updated = expenses
+    let updated = [...expenses]
 
     // category filter
     if (formFilter.category) {
@@ -109,9 +119,10 @@ export default function Expenses({ user }) {
     if (filterStart || filterEnd) {
       updated = updated.filter(e => {
         const dbDate = new Date(e.date).getTime()
-        return (filterStart && dbDate >= filterStart || filterEnd && dbDate <= filterEnd)
+        return (!filterStart || dbDate >= filterStart) && (!filterEnd || dbDate <= filterEnd);
       })
     }
+    // console.log(updated)
 
     // sortBy filter
     if (formFilter.sortBy === "oldest") {
@@ -123,7 +134,6 @@ export default function Expenses({ user }) {
     } else if (formFilter.sortBy === "smallest amount") {
       updated.sort((a, b) => a.amount - b.amount)
     }
-
     setFiltered(updated);
     setApplyButton(false);
   }
@@ -154,7 +164,7 @@ export default function Expenses({ user }) {
 
       {/* filter */}
       <button onClick={showFormFilter}>Filters</button>
-      <form>
+      <form onSubmit={applyFilterChanges}>
         <label htmlFor="category">Category: </label>
         <select
           id="category"
@@ -236,14 +246,21 @@ export default function Expenses({ user }) {
             })}
           </p>
           <button onClick={() => deleteExpense(e.id)}>Delete</button>
-          <button onClick={() => editExpense(e)}>Edit</button>
+          <button onClick={() => editExpense(e.id)}>Edit</button>
           {/* edit form */}
-          <form>
-            <input placeholder="Category" value={editForm.category} onChange={(e) => setEditForm({...editForm, category: e.target.value})} />
+          {editingId === e.id && (<form onSubmit={applyEditChanges}>
+            <select value={editForm.category} onChange={(e) => setEditForm({...editForm, category: e.target.value})}>
+              <option value="None">Select Category</option>
+              <option value="Food">Food</option>
+              <option value="Rent">Rent</option>
+              <option value="Transport">Transport</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Utilities">Utilities</option>
+            </select>
             <input placeholder="Description" value={editForm.description} onChange={(e) => setEditForm({...editForm, description: e.target.value})} />
             <input placeholder="Amount" type="number" value={editForm.amount} onChange={(e) => setEditForm({...editForm, amount: e.target.value})} />
             <button onClick={() => handleSave(e.id)}>Save</button>
-          </form>
+          </form>)}
         </div>
       ))}
     </div>
