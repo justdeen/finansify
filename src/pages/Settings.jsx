@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { auth, db } from "../firebase";
+import { auth, db, provider } from "../firebase";
 import { doc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
 import { deleteUser, updateEmail, updatePassword, reauthenticateWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 export default function Settings({ user }) {
-  const [data, setData] = useState({ firstName: "", lastName: "", email: "", password: "" });
+  const [data, setData] = useState({ firstName: "", lastName: "", password: "" });
+  const [canChangePassword, setCanChangePassword] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,6 +15,10 @@ export default function Settings({ user }) {
         const res = snap.data();
         setData({...data, firstName: res.firstName})
       }
+      const checkPasswordChange = user.providerData.some(
+        (provider) => provider.providerId === "password"
+      )
+      if (checkPasswordChange) setCanChangePassword(true)
     };
     fetchData();
   }, []);
@@ -45,7 +50,7 @@ export default function Settings({ user }) {
       <h2>Settings</h2>
       <input placeholder="First Name" value={data.firstName} onChange={e => setData({...data, firstName: e.target.value})} />
       <input placeholder="Last Name" onChange={e => setData({...data, lastName: e.target.value})} />
-      <input placeholder="New Password" onChange={e => setData({...data, password: e.target.value})} />
+      {canChangePassword && <input placeholder="New Password" onChange={e => setData({...data, password: e.target.value})} />}
       <button onClick={saveChanges}>Save Changes</button>
       <button onClick={deleteAccount}>Delete Account</button>
     </div>

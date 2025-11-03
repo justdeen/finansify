@@ -53,7 +53,7 @@ export default function Expenses({ user }) {
 
   // add new expense
   async function addExpense() {
-    const newExp = { ...form, amount: +form.amount, id: uuidv4(), date: new Date().toISOString() };
+    const newExp = { ...form, amount: parseInt(form.amount), id: uuidv4(), date: new Date().toISOString() };
     const updated = [...expenses, newExp];
     await updateDoc(doc(db, "users", user.uid), { expenses: updated });
     setExpenses(updated);
@@ -76,7 +76,7 @@ export default function Expenses({ user }) {
   const handleSave = async (id) => {
     const updated = expenses.map(e => {
         if (e.id === id) {
-            return {...e, ...editForm}
+            return {...e, ...editForm, amount: parseInt(editForm.amount)}
         }
         return e;
     })

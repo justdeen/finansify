@@ -95,7 +95,7 @@ export default function Dashboard({ user }) {
         return (filterStart && dbDate >= filterStart || filterEnd && dbDate <= filterEnd)
     })
 
-    const exp = updatedExpenses.reduce((a, e) => a + e.amount, 0) || 0;
+    const exp = updatedExpenses.reduce((a, e) => parseInt(a) + parseInt(e.amount), 0) || 0;
     const inc = updatedIncome.reduce((a, i) => a + i.amount, 0) || 0;
 
     setDisplay({...display, exp: exp, inc: inc})    
