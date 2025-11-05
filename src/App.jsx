@@ -26,7 +26,6 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Dashboard user={user} />} />
-        <Route path="/income" element={<Income user={user} />} />
         <Route path="/expenses" element={<Expenses user={user} />} />
         <Route path="/reports" element={<Reports user={user} />} />
         <Route path="/settings" element={<Settings user={user} />} />

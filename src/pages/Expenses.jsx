@@ -7,18 +7,18 @@ import { v4 as uuidv4 } from 'uuid';
 export default function Expenses({ user }) {
   const [expenses, setExpenses] = useState([]);
   const [filtered, setFiltered] = useState([]);
-  const [form, setForm] = useState({ category: "", description: "", amount: 0 });
-  const [editForm, setEditForm] = useState({ category: "", description: "", amount: 0 });
+  const [form, setForm] = useState({ category: "", description: "", amount: "" });
+  const [editForm, setEditForm] = useState({ category: "", description: "", amount: "" });
   const [formFilter, setFormFilter] = useState({
     category: "", sortBy: "newest", date: { start: getFirstDayOfMonth(), end: getLastDayOfMonth() }
   });
+  const [totalExpenses, setTotalExpenses] = useState("");
   const [applyButton, setApplyButton] = useState(true);
   const [editingId, setEditingId] = useState(false);
   const [rstToDefaultButton, setRstToDefaultButton] = useState(true)
   const [showForm, setShowForm] = useState(false);
   const formRef = useRef(null);
   const filterButton = useRef(null);
-  const [hideExpense, setHideExpense] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,6 +40,9 @@ export default function Expenses({ user }) {
       if (formFilter.sortBy === "newest") {
         updatedExpenses.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
       }
+
+      const total = updatedExpenses.reduce((sum, e) => sum + e.amount, 0);
+      setTotalExpenses(total);
 
       setFiltered(updatedExpenses);
     };
@@ -73,6 +76,12 @@ export default function Expenses({ user }) {
     return new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
   }
 
+  const handleNewExpense = (e) => {
+    e.preventDefault();
+    if(!form.category || !form.description || !form.amount) return;
+    addExpense();
+  }
+
   // add new expense
   async function addExpense() {
     const newExp = { ...form, amount: parseInt(form.amount), id: uuidv4(), date: new Date().toISOString() };
@@ -82,6 +91,7 @@ export default function Expenses({ user }) {
     setFiltered(updated);
     // toDefaultFilters();
     saveFilters(updated)
+    setForm({ category: "", description: "", amount: "" })
   }
   
   // edit expense
@@ -118,11 +128,6 @@ export default function Expenses({ user }) {
     await updateDoc(doc(db, "users", user.uid), { expenses: updated });
   }
 
-  // display form filter
-  const showFormFilter = () => {
-
-  }
-
   // update sortBy in formFilter
   const handleRadioChange = (e) => {
     setApplyButton(false)
@@ -138,10 +143,6 @@ export default function Expenses({ user }) {
 
   // save form filter changes
   const saveFilters = (expensesToUse = expenses) => {
-    // let link = expensesToUse
-    // console.log(link)
-    // let updated = [...expensesToUse]
-
     if (!Array.isArray(expensesToUse)) {
       expensesToUse = Array.isArray(expenses) ? expenses : [];
     }
@@ -164,7 +165,6 @@ export default function Expenses({ user }) {
         return (!filterStart || dbDate >= filterStart) && (!filterEnd || dbDate <= filterEnd);
       })
     }
-    // console.log(updated)
 
     // sortBy filter
     if (formFilter.sortBy === "oldest") {
@@ -179,6 +179,9 @@ export default function Expenses({ user }) {
     setFiltered(updated);
     setApplyButton(true);
     setRstToDefaultButton(false);
+
+    const total = updated.reduce((sum, e) => sum + e.amount, 0);
+    setTotalExpenses(total);
   }
 
   const toDefaultFilters = () => {
@@ -188,7 +191,7 @@ export default function Expenses({ user }) {
     let updatedExpenses = expenses;
     updatedExpenses = updatedExpenses.filter((e) => {
       const dbDate = new Date(e.date).getTime();
-      return (filterStart && dbDate >= filterStart) || (filterEnd && dbDate <= filterEnd);
+      return (!filterStart || dbDate >= filterStart) && (!filterEnd || dbDate <= filterEnd);
     });
 
     updatedExpenses.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -198,6 +201,9 @@ export default function Expenses({ user }) {
       sortBy: "newest",
       date: {start: getFirstDayOfMonth(), end: getLastDayOfMonth()},
     });
+
+    const total = updatedExpenses.reduce((sum, e) => sum + e.amount, 0);
+    setTotalExpenses(total);
     
     setFiltered(updatedExpenses);
     setRstToDefaultButton(true)
@@ -251,7 +257,7 @@ export default function Expenses({ user }) {
               setRstToDefaultButton(false);
               setFormFilter({...formFilter, category: e.target.value});
             }}>
-            <option value="">Select Category</option>
+            <option value="">All</option>
             <option value="Food">Food</option>
             <option value="Rent">Rent</option>
             <option value="Transport">Transport</option>
@@ -298,20 +304,26 @@ export default function Expenses({ user }) {
       </div>}
 
       <br />
-      {/* Add new expense button */}
-      <button onClick={addExpense}>Add Expense</button>
+      <form onSubmit={handleNewExpense}>
+        {/* Add new expense button */}
+        <button type="submit">Add Expense</button>
+        {/* New expense form */}
+        <select value={form.category} onChange={(e) => setForm({...form, category: e.target.value})} required>
+          <option value="">Select Category</option>
+          <option value="Food">Food</option>
+          <option value="Rent">Rent</option>
+          <option value="Transport">Transport</option>
+          <option value="Entertainment">Entertainment</option>
+          <option value="Utilities">Utilities</option>
+        </select>
+        <input placeholder="Description" value={form.description} onChange={(e) => setForm({...form, description: e.target.value})} required />
+        <input placeholder="Amount" type="number" value={form.amount} onChange={(e) => setForm({...form, amount: e.target.value})} required />
+      </form>
 
-      {/* New expense form */}
-      <select value={form.category} onChange={(e) => setForm({...form, category: e.target.value})}>
-        <option value="None">Select Category</option>
-        <option value="Food">Food</option>
-        <option value="Rent">Rent</option>
-        <option value="Transport">Transport</option>
-        <option value="Entertainment">Entertainment</option>
-        <option value="Utilities">Utilities</option>
-      </select>
-      <input placeholder="Description" onChange={(e) => setForm({...form, description: e.target.value})} />
-      <input placeholder="Amount" type="number" onChange={(e) => setForm({...form, amount: e.target.value})} />
+      <br />
+      {/* Total expenses; */}
+      <div><b>Total expenses: ₦{totalExpenses}</b></div>
+      <br />
 
       {/* expenses list */}
       {filtered.map((e, idx) => (

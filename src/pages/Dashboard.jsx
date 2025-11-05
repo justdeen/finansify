@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 export default function Dashboard({ user }) {
-  const [income, setIncome] = useState([]);
   const [expenses, setExpenses] = useState([]);
-  const [display, setDisplay] = useState({exp: 0, inc: 0})
-  const [formFilter, setFormFilter] = useState({start: getFirstDayOfMonth(), end: getLastDayOfMonth()})
+  const [display, setDisplay] = useState({exp: 0})
+  const [formFilter, setFormFilter] = useState({category: "", start: getFirstDayOfMonth(), end: getLastDayOfMonth()})
   const [firstName, setFirstName] = useState("")
   const [applyButton, setApplyButton] = useState(true);
+  const [rstToDefaultButton, setRstToDefaultButton] = useState(true)
+  const [showForm, setShowForm] = useState(false);
+  const filterButton = useRef(null);
+  const formRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,10 +20,8 @@ export default function Dashboard({ user }) {
       if (snap.exists()) {
         const data = snap.data();
         setFirstName(data.firstName)
-        setIncome(data.income)
         setExpenses(data.expenses)
         let updatedExpenses = data.expenses
-        let updatedIncome = data.income
 
         const filterStart = new Date(getFirstDayOfMonth()).getTime();
         const filterEnd = new Date(getLastDayOfMonth()).getTime();
@@ -31,18 +32,29 @@ export default function Dashboard({ user }) {
           const dbDate = new Date(e.date).getTime();
           return (filterStart && dbDate >= filterStart) || (filterEnd && dbDate <= filterEnd);
         });
-        updatedIncome = updatedIncome.filter((e) => {
-          const dbDate = new Date(e.date).getTime();
-          return (filterStart && dbDate >= filterStart) || (filterEnd && dbDate <= filterEnd);
-        });
-
-        const inc = updatedIncome?.reduce((a, i) => a + i.amount, 0) || 0;
+  
         const exp = updatedExpenses?.reduce((a, e) => a + e.amount, 0) || 0;
-        setDisplay({...display, exp: exp, inc: inc})
+        setDisplay({...display, exp: exp})
       }
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (formRef.current && !formRef.current.contains(event.target) && !filterButton.current.contains(event.target)) {
+        setShowForm(false);
+        return;
+      }
+   }
+   if (showForm) {
+       document.addEventListener("mousedown", handleClickOutside);
+   } else {
+     document.removeEventListener("mousedown", handleClickOutside);
+   }
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showForm]);
 
   function getFirstDayOfMonth() {
     const today = new Date();
@@ -54,9 +66,16 @@ export default function Dashboard({ user }) {
     return new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  }
+
   const applyFilter = () => {
     let updatedExpenses = expenses;
-    let updatedIncome = income;
+
+    if (formFilter.category) {
+      updatedExpenses = updatedExpenses.filter((e) => e.category === formFilter.category);
+    }
 
     const filterStart = formFilter.start ? new Date(formFilter.start).getTime() : ""
     const filterEnd = formFilter.end ? new Date(formFilter.end).getTime() : ""
@@ -64,70 +83,85 @@ export default function Dashboard({ user }) {
     if (filterStart || filterEnd) {
       updatedExpenses = updatedExpenses.filter(e => {
         const dbDate = new Date(e.date).getTime()
-        return (filterStart && dbDate >= filterStart) || (filterEnd && dbDate <= filterEnd);
-      })
-      updatedIncome = updatedIncome.filter(e => {
-        const dbDate = new Date(e.date).getTime()
-        return (filterStart && dbDate >= filterStart || filterEnd && dbDate <= filterEnd)
+        return (!filterStart || dbDate >= filterStart) && (!filterEnd || dbDate <= filterEnd);
       })
     }
 
     const exp = updatedExpenses.reduce((a, e) => a + e.amount, 0) || 0;
-    const inc = updatedIncome.reduce((a, i) => a + i.amount, 0) || 0;
 
-    setDisplay({...display, exp: exp, inc: inc})
+    setDisplay({...display, exp: exp})
+    setApplyButton(true)
+    setRstToDefaultButton(false)
   }
 
-  const defaultFilter = () => {
+  const defaultFilter = (e) => {
+    e.preventDefault();
     let updatedExpenses = expenses;
-    let updatedIncome = income;
-    setFormFilter({ ...formFilter, start: getFirstDayOfMonth(), end: getLastDayOfMonth() })
+    setFormFilter({ ...formFilter, category: "", start: getFirstDayOfMonth(), end: getLastDayOfMonth() })
     
     const filterStart = new Date(getFirstDayOfMonth()).getTime()
     const filterEnd = new Date(getLastDayOfMonth()).getTime()
 
     updatedExpenses = updatedExpenses.filter(e => {
         const dbDate = new Date(e.date).getTime()
-        return (filterStart && dbDate >= filterStart) || (filterEnd && dbDate <= filterEnd);
+        return (!filterStart || dbDate >= filterStart) && (!filterEnd || dbDate <= filterEnd);
     })
-    updatedIncome = updatedIncome.filter(e => {
-        const dbDate = new Date(e.date).getTime()
-        return (filterStart && dbDate >= filterStart || filterEnd && dbDate <= filterEnd)
-    })
-
+  
     const exp = updatedExpenses.reduce((a, e) => parseInt(a) + parseInt(e.amount), 0) || 0;
-    const inc = updatedIncome.reduce((a, i) => a + i.amount, 0) || 0;
-
-    setDisplay({...display, exp: exp, inc: inc})    
+    
+    setDisplay({...display, exp: exp})    
+    setApplyButton(true)
+    setRstToDefaultButton(true)
   }
-
-  const balance = display.inc - display.exp;
 
   return (
     <div>
       <h2>Dashboard</h2>
       <p>Hello, {firstName}</p>
-      <div>
-        <form>
+      <button ref={filterButton} onClick={() => setShowForm((prev) => !prev)}>Filters</button>
+      {showForm && <div ref={formRef}
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="category">Category: </label>
+          <select
+            id="category"
+            value={formFilter.category}
+            onChange={(e) => {
+              setApplyButton(false);
+              setRstToDefaultButton(false);
+              setFormFilter({...formFilter, category: e.target.value});
+            }}>
+            <option value="">All</option>
+            <option value="Food">Food</option>
+            <option value="Rent">Rent</option>
+            <option value="Transport">Transport</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Utilities">Utilities</option>
+          </select>
           <label htmlFor="start">Start Date</label>
           <input type="date" name="" id="start" value={formFilter.start} onChange={(e) => {
             setFormFilter({...formFilter, start: e.target.value})
             setApplyButton(false)
+            setRstToDefaultButton(false)
           }} />
 
           <label htmlFor="end">End Date</label>
           <input type="date" name="" id="end" value={formFilter.end} onChange={(e) => {
             setFormFilter({...formFilter, end: e.target.value})
             setApplyButton(false)
+            setRstToDefaultButton(false)
           }} />
-          <button disabled={applyButton === true} onClick={applyFilter}>Apply</button>
-          <button onClick={defaultFilter}>Reset to Default</button>
+          <button type="submit" disabled={applyButton === true} onClick={applyFilter}>Apply</button>
+          <button type="button" disabled={rstToDefaultButton === true} onClick={defaultFilter}>Reset to Default</button>
         </form>
-        <button>Filter by date</button>
-      </div>
-      <p>Total Income: ₦{display.inc}</p>
+      </div>}
       <p>Total Expenses: ₦{display.exp}</p>
-      <p>Balance: ₦{balance}</p>
     </div>
   );
 }
