@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { v4 as uuidv4 } from 'uuid';
-
+import "./Expenses.css"
 
 export default function Expenses({ user }) {
   const [expenses, setExpenses] = useState([]);
@@ -19,6 +19,10 @@ export default function Expenses({ user }) {
   const [showForm, setShowForm] = useState(false);
   const formRef = useRef(null);
   const filterButton = useRef(null);
+  const [batchDelete, setBatchDelete] = useState(false)
+  const [expsToDelete, setExpsToDelete] = useState([])
+  const [batchDeleteBtnText, setBatchDeleteBtnText] = useState(true)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -228,6 +232,51 @@ export default function Expenses({ user }) {
     }
   };
 
+  const showBatchDelete = () => {
+    setBatchDelete(true)
+    setBatchDeleteBtnText(false)
+    if(!batchDeleteBtnText){
+      setBatchDeleteBtnText(true)
+      setBatchDelete(false)
+      setExpsToDelete([])
+    }
+  }
+
+  const selectItems = (id) => {
+    const exp = expsToDelete.find(e => e === id)
+    if(exp){
+      setExpsToDelete((prev) => {
+        return prev.filter(e => e !== id)
+      })
+    } else {
+      setExpsToDelete([...expsToDelete, id])
+    }    
+  }
+
+  const deleteRequest = () => {
+    if(!expsToDelete[0]){
+      alert("Select expenses to delete!")
+      return;
+    }
+    setConfirmDelete(true)
+  }
+
+  const cancelDeleteRequest = () => {
+    setConfirmDelete(false)
+  }
+
+  const handleDeleteExps = async () => {
+    setConfirmDelete(false)
+    setBatchDeleteBtnText(true);
+    setBatchDelete(false);
+    setExpsToDelete([]);
+    const remainingExpenses = expenses.filter((expense) => !expsToDelete.includes(expense.id));
+    setExpenses(remainingExpenses);
+    setFiltered(remainingExpenses);
+    await updateDoc(doc(db, "users", user.uid), {expenses: remainingExpenses});
+    saveFilters(remainingExpenses);
+  };
+
   const sortByList = ["newest", "oldest", "largest amount", "smallest amount"]
 
   return (
@@ -325,13 +374,34 @@ export default function Expenses({ user }) {
       <div><b>Total expenses: ₦{totalExpenses}</b></div>
       <br />
 
+      <button onClick={showBatchDelete}>{batchDeleteBtnText ? "Batch Delete" : "Cancel"}</button>
+      {!batchDeleteBtnText && <button onClick={deleteRequest}>Delete</button>}
+      {confirmDelete && <div className="confirmDelete">
+        <div className="popup">
+          <p>The selected expense(s) will be deleted permanently!</p>
+          <div>
+            <button onClick={cancelDeleteRequest}>Cancel</button>
+            <button onClick={handleDeleteExps}>Delete</button>
+          </div>
+        </div>
+      </div>}
+
+      {/* <button onClick={cancelBatchDelete}>Cancel Batch Delete</button> */}
+      <br />
+      <br />
+
       {/* expenses list */}
       {filtered.map((e, idx) => (
-        <div key={idx}>
+        <div className="expense" key={idx}>
           {editingId !== e.id && <div>
+            {batchDelete && 
+              <div>
+                <label htmlFor={idx}>Delete</label>
+                <input id={idx} type="checkbox" onChange={() => selectItems(e.id)} />
+              </div>
+            }
             <span>{e.category}</span> - <span>₦{e.amount}</span>
             <div>{e.description}</div>
-            {/* <p>{new Date (e.date).toISOString().slice(0, 16).replace("T", " ")}</p> */}
             <p>
               {new Date(e.date).toLocaleString("en-US", {
                 timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -345,6 +415,7 @@ export default function Expenses({ user }) {
             <button onClick={() => deleteExpense(e.id)}>Delete</button>
             <button onClick={() => editExpense(e.id)}>Edit</button>
           </div>}
+          
           {/* edit form */}
           {editingId === e.id && (
             <form onSubmit={applyEditChanges}>
