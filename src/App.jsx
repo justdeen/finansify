@@ -4,7 +4,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
-import Expenses from "./pages/Expenses";
+import ExpensesFilters from "./pages/ExpensesFilters";
 import Income from "./pages/Income";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
@@ -26,7 +26,7 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Dashboard user={user} />} />
-        <Route path="/expenses" element={<Expenses user={user} />} />
+        <Route path="/expenses" element={<ExpensesFilters user={user} />} />
         <Route path="/reports" element={<Reports user={user} />} />
         <Route path="/settings" element={<Settings user={user} />} />
       </Routes>
