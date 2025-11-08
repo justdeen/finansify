@@ -11,7 +11,7 @@ import {
   GoogleAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth";
-import { ConfigProvider, theme, Form, Input } from 'antd';
+import { ConfigProvider, theme, Form, Input, Button } from 'antd';
 
 interface SettingsProps {
   user: any; // You can make this more strict if you have a User type
@@ -47,8 +47,10 @@ export default function Settings({user}: SettingsProps) {
         setData({
           ...data,
           firstName: res.firstName,
+          lastName: res.lastName,
           email: res.email,
         });
+        form.setFieldsValue({ firstName: res.firstName, lastName: res.lastName });
       }
       const checkPasswordChange = user.providerData.some(
         (provider: any) => provider.providerId === "password"
@@ -57,16 +59,6 @@ export default function Settings({user}: SettingsProps) {
     };
     fetchData();
   }, []);
-
-  async function saveChanges() {
-    const currUser = auth.currentUser;
-    if(!currUser) return
-    await updateDoc(doc(db, "users", currUser.uid), {
-      firstName: data.firstName,
-      lastName: data.lastName,
-    });
-    alert("Updated!");
-  }
 
   const saveNewPassword = async () => {
     const credential = EmailAuthProvider.credential(user.email, data.oldPassword);
@@ -90,42 +82,59 @@ export default function Settings({user}: SettingsProps) {
     await deleteUser(user);
   }
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setData({...data, firstName: value });
-    form.setFieldValue("field_a", value); // sync AntD form
+  const onFinish = async (values: any) => {
+    const currUser = auth.currentUser;
+    if(!currUser) return
+    if (data.firstName === values.firstName && data.lastName === values.lastName) {
+      return;
+    } else {
+      await updateDoc(doc(db, "users", currUser.uid), {
+        firstName: values.firstName,
+        lastName: values.lastName,
+      });
+      setData({...data, firstName: values.firstName, lastName: values.lastName});
+      alert("Updated!");
+    }
   };
 
   return (
     <div>
       <h2>Settings</h2>
       <p>{data.email}</p>
-      <label htmlFor="firstName">First Name</label>
-      <input
-        id="firstName"
-        placeholder="First Name"
-        value={data.firstName}
-        onChange={(e) =>
-          setData({
-            ...data,
-            firstName: e.target.value,
-          })
-        }
-      />
+      <ConfigProvider
+        theme={{
+          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+        }}>
+        <Form
+          form={form}
+          initialValues={{firstName: data.firstName, lastName: data.lastName}}
+          name="trigger"
+          style={{maxWidth: 600}}
+          layout="vertical"
+          onFinish={onFinish}
+          autoComplete="off">
+          <Form.Item
+            hasFeedback
+            label="First Name"
+            name="firstName"
+            validateFirst
+            rules={[{required: true, min: 3}]}>
+            <Input
+              placeholder="Enter First Name"
+            />
+          </Form.Item>
+          <Form.Item hasFeedback label="Last Name" name="lastName" validateFirst rules={[{required: true, min: 3}]}>
+            <Input
+              placeholder="Enter Last Name"
+            />
+          </Form.Item>
+          <Button type="primary" htmlType="submit" block>
+            Submit
+          </Button>
+        </Form>
+      </ConfigProvider>
       <br />
-      <label htmlFor="lastName">Last Name</label>
-      <input
-        id="lastName"
-        placeholder="Last Name"
-        onChange={(e) =>
-          setData({
-            ...data,
-            lastName: e.target.value,
-          })
-        }
-      />
-      <br />
-      <button onClick={saveChanges}>Save Changes</button>
+      
       <button onClick={deleteAccount}>Delete Account</button>
       <br />
       <br />
@@ -159,27 +168,6 @@ export default function Settings({user}: SettingsProps) {
           <button onClick={saveNewPassword}>Save Password</button>
         </div>
       )}
-
-      <ConfigProvider
-        theme={{
-          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
-        }}>
-        <Form
-          form={form}
-          initialValues={{field_a: data.firstName}}
-          name="trigger"
-          style={{maxWidth: 600}}
-          layout="vertical"
-          autoComplete="off">
-          <Form.Item hasFeedback label="Field A" name="field_a" validateFirst rules={[{min: 3}]}>
-            <Input
-              placeholder="Validate required onBlur"
-              // value={data.firstName}
-              // onChange={handleInputChange}
-            />
-          </Form.Item>
-        </Form>
-      </ConfigProvider>
     </div>
   );
 }

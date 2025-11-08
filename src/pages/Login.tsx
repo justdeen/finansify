@@ -1,29 +1,22 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { auth, provider, db } from "../firebase";
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-} from "firebase/auth";
-import { doc, setDoc, getDocs, where, query, collection, } from "firebase/firestore";
+import {useState, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
+import {auth, provider, db} from "../firebase";
+import {signInWithEmailAndPassword, signInWithPopup} from "firebase/auth";
+import {doc, setDoc, getDocs, where, query, collection} from "firebase/firestore";
+import {ConfigProvider, theme, Form, Input, Button} from "antd";
 
 interface LoginProps {
   setLogOrReg: (val: boolean) => void;
 }
 
-export default function Login({ setLogOrReg }: LoginProps) {
+export default function Login({setLogOrReg}: LoginProps) {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   const navigate = useNavigate();
 
   function register() {
-    setLogOrReg(false)
-  }
-
-  async function login() {
-    await signInWithEmailAndPassword(auth, email, password);
-    navigate("/");
+    setLogOrReg(false);
   }
 
   async function googleLogin() {
@@ -55,15 +48,71 @@ export default function Login({ setLogOrReg }: LoginProps) {
     }
   }
 
+  const onFinish = async (values: any) => {
+    await signInWithEmailAndPassword(auth, values.email, values.password);
+    navigate("/");
+  };
+
   return (
     <div>
       <h2>Login</h2>
-      <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} type="email" name="email" autoComplete="email"/>
-      <input placeholder="Password" onChange={(e) => setPassword(e.target.value)} type="text" name="password" autoComplete="password" />
-      <button onClick={login}>Login</button>
+      <ConfigProvider
+        theme={{
+          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+        }}>
+        <Form
+          // form={form}
+          name="trigger"
+          style={{maxWidth: 600}}
+          layout="vertical"
+          onFinish={onFinish}
+          autoComplete="on">
+          <Form.Item
+            hasFeedback
+            label="Email"
+            name="email"
+            validateFirst
+            rules={[{required: true, type: "email"}]}>
+            <Input placeholder="Enter email" />
+          </Form.Item>
 
-      <button onClick={register}>Register</button>
-      <button onClick={googleLogin}>Login with Google</button>
+          <Form.Item
+            hasFeedback
+            label="Password"
+            name="password"
+            validateFirst
+            rules={[{required: true}]}>
+            <Input.Password placeholder="Enter password" />
+          </Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{fontWeight: "500", fontSize: "13px", marginBottom: '10px'}}
+            block>
+            Login
+          </Button>
+
+          <Button
+            onClick={register}
+            style={{fontWeight: "500", fontSize: "13px", marginBottom: '10px'}}
+            type="primary"
+            block>
+            Register
+          </Button>
+          <Button
+            icon={
+              <img
+                src="/src/assets/google-logo.png"
+                alt="Google"
+                style={{width: 20, height: 20, marginRight: 8, marginTop: 4}}
+              />
+            }
+            style={{fontWeight: "500", fontSize: "13px", width: "100%"}}
+            onClick={googleLogin}>
+            Continue With Google
+          </Button>
+        </Form>
+      </ConfigProvider>
     </div>
   );
 }
