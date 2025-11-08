@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, ChangeEvent} from "react";
 import {auth, db, provider} from "../firebase";
 import {doc, updateDoc, getDoc, deleteDoc} from "firebase/firestore";
 import {
@@ -13,7 +13,20 @@ import {
 } from "firebase/auth";
 import { ConfigProvider, theme, Form, Input } from 'antd';
 
-export default function Settings({user}) {
+interface SettingsProps {
+  user: any; // You can make this more strict if you have a User type
+}
+
+// ✅ State type
+interface UserData {
+  firstName: string;
+  lastName: string;
+  oldPassword: string;
+  newPassword: string;
+  email: string;
+}
+
+export default function Settings({user}: SettingsProps) {
   const [data, setData] = useState({
     firstName: "",
     lastName: "",
@@ -23,6 +36,7 @@ export default function Settings({user}) {
   });
   const [canChangePassword, setCanChangePassword] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,7 +51,7 @@ export default function Settings({user}) {
         });
       }
       const checkPasswordChange = user.providerData.some(
-        (provider) => provider.providerId === "password"
+        (provider: any) => provider.providerId === "password"
       );
       if (checkPasswordChange) setCanChangePassword(true);
     };
@@ -45,8 +59,9 @@ export default function Settings({user}) {
   }, []);
 
   async function saveChanges() {
-    const user = auth.currentUser;
-    await updateDoc(doc(db, "users", user.uid), {
+    const currUser = auth.currentUser;
+    if(!currUser) return
+    await updateDoc(doc(db, "users", currUser.uid), {
       firstName: data.firstName,
       lastName: data.lastName,
     });
@@ -56,7 +71,7 @@ export default function Settings({user}) {
   const saveNewPassword = async () => {
     const credential = EmailAuthProvider.credential(user.email, data.oldPassword);
     await reauthenticateWithCredential(user, credential);
-    if (data.newPassword) await updatePassword(auth.currentUser, data.newPassword);
+    if (data.newPassword) await updatePassword(auth.currentUser!, data.newPassword);
     setChangePassword(false);
     alert("Password Changed!");
   };
@@ -69,11 +84,17 @@ export default function Settings({user}) {
   async function deleteAccount() {
     const user = auth.currentUser;
     const provider = new GoogleAuthProvider();
+    if(!user) return
     await reauthenticateWithPopup(user, provider);
-
     await deleteDoc(doc(db, "users", user.uid));
     await deleteUser(user);
   }
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setData({...data, firstName: value });
+    form.setFieldValue("field_a", value); // sync AntD form
+  };
 
   return (
     <div>
@@ -139,23 +160,26 @@ export default function Settings({user}) {
         </div>
       )}
 
-      {/* <ConfigProvider
+      <ConfigProvider
         theme={{
           algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
         }}>
-        
-        <Form name="trigger" style={{maxWidth: 600}} layout="vertical" autoComplete="off">
-        <Form.Item
-          hasFeedback
-          label="Field A"
-          name="field_a"
-          validateFirst
-          rules={[{min: 3}]}>
-          <Input placeholder="Validate required onBlur" />
-        </Form.Item>
-      </Form>
-      </ConfigProvider> */}
-      
+        <Form
+          form={form}
+          initialValues={{field_a: data.firstName}}
+          name="trigger"
+          style={{maxWidth: 600}}
+          layout="vertical"
+          autoComplete="off">
+          <Form.Item hasFeedback label="Field A" name="field_a" validateFirst rules={[{min: 3}]}>
+            <Input
+              placeholder="Validate required onBlur"
+              // value={data.firstName}
+              // onChange={handleInputChange}
+            />
+          </Form.Item>
+        </Form>
+      </ConfigProvider>
     </div>
   );
 }

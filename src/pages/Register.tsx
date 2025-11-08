@@ -2,9 +2,13 @@ import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {auth, provider, db} from "../firebase";
 import {signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup} from "firebase/auth";
-import {doc, setDoc} from "firebase/firestore";
+import {doc, setDoc, where, query, collection, getDocs} from "firebase/firestore";
 
-export default function register({setLogOrReg}) {
+interface RegisterProps {
+  setLogOrReg: (val: boolean) => void;
+}
+
+export default function register({setLogOrReg}: RegisterProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -27,7 +31,7 @@ export default function register({setLogOrReg}) {
   async function googleLogin() {
     const res = await signInWithPopup(auth, provider);
 
-    const q = query(collection(db, "users"), where("email", "==", user.email));
+    const q = query(collection(db, "users"), where("email", "==", res.user.email));
     const querySnapshot = await getDocs(q);
     if (querySnapshot.empty) {
       const userDoc = doc(db, "users", res.user.uid);

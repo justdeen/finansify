@@ -3,10 +3,42 @@ import {collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, w
 import {db, auth} from "../firebase";
 import {v4 as uuidv4} from "uuid";
 
-export default function ExpensesNew({user, expenses, filtered, totalExpenses, setExpenses, setFiltered, saveFilters}) {
+interface Expense {
+  id: string;
+  category: string;
+  description: string;
+  amount: number;
+  date: string;
+}
+
+interface FormData {
+  category: string;
+  description: string;
+  amount: string; // remains string since input returns a string
+}
+
+interface ExpensesNewProps {
+  user: { uid: string }; // define expected user structure
+  expenses: Expense[]; // array of existing expenses
+  filtered: Expense[]; // array of filtered expenses
+  totalExpenses: number; // total amount of expenses
+  setExpenses: React.Dispatch<React.SetStateAction<Expense[]>>; // state setter
+  setFiltered: React.Dispatch<React.SetStateAction<Expense[]>>; // state setter
+  saveFilters: (updated: Expense[]) => void; // function prop
+}
+
+export default function ExpensesNew({
+  user,
+  expenses,
+  filtered,
+  totalExpenses,
+  setExpenses,
+  setFiltered,
+  saveFilters,
+}: ExpensesNewProps) {
   const [form, setForm] = useState({ category: "", description: "", amount: "" });
 
-  const handleNewExpense = (e) => {
+  const handleNewExpense = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.category || !form.description || !form.amount) return;
     addExpense();

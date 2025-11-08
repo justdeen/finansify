@@ -5,15 +5,15 @@ import { auth } from "./firebase";
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import ExpensesFilters from "./pages/ExpensesFilters";
-import Income from "./pages/Income";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
-import Login from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import { User } from "firebase/auth";
 
 export default function App() {
-  const [user, setUser] = useState(null);
-  const [logOrReg, setLogOrReg] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [logOrReg, setLogOrReg] = useState<boolean>(true);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUser(u));
@@ -25,9 +25,9 @@ export default function App() {
     <>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Dashboard user={user} />} />
-        <Route path="/expenses" element={<ExpensesFilters user={user} />} />
-        <Route path="/reports" element={<Reports user={user} />} />
+        <Route path="/" element={user && <Dashboard user={user} />} />
+        <Route path="/expenses" element={user && <ExpensesFilters user={user} />} />
+        <Route path="/reports" element={user && <Reports user={user} />} />
         <Route path="/settings" element={<Settings user={user} />} />
       </Routes>
     </>

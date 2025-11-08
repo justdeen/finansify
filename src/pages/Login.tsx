@@ -3,16 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { auth, provider, db } from "../firebase";
 import {
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   signInWithPopup,
-  signInWithRedirect
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDocs, where, query, collection, } from "firebase/firestore";
 
-export default function Login({setLogOrReg}) {
-  const [date, setDate] = useState({start: getFirstDayOfMonth(), end: getLastDayOfMonth()});
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+interface LoginProps {
+  setLogOrReg: (val: boolean) => void;
+}
+
+export default function Login({ setLogOrReg }: LoginProps) {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const navigate = useNavigate();
 
@@ -27,10 +28,8 @@ export default function Login({setLogOrReg}) {
 
   async function googleLogin() {
     try {
-      console.log('first')
       const res = await signInWithPopup(auth, provider);
-      console.log('second')
-      const user = result.user;
+      const user = res.user;
 
       // Check if user with this email already exists in Firestore
       const q = query(collection(db, "users"), where("email", "==", user.email));
@@ -51,19 +50,9 @@ export default function Login({setLogOrReg}) {
         );
         navigate("/");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Google sign-in error:", error.message);
     }
-  }
-
-  function getFirstDayOfMonth() {
-    const today = new Date();
-    return new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
-  }
-
-  function getLastDayOfMonth() {
-    const today = new Date();
-    return new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
   }
 
   return (

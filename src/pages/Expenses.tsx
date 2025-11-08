@@ -4,25 +4,57 @@ import { db, auth } from "../firebase";
 import { v4 as uuidv4 } from 'uuid';
 import "./Expenses.css"
 
-export default function Expenses({ user, expenses, filtered, totalExpenses, setExpenses, setFiltered, saveFilters }) {
+interface Expense {
+  id: string;
+  category: string;
+  description: string;
+  amount: number;
+  date: string;
+}
+
+interface ExpensesProps {
+  user: { uid: string }; // only uid needed here
+  expenses: Expense[];
+  filtered: Expense[];
+  totalExpenses: number;
+  setExpenses: React.Dispatch<React.SetStateAction<Expense[]>>;
+  setFiltered: React.Dispatch<React.SetStateAction<Expense[]>>;
+  saveFilters: (updated: Expense[]) => void;
+}
+
+export default function Expenses({
+  user,
+  expenses,
+  filtered,
+  totalExpenses,
+  setExpenses,
+  setFiltered,
+  saveFilters,
+}: ExpensesProps) {
   const [form, setForm] = useState({ category: "", description: "", amount: "" });
-  const [editForm, setEditForm] = useState({ category: "", description: "", amount: "" });
-  const [editingId, setEditingId] = useState(false);
-  const [batchDelete, setBatchDelete] = useState(false)
-  const [expsToDelete, setExpsToDelete] = useState([])
-  const [batchDeleteBtnText, setBatchDeleteBtnText] = useState(true)
-  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [editForm, setEditForm] = useState<Expense | Omit<Expense, "id" | "date">>({
+    category: "",
+    description: "",
+    amount: 0,
+  });
+  const [editingId, setEditingId] = useState<string | false>(false);
+  const [batchDelete, setBatchDelete] = useState(false);
+  const [expsToDelete, setExpsToDelete] = useState<string[]>([]);
+  const [batchDeleteBtnText, setBatchDeleteBtnText] = useState(true);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   
   // edit expense
-  const editExpense = async (id) =>{
-    const expenseToEdit = filtered.find(e => e.id === id);
-    setEditForm({ ...expenseToEdit });
-    setEditingId(id)
-  }
+  const editExpense = (id: string) => {
+    const expenseToEdit = filtered.find((e) => e.id === id);
+    if (expenseToEdit) {
+      setEditForm({ ...expenseToEdit });
+      setEditingId(id);
+    }
+  };
 
-  const applyEditChanges = (e) =>{
+  const applyEditChanges = (e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault();
-    handleSave(editingId);
+    if (editingId) handleSave(editingId);
   }
 
   const cancelEdit = () =>{
@@ -30,10 +62,10 @@ export default function Expenses({ user, expenses, filtered, totalExpenses, setE
   }
   
   // save edited expense
-  const handleSave = async (id) => {
+  const handleSave = async (id: string) => {
     const updated = expenses.map(e => {
         if (e.id === id) {
-            return {...e, ...editForm, amount: parseInt(editForm.amount)}
+            return {...e, ...editForm, amount: Number(editForm.amount)}
         }
         return e;
     })
@@ -44,7 +76,7 @@ export default function Expenses({ user, expenses, filtered, totalExpenses, setE
   }
     
   // delete an expense
-  const deleteExpense = async (id) => {
+  const deleteExpense = async (id: string) => {
     try {
       const updated = expenses.filter((e) => e.id !== id);
       setExpenses(updated);
@@ -66,7 +98,7 @@ export default function Expenses({ user, expenses, filtered, totalExpenses, setE
     }
   }
 
-  const selectItems = (id) => {
+  const selectItems = (id: string) => {
     const exp = expsToDelete.find(e => e === id)
     if(exp){
       setExpsToDelete((prev) => {
@@ -129,8 +161,8 @@ export default function Expenses({ user, expenses, filtered, totalExpenses, setE
           {editingId !== e.id && <div>
             {batchDelete && 
               <div>
-                <label htmlFor={idx}>Delete</label>
-                <input id={idx} type="checkbox" onChange={() => selectItems(e.id)} />
+                <label htmlFor={idx.toString()}>Delete</label>
+                <input id={idx.toString()} type="checkbox" onChange={() => selectItems(e.id)} />
               </div>
             }
             <span>{e.category}</span> - <span>₦{e.amount}</span>
@@ -161,10 +193,10 @@ export default function Expenses({ user, expenses, filtered, totalExpenses, setE
                 <option value="Utilities">Utilities</option>
               </select>
               <input placeholder="Description" value={editForm.description} onChange={(e) => setEditForm({...editForm, description: e.target.value})} />
-              <input placeholder="Amount" type="number" value={editForm.amount} onChange={(e) => setEditForm({...editForm, amount: e.target.value})} />
+              <input placeholder="Amount" type="number" value={editForm.amount} onChange={(e) => setEditForm({...editForm, amount: Number(e.target.value)})} />
               <button type="submit">Save</button>
               {/* <button type="submit" onClick={() => handleSave(e.id)}>Save</button> */}
-              <button type="button" onClick={() => cancelEdit(e.id)}>Cancel</button>
+              <button type="button" onClick={() => cancelEdit()}>Cancel</button>
             </form>
           )}
         </div>

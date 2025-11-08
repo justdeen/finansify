@@ -5,20 +5,49 @@ import {collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, w
 import {db, auth} from "../firebase";
 import {v4 as uuidv4} from "uuid";
 
-export default function ExpensesFilters({user}) {
-  const [expenses, setExpenses] = useState([]);
-  const [filtered, setFiltered] = useState([]);
-  const [formFilter, setFormFilter] = useState({
+// ✅ Define the shape of an expense
+interface Expense {
+  id: string;
+  category: string;
+  description: string;
+  amount: number;
+  date: string;
+}
+
+// ✅ Define structure of date range in filters
+interface DateRange {
+  start: string;
+  end: string;
+}
+
+// ✅ Define filter form structure
+interface FormFilter {
+  category: string;
+  sortBy: string;
+  date: DateRange;
+}
+
+// ✅ Define props for the component
+interface ExpensesFiltersProps {
+  user: { uid: string };
+}
+
+export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [filtered, setFiltered] = useState<Expense[]>([]);
+  const [formFilter, setFormFilter] = useState<FormFilter>({
     category: "",
     sortBy: "newest",
-    date: {start: getFirstDayOfMonth(), end: getLastDayOfMonth()},
+    date: { start: getFirstDayOfMonth(), end: getLastDayOfMonth() },
   });
   const [showForm, setShowForm] = useState(false);
-  const [totalExpenses, setTotalExpenses] = useState("");
+  const [totalExpenses, setTotalExpenses] = useState<number>(0);
   const [applyButton, setApplyButton] = useState(true);
   const [rstToDefaultButton, setRstToDefaultButton] = useState(true);
-  const formRef = useRef(null);
-  const filterButton = useRef(null);
+
+  // ✅ Properly typed Refs
+  const formRef = useRef<HTMLDivElement | null>(null);
+  const filterButton = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,16 +61,16 @@ export default function ExpensesFilters({user}) {
       const filterStart = new Date(getFirstDayOfMonth()).getTime();
       const filterEnd = new Date(getLastDayOfMonth()).getTime();
 
-      updatedExpenses = updatedExpenses.filter((e) => {
+      updatedExpenses = updatedExpenses.filter((e: Expense) => {
         const dbDate = new Date(e.date).getTime();
-        return (filterStart && dbDate >= filterStart) || (filterEnd && dbDate <= filterEnd);
+        return dbDate >= filterStart && dbDate <= filterEnd;
       });
 
       if (formFilter.sortBy === "newest") {
-        updatedExpenses.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        updatedExpenses.sort((a: Expense, b: Expense): number => new Date(b.date).getTime() - new Date(a.date).getTime());
       }
 
-      const total = updatedExpenses.reduce((sum, e) => sum + e.amount, 0);
+      const total = updatedExpenses.reduce((sum: number, e: Expense) => sum + e.amount, 0);
       setTotalExpenses(total);
 
       setFiltered(updatedExpenses);
@@ -51,8 +80,8 @@ export default function ExpensesFilters({user}) {
 
   // Overlay for formFilter
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (formRef.current && !formRef.current.contains(event.target) && !filterButton.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (formRef.current && !formRef.current.contains(event.target as Node) && filterButton.current && !filterButton.current.contains(event.target as Node)) {
         setShowForm(false);
         return;
       }
@@ -76,13 +105,13 @@ export default function ExpensesFilters({user}) {
     return new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split("T")[0];
   }
 
-  const handleRadioChange = (e) => {
+  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setApplyButton(false);
     setRstToDefaultButton(false);
     setFormFilter({...formFilter, sortBy: e.target.value});
   };
 
-  const applyFilterChanges = (e) => {
+  const applyFilterChanges = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // if(e.target)
     saveFilters();
@@ -226,7 +255,7 @@ export default function ExpensesFilters({user}) {
                 setFormFilter({...formFilter, date: {...formFilter.date, end: e.target.value}});
               }}
             />
-            <button type="submit" onClick={saveFilters} disabled={applyButton === true}>
+            <button type="submit" onClick={() => saveFilters} disabled={applyButton === true}>
               Apply
             </button>
             <button type="button" onClick={defaultFilter} disabled={rstToDefaultButton === true}>
