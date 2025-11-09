@@ -18,6 +18,8 @@ interface ExpensesProps {
   expenses: Expense[];
   filtered: Expense[];
   totalExpenses: number;
+  batchDelete: boolean;
+  setBatchDelete: React.Dispatch<React.SetStateAction<boolean>> 
   setExpenses: React.Dispatch<React.SetStateAction<Expense[]>>;
   setFiltered: React.Dispatch<React.SetStateAction<Expense[]>>;
   saveFilters: (updated: Expense[]) => void;
@@ -28,6 +30,8 @@ export default function Expenses({
   expenses,
   filtered,
   totalExpenses,
+  batchDelete,
+  setBatchDelete,
   setExpenses,
   setFiltered,
   saveFilters,
@@ -39,7 +43,7 @@ export default function Expenses({
     amount: 0,
   });
   const [editingId, setEditingId] = useState<string | false>(false);
-  const [batchDelete, setBatchDelete] = useState(false);
+  // const [batchDelete, setBatchDelete] = useState(false);
   const [expsToDelete, setExpsToDelete] = useState<string[]>([]);
   const [batchDeleteBtnText, setBatchDeleteBtnText] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
