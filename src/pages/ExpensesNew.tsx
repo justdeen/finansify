@@ -70,7 +70,7 @@ export default function ExpensesNew({
 
   return (
     <form onSubmit={handleNewExpense}>
-      <button onClick={showForm}>Add Expense</button>
+      <button onClick={showForm} disabled={batchDelete}>Add Expense</button>
       
       {newExpForm && <div>
         <select value={form.category} onChange={(e) => setForm({...form, category: e.target.value})} required>
