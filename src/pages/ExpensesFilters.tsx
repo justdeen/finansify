@@ -12,6 +12,7 @@ interface Expense {
   description: string;
   amount: number;
   date: string;
+  edited: boolean;
 }
 
 // ✅ Define structure of date range in filters
@@ -44,6 +45,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
   const [totalExpenses, setTotalExpenses] = useState<number>(0);
   const [applyButton, setApplyButton] = useState(true);
   const [rstToDefaultButton, setRstToDefaultButton] = useState(true);
+  const [batchDelete, setBatchDelete] = useState(false);
 
   // ✅ Properly typed Refs
   const formRef = useRef<HTMLDivElement | null>(null);
@@ -272,7 +274,8 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
         filtered={filtered} 
         expenses={expenses} 
         totalExpenses={totalExpenses}
-        saveFilters={saveFilters}>
+        saveFilters={saveFilters}
+        batchDelete={batchDelete}>
       </ExpensesNew>
       
       <Expenses 
@@ -282,7 +285,9 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
         filtered={filtered} 
         expenses={expenses} 
         totalExpenses={totalExpenses}
-        saveFilters={saveFilters}>
+        saveFilters={saveFilters}
+        batchDelete={batchDelete}
+        setBatchDelete={setBatchDelete}>
       </Expenses>
     </>
   );

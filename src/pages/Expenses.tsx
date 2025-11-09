@@ -10,13 +10,16 @@ interface Expense {
   description: string;
   amount: number;
   date: string;
+  edited: boolean;
 }
 
 interface ExpensesProps {
-  user: { uid: string }; // only uid needed here
+  user: { uid: string };
   expenses: Expense[];
   filtered: Expense[];
   totalExpenses: number;
+  batchDelete: boolean;
+  setBatchDelete: React.Dispatch<React.SetStateAction<boolean>>;
   setExpenses: React.Dispatch<React.SetStateAction<Expense[]>>;
   setFiltered: React.Dispatch<React.SetStateAction<Expense[]>>;
   saveFilters: (updated: Expense[]) => void;
@@ -27,23 +30,24 @@ export default function Expenses({
   expenses,
   filtered,
   totalExpenses,
+  batchDelete,
+  setBatchDelete,
   setExpenses,
   setFiltered,
   saveFilters,
 }: ExpensesProps) {
   const [form, setForm] = useState({ category: "", description: "", amount: "" });
-  const [editForm, setEditForm] = useState<Expense | Omit<Expense, "id" | "date">>({
+  const [editForm, setEditForm] = useState<Expense | Omit<Expense, "id" | "date" | "edited">>({
     category: "",
     description: "",
     amount: 0,
   });
   const [editingId, setEditingId] = useState<string | false>(false);
-  const [batchDelete, setBatchDelete] = useState(false);
+  // const [batchDelete, setBatchDelete] = useState(false);
   const [expsToDelete, setExpsToDelete] = useState<string[]>([]);
   const [batchDeleteBtnText, setBatchDeleteBtnText] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
   
-  // edit expense
   const editExpense = (id: string) => {
     const expenseToEdit = filtered.find((e) => e.id === id);
     if (expenseToEdit) {
@@ -52,20 +56,19 @@ export default function Expenses({
     }
   };
 
-  const applyEditChanges = (e: React.FormEvent<HTMLFormElement>) =>{
+  const applyEditChanges = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (editingId) handleSave(editingId);
-  }
+  };
 
-  const cancelEdit = () =>{
+  const cancelEdit = () => {
     setEditingId(false)
   }
   
-  // save edited expense
   const handleSave = async (id: string) => {
     const updated = expenses.map(e => {
         if (e.id === id) {
-            return {...e, ...editForm, amount: Number(editForm.amount)}
+            return {...e, ...editForm, amount: Number(editForm.amount), edited: true}
         }
         return e;
     })
@@ -75,7 +78,6 @@ export default function Expenses({
     await updateDoc(doc(db, "users", user.uid), { expenses: updated });
   }
     
-  // delete an expense
   const deleteExpense = async (id: string) => {
     try {
       const updated = expenses.filter((e) => e.id !== id);
@@ -91,6 +93,7 @@ export default function Expenses({
   const showBatchDelete = () => {
     setBatchDelete(true)
     setBatchDeleteBtnText(false)
+    setEditingId(false)
     if(!batchDeleteBtnText){
       setBatchDeleteBtnText(true)
       setBatchDelete(false)
@@ -136,7 +139,6 @@ export default function Expenses({
   return (
     <div>
       <br />
-      {/* Total expenses; */}
       <div><b>Total expenses: ₦{totalExpenses}</b></div>
       <br />
 
@@ -155,7 +157,6 @@ export default function Expenses({
       <br />
       <br />
 
-      {/* expenses list */}
       {filtered.map((e, idx) => (
         <div className="expense" key={idx}>
           {editingId !== e.id && <div>
@@ -176,12 +177,12 @@ export default function Expenses({
                 hour: "2-digit",
                 minute: "2-digit",
               })}
+              {e.edited && <span> - <i>edited</i></span>}
             </p>
             <button disabled={batchDelete === true} onClick={() => deleteExpense(e.id)}>Delete</button>
             <button disabled={batchDelete === true} onClick={() => editExpense(e.id)}>Edit</button>
           </div>}
           
-          {/* edit form */}
           {editingId === e.id && (
             <form onSubmit={applyEditChanges}>
               <select value={editForm.category} onChange={(e) => setEditForm({...editForm, category: e.target.value})}>
@@ -195,7 +196,6 @@ export default function Expenses({
               <input placeholder="Description" value={editForm.description} onChange={(e) => setEditForm({...editForm, description: e.target.value})} />
               <input placeholder="Amount" type="number" value={editForm.amount} onChange={(e) => setEditForm({...editForm, amount: Number(e.target.value)})} />
               <button type="submit">Save</button>
-              {/* <button type="submit" onClick={() => handleSave(e.id)}>Save</button> */}
               <button type="button" onClick={() => cancelEdit()}>Cancel</button>
             </form>
           )}

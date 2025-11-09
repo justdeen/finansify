@@ -12,6 +12,7 @@ import {
   reauthenticateWithCredential,
 } from "firebase/auth";
 import { ConfigProvider, theme, Form, Input, Button } from 'antd';
+import './Settings.css'
 
 interface SettingsProps {
   user: any; // You can make this more strict if you have a User type
@@ -37,6 +38,9 @@ export default function Settings({user}: SettingsProps) {
   const [canChangePassword, setCanChangePassword] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
   const [form] = Form.useForm();
+  const [deleteAccWithPw, setDeleteAccWithPw] = useState("")
+  const [deleteAccForm, setDeleteAccForm] = useState(false)
+  const [confirmAccDelete, setConfirmAccDelete] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,16 +74,74 @@ export default function Settings({user}: SettingsProps) {
 
   const handlePasswordChange = async () => {
     setChangePassword(true);
-    if (changePassword) setChangePassword(false);
+    // if (changePassword) setChangePassword(false);
   };
+
+  const cancelPassword = () => {
+    setChangePassword(false)
+  }
+
+  // First popup for acc deletion
+  function deleteAccountReq() {
+    setConfirmAccDelete(true)
+  }
+
+  // Closes first popup for acc deletion
+  function accDeleteFalse() {
+    setConfirmAccDelete(false)
+  }
+
+  // Opens second popup for acc deletion
+  async function accDeleteTrue() {
+    const user = auth.currentUser;
+    if (!user) return;
+    const isGoogleProvider = user.providerData.some(
+      (provider: any) => provider.providerId === "google.com"
+    );
+    const isPasswordProvider = user.providerData.some(
+      (provider: any) => provider.providerId === "password"
+    );
+    setConfirmAccDelete(false)
+    if (isGoogleProvider) {
+      const provider = new GoogleAuthProvider();
+      await reauthenticateWithPopup(user, provider);
+      await deleteUser(user);
+      await deleteDoc(doc(db, "users", user.uid));
+      alert("Account deleted successfully.");
+    } else if (isPasswordProvider) {
+      setDeleteAccForm(true)
+    }
+  }
+
+  // Closes second popup for acc deletion
+  function cancelAccDelete() {
+    setDeleteAccForm(false)
+    setDeleteAccWithPw("")
+  }
+
+  async function handleAccDelete(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    deleteAccount();
+  }
 
   async function deleteAccount() {
     const user = auth.currentUser;
-    const provider = new GoogleAuthProvider();
-    if(!user) return
-    await reauthenticateWithPopup(user, provider);
-    await deleteDoc(doc(db, "users", user.uid));
-    await deleteUser(user);
+    if (!user) return;
+
+    try {
+      const credential = EmailAuthProvider.credential(user.email!, deleteAccWithPw);
+      await reauthenticateWithCredential(user, credential);
+      await deleteUser(user);
+      await deleteDoc(doc(db, "users", user.uid));
+      alert("Account deleted successfully.");
+      // Optionally: sign out or redirect the user
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      alert("Failed to delete account. Please check your credentials and try again.");
+    } finally {
+      setDeleteAccForm(false);
+      setDeleteAccWithPw("");
+    }
   }
 
   const onFinish = async (values: any) => {
@@ -118,15 +180,16 @@ export default function Settings({user}: SettingsProps) {
             label="First Name"
             name="firstName"
             validateFirst
-            rules={[{required: true, min: 3}]}>
-            <Input
-              placeholder="Enter First Name"
-            />
+            rules={[{required: true, min: 2}]}>
+            <Input placeholder="Enter First Name" />
           </Form.Item>
-          <Form.Item hasFeedback label="Last Name" name="lastName" validateFirst rules={[{required: true, min: 3}]}>
-            <Input
-              placeholder="Enter Last Name"
-            />
+          <Form.Item
+            hasFeedback
+            label="Last Name"
+            name="lastName"
+            validateFirst
+            rules={[{required: true, min: 2}]}>
+            <Input placeholder="Enter Last Name" />
           </Form.Item>
           <Button type="primary" htmlType="submit" block>
             Submit
@@ -134,8 +197,21 @@ export default function Settings({user}: SettingsProps) {
         </Form>
       </ConfigProvider>
       <br />
-      
-      <button onClick={deleteAccount}>Delete Account</button>
+
+      <button onClick={deleteAccountReq}>Delete Account</button>
+      {confirmAccDelete && <div className="confirmAccDelete">
+        <p>Are you sure you want to delete your account?</p>
+        <button onClick={accDeleteFalse}>No</button>
+        <button onClick={accDeleteTrue}>Yes</button>
+      </div>}
+      {deleteAccForm && <div className="deleteAcc">
+        <form className="popup2" onSubmit={handleAccDelete}>
+          <label htmlFor="pw">Enter Password</label>
+          <input id="pw" type="text" value={deleteAccWithPw} onChange={(e) => setDeleteAccWithPw(e.target.value)} placeholder="password" />
+          <button type="button" onClick={cancelAccDelete}>Cancel</button>
+          <button type="submit">Delete Account</button>
+        </form>
+      </div>}
       <br />
       <br />
       {canChangePassword && <button onClick={handlePasswordChange}>Change Password</button>}
@@ -153,7 +229,7 @@ export default function Settings({user}: SettingsProps) {
             }
           />
           <br />
-          <label htmlFor="newPassword">New Password (optional)</label>
+          <label htmlFor="newPassword">New Password</label>
           <input
             id="newPassword"
             placeholder="New Password"
@@ -166,6 +242,7 @@ export default function Settings({user}: SettingsProps) {
           />
           <br />
           <button onClick={saveNewPassword}>Save Password</button>
+          <button onClick={cancelPassword}>Cancel</button>
         </div>
       )}
     </div>
