@@ -48,7 +48,7 @@ export default function Expenses({
   const [batchDeleteBtnText, setBatchDeleteBtnText] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [selectAll, setSelectAll] = useState(false)
-  const [confirmSingleDelete, setConfirmSingleDelete] = useState(false)
+  const [confirmSingleDelete, setConfirmSingleDelete] = useState<{ show: boolean, id: string }>({ show: false, id: "" });
   
   // edit expense
   const editExpense = (id: string) => {
@@ -84,7 +84,8 @@ export default function Expenses({
     
   // delete an expense
   const deleteExpense = async (id: string) => {
-    setConfirmSingleDelete(false);
+    console.log(id)
+    setConfirmSingleDelete({show: false, id: ""})
     try {
       const updated = expenses.filter((e) => e.id !== id);
       setExpenses(updated);
@@ -107,12 +108,13 @@ export default function Expenses({
     }
   }
 
-  const singleDelete = () =>{
-    setConfirmSingleDelete(true)
+  const singleDelete = (id: string) =>{
+    setConfirmSingleDelete({ show: true, id });
+    console.log(id)
   }
 
   const cancelSingleDelete = () => {
-    setConfirmSingleDelete(false)
+    setConfirmSingleDelete({show: false, id: ""});
   }
 
   const selectItems = (id: string) => {
@@ -236,18 +238,18 @@ export default function Expenses({
                 })}
                 {e.edited && <span> - <i>edited</i></span>}
               </p>
-              <button disabled={batchDelete === true} onClick={singleDelete}>
+              <button disabled={batchDelete === true} onClick={() => singleDelete(e.id)}>
                 Delete
               </button>
               <button disabled={batchDelete === true} onClick={() => editExpense(e.id)}>
                 Edit
               </button>
-              {confirmSingleDelete && <div className="singleDeletePopup">
+              {confirmSingleDelete.show && <div className="singleDeletePopup">
                 <div className="popup2">
                   <p>The selected expense will be deleted permanently!</p>
                   <div>
                     <button onClick={cancelSingleDelete}>Cancel</button>
-                    <button onClick={() => deleteExpense(e.id)}>Delete</button>
+                    <button onClick={() => deleteExpense(confirmSingleDelete.id)}>Delete</button>
                   </div>
                 </div>
               </div>}

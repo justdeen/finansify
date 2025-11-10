@@ -197,7 +197,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
 
   return (
     <>
-      <button ref={filterButton} onClick={() => setShowForm((prev) => !prev)}>
+      <button ref={filterButton} disabled={batchDelete} onClick={() => setShowForm((prev) => !prev)}>
         Filters
       </button>
       <br />

@@ -1,0 +1,12 @@
+.newExpBtn:focus{
+    outline: none ;
+    /* box-shadow: none !important; */
+}
+
+/* .newExpBtn:focus-visible{
+    outline: none !important;
+} */
+
+/* .newExpBtn::-moz-focus-inner{
+    border: 0 !important;
+} */

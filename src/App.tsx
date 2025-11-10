@@ -13,8 +13,11 @@ import PasswordRst from "./pages/PasswordRst";
 import { User } from "firebase/auth";
 
 export default function App() {
-  const [user, setUser] = useState<User | any>("str");
-  const [logOrReg, setLogOrReg] = useState<boolean>(true);
+  const [user, setUser] = useState<User | any>(() => {
+    const currUser = localStorage.getItem('user')
+    return currUser ? currUser : null;
+  });
+  // const [logOrReg, setLogOrReg] = useState<boolean>(true);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
@@ -24,23 +27,30 @@ export default function App() {
     return () => unsub();
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify({ uid: user.uid }));
+    } else {
+      localStorage.removeItem("user");
+    }
+  }, [user])
+
   // Authenticated user UI
   const AuthenticatedApp = () => (
     <>
-      {typeof user !== 'string' && <Navbar />}
-      {typeof user !== 'string' && <Routes>
+      <Navbar />
+      <Routes>
         <Route path="/" element={user && <Dashboard user={user} />} />
         <Route path="/expenses" element={user && <ExpensesFilters user={user} />} />
         <Route path="/reports" element={user && <Reports user={user} />} />
         <Route path="/settings" element={user && <Settings user={user} />} />
-      </Routes>}
+      </Routes>
     </>
   );
 
   // Unauthenticated user UI
   const UnauthenticatedApp = () => (
     <>
-      hey
       {/* <Login/> */}
       <Routes>
         <Route path="*" element={<Login/>} />
