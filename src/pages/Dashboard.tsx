@@ -59,7 +59,7 @@ export default function Dashboard({ user }: { user: User }) {
         setDisplay({...display, exp: exp})
       }
     };
-    fetchData();
+    if(typeof user !== 'string')fetchData();
   }, []);
 
   useEffect(() => {

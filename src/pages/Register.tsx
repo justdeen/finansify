@@ -1,15 +1,16 @@
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import { Link } from "react-router-dom";
 import {auth, provider, db} from "../firebase";
 import {signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup} from "firebase/auth";
 import {doc, setDoc, where, query, collection, getDocs} from "firebase/firestore";
 import {ConfigProvider, theme, Form, Input, Button} from "antd";
 
 interface RegisterProps {
-  setLogOrReg: (val: boolean) => void;
+  setLogOrReg: (val: string) => void;
 }
 
-export default function register({setLogOrReg}: RegisterProps) {
+export default function register() {
   const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
@@ -45,7 +46,7 @@ export default function register({setLogOrReg}: RegisterProps) {
   }
 
   function login() {
-    setLogOrReg(true);
+    // setLogOrReg("log");
   }
 
   return (
@@ -106,13 +107,23 @@ export default function register({setLogOrReg}: RegisterProps) {
             Register
           </Button>
 
-          <Button
+          <Link to="/login">
+            <Button
+              // onClick={register}
+              style={{fontWeight: "500", fontSize: "13px", marginBottom: "10px"}}
+              type="primary"
+              block>
+              Login
+            </Button>
+          </Link>
+
+          {/* <Button
             onClick={login}
             type="primary"
             style={{fontWeight: "500", fontSize: "13px", marginBottom: "10px"}}
             block>
             Login
-          </Button>
+          </Button> */}
 
           <Button
             icon={

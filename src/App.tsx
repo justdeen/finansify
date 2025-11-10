@@ -9,34 +9,46 @@ import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import PasswordRst from "./pages/PasswordRst";
 import { User } from "firebase/auth";
 
 export default function App() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | any>("str");
   const [logOrReg, setLogOrReg] = useState<boolean>(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => setUser(u));
+    const unsub = onAuthStateChanged(auth, (u) => {
+      if(u) setUser(u)
+      else setUser(null)
+    });
     return () => unsub();
   }, []);
 
   // Authenticated user UI
   const AuthenticatedApp = () => (
     <>
-      <Navbar />
-      <Routes>
+      {typeof user !== 'string' && <Navbar />}
+      {typeof user !== 'string' && <Routes>
         <Route path="/" element={user && <Dashboard user={user} />} />
         <Route path="/expenses" element={user && <ExpensesFilters user={user} />} />
         <Route path="/reports" element={user && <Reports user={user} />} />
-        <Route path="/settings" element={<Settings user={user} />} />
-      </Routes>
+        <Route path="/settings" element={user && <Settings user={user} />} />
+      </Routes>}
     </>
   );
 
   // Unauthenticated user UI
   const UnauthenticatedApp = () => (
     <>
-      {logOrReg ? <Login setLogOrReg={setLogOrReg} /> : <Register setLogOrReg={setLogOrReg} />}
+      hey
+      {/* <Login/> */}
+      <Routes>
+        <Route path="*" element={<Login/>} />
+        <Route path="/login" element={<Login/>} />
+        <Route path="/register" element={<Register/>} />
+        <Route path="/passwordRst" element={<PasswordRst/>} />
+      </Routes>
+      {/* {logOrReg ? <Login setLogOrReg={setLogOrReg} /> : <Register setLogOrReg={setLogOrReg} />} */}
     </>
   );
 

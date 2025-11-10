@@ -1,22 +1,24 @@
 import {useState, useEffect} from "react";
+import { Link } from "react-router-dom";
 import {useNavigate} from "react-router-dom";
 import {auth, provider, db} from "../firebase";
 import {signInWithEmailAndPassword, signInWithPopup} from "firebase/auth";
 import {doc, setDoc, getDocs, where, query, collection} from "firebase/firestore";
 import {ConfigProvider, theme, Form, Input, Button} from "antd";
 
-interface LoginProps {
-  setLogOrReg: (val: boolean) => void;
-}
+// interface LoginProps {
+//   setLogOrReg: (val: string) => void;
+//   setPasswordReset: (val: boolean) => void; 
+// }
 
-export default function Login({setLogOrReg}: LoginProps) {
+export default function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   const navigate = useNavigate();
 
   function register() {
-    setLogOrReg(false);
+    // setLogOrReg("reg");
   }
 
   async function googleLogin() {
@@ -84,21 +86,37 @@ export default function Login({setLogOrReg}: LoginProps) {
             rules={[{required: true}]}>
             <Input.Password placeholder="Enter password" />
           </Form.Item>
+
+          <Link to="/passwordRst">Forgot password?</Link>
+          
+          <br />
+          <br />
+
           <Button
             type="primary"
             htmlType="submit"
-            style={{fontWeight: "500", fontSize: "13px", marginBottom: '10px'}}
+            style={{fontWeight: "500", fontSize: "13px", marginBottom: "10px"}}
             block>
             Login
           </Button>
 
-          <Button
+          <Link to="/register">
+            <Button
+              // onClick={register}
+              style={{fontWeight: "500", fontSize: "13px", marginBottom: "10px"}}
+              type="primary"
+              block>
+              Register
+            </Button>
+          </Link>
+
+          {/* <Button
             onClick={register}
             style={{fontWeight: "500", fontSize: "13px", marginBottom: '10px'}}
             type="primary"
             block>
             Register
-          </Button>
+          </Button> */}
           <Button
             icon={
               <img

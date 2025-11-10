@@ -1,18 +1,4 @@
-.deleteAcc{
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    text-align: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.confirmAccDelete{
+.deleteAcc, .confirmAccDelete{
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.4);

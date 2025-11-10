@@ -77,7 +77,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
 
       setFiltered(updatedExpenses);
     };
-    fetchData();
+    if(typeof user !== 'string')fetchData();
   }, []);
 
   // Overlay for formFilter

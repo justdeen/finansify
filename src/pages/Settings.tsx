@@ -61,7 +61,7 @@ export default function Settings({user}: SettingsProps) {
       );
       if (checkPasswordChange) setCanChangePassword(true);
     };
-    fetchData();
+    if(typeof user !== 'string')fetchData();
   }, []);
 
   const saveNewPassword = async () => {
@@ -200,16 +200,22 @@ export default function Settings({user}: SettingsProps) {
 
       <button onClick={deleteAccountReq}>Delete Account</button>
       {confirmAccDelete && <div className="confirmAccDelete">
-        <p>Are you sure you want to delete your account?</p>
-        <button onClick={accDeleteFalse}>No</button>
-        <button onClick={accDeleteTrue}>Yes</button>
+        <div className="popup2">
+          <p>Are you sure you want to delete your account?</p>
+          <div>
+            <button onClick={accDeleteFalse}>No</button>
+            <button onClick={accDeleteTrue}>Yes</button>
+          </div>
+        </div>
       </div>}
       {deleteAccForm && <div className="deleteAcc">
         <form className="popup2" onSubmit={handleAccDelete}>
           <label htmlFor="pw">Enter Password</label>
           <input id="pw" type="text" value={deleteAccWithPw} onChange={(e) => setDeleteAccWithPw(e.target.value)} placeholder="password" />
-          <button type="button" onClick={cancelAccDelete}>Cancel</button>
-          <button type="submit">Delete Account</button>
+          <div style={{marginTop: '20px'}}>
+            <button type="button" onClick={cancelAccDelete}>Cancel</button>
+            <button type="submit">Delete Account</button>
+          </div>
         </form>
       </div>}
       <br />

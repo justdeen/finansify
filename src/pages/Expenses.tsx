@@ -48,6 +48,7 @@ export default function Expenses({
   const [batchDeleteBtnText, setBatchDeleteBtnText] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [selectAll, setSelectAll] = useState(false)
+  const [confirmSingleDelete, setConfirmSingleDelete] = useState(false)
   
   // edit expense
   const editExpense = (id: string) => {
@@ -83,6 +84,7 @@ export default function Expenses({
     
   // delete an expense
   const deleteExpense = async (id: string) => {
+    setConfirmSingleDelete(false);
     try {
       const updated = expenses.filter((e) => e.id !== id);
       setExpenses(updated);
@@ -91,7 +93,7 @@ export default function Expenses({
       saveFilters(updated)
     } catch (err) {
       console.error("Error deleting expense:", err);
-    }
+    } 
   };
 
   const showBatchDelete = () => {
@@ -103,6 +105,14 @@ export default function Expenses({
       setExpsToDelete([])
       setSelectAll(false)
     }
+  }
+
+  const singleDelete = () =>{
+    setConfirmSingleDelete(true)
+  }
+
+  const cancelSingleDelete = () => {
+    setConfirmSingleDelete(false)
   }
 
   const selectItems = (id: string) => {
@@ -226,12 +236,21 @@ export default function Expenses({
                 })}
                 {e.edited && <span> - <i>edited</i></span>}
               </p>
-              <button disabled={batchDelete === true} onClick={() => deleteExpense(e.id)}>
+              <button disabled={batchDelete === true} onClick={singleDelete}>
                 Delete
               </button>
               <button disabled={batchDelete === true} onClick={() => editExpense(e.id)}>
                 Edit
               </button>
+              {confirmSingleDelete && <div className="singleDeletePopup">
+                <div className="popup2">
+                  <p>The selected expense will be deleted permanently!</p>
+                  <div>
+                    <button onClick={cancelSingleDelete}>Cancel</button>
+                    <button onClick={() => deleteExpense(e.id)}>Delete</button>
+                  </div>
+                </div>
+              </div>}
             </div>
           )}
 

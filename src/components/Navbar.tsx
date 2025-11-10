@@ -9,7 +9,7 @@ export default function Navbar() {
       <Link to="/expenses">Expenses</Link> | 
       <Link to="/reports">Reports</Link> | 
       <Link to="/settings">Settings</Link> | 
-      <button onClick={() => signOut(auth)}>Logout</button>
+      <Link to="/login"><button onClick={() => signOut(auth)}>Logout</button></Link>
     </nav>
   );
 }
