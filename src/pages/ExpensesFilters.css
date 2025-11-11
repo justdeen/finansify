@@ -1,11 +1,16 @@
 .popupBg{
     background-color: black;
     border: 2px solid rgb(0, 89, 255);
-    width: 90%;
+    width: 80%;
     padding: 10px;
     border-radius: 10px;
 }
 
 .formFilter{
     width: 100%;
+}
+
+ .ant-picker-dropdown {
+  transform: scale(0.90);
+  transform-origin: top left;
 }

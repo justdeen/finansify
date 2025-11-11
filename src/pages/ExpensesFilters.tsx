@@ -7,6 +7,10 @@ import {v4 as uuidv4} from "uuid";
 import "./ExpensesFilters.css"
 import {ConfigProvider, theme, Form, Input, Button, RadioChangeEvent, DatePicker, InputNumber, Select, Flex, Radio} from "antd";
 import { useForm } from "react-hook-form";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 const { RangePicker } = DatePicker;
 
@@ -56,6 +60,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
   const formRef = useRef<HTMLDivElement | null>(null);
   const filterButton = useRef<HTMLButtonElement | null>(null);
   const [formFilterSubmit] = Form.useForm()
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -131,10 +136,32 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
     setFormFilter({...formFilter, sortBy: e.target.value});
   };
 
+  // const handleOpenChange = (isOpen: boolean) => setOpen(isOpen);
+
+  // const handleChange = (dates: any) => {
+  //   // Only normalize when the picker is closed (i.e. selection completed)
+  //   if (!dates) {
+  //     formFilterSubmit.setFieldsValue({ date: undefined });
+  //     return;
+  //   }
+
+  //   // If picker is still open, do nothing (prevents UI jumps)
+  //   if (open) return;
+
+  //   const [start, end] = dates.map((d: any) => dayjs(d).startOf("day"));
+  //   formFilterSubmit.setFieldsValue({ date: [start, end] });
+  // };
+  
   const onFinish = (values: any) => {
+    console.log(values)
+    const [start, end] = values.date;
+    console.log({
+      start: start.format("YYYY-MM-DD"), // ✅ "2025-12-02"
+      end: end.format("YYYY-MM-DD"), // ✅ "2025-12-17"
+    });
+
     setShowForm(false)
     let updated = []
-    console.log(values)
     setFormFilter({
       category: values.category,
       sortBy: values.sortBy,
@@ -291,7 +318,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
             <Form
               form={formFilterSubmit}
               name="formFilterSubmit"
-              style={{maxWidth: 600}}
+              // style={{maxWidth: 600}}
               layout="vertical"
               onFinish={onFinish}
               autoComplete="on">
@@ -333,10 +360,31 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
                 </Radio.Group>
               </Form.Item>
 
-              <Form.Item 
-                label="RangePicker"
-                name="date">
-                  <RangePicker getPopupContainer={(trigger) => trigger.parentElement ?? document.body} />
+              {/* <Form.Item label="RangePicker" name="date">
+                <RangePicker
+                  getPopupContainer={(trigger) => trigger.parentElement ?? document.body}
+                  // onChange={handleChange}
+                  // onOpenChange={handleOpenChange}
+                  showTime={false}
+                />
+              </Form.Item> */}
+
+              <Form.Item
+                label="Start date"
+                name="start"
+                rules={[{required: true, message: "Please input!"}]}>
+                <DatePicker  
+                  getPopupContainer={(trigger) => trigger.parentElement ?? document.body} 
+                  style={{width: "100%"}}/>
+              </Form.Item>
+              
+              <Form.Item
+                label="End date"
+                name="end"
+                rules={[{required: true, message: "Please input!"}]}>
+                <DatePicker  
+                  getPopupContainer={(trigger) => trigger.parentElement ?? document.body} 
+                  style={{width: "100%"}}/>
               </Form.Item>
 
               <Button
@@ -369,6 +417,17 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
               </Button>
             </Form>
           </ConfigProvider>
+
+          <label htmlFor="start">Start Date</label>
+          <input
+            type="date"
+            name=""
+            id="start"
+            // value={formFilter.date.start}
+            onChange={(e) => {
+              console.log(e.target.value);
+            }}
+          />
 
           {/* <form className="formFilter">
             <label htmlFor="category">Category: </label>
