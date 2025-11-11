@@ -1,9 +1,11 @@
 .popupBg{
-    background-color: blueviolet;
+    background-color: black;
+    border: 2px solid rgb(0, 89, 255);
     width: 90%;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 .formFilter{
-    background-color: brown;
     width: 100%;
 }

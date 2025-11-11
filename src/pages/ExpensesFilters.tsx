@@ -5,8 +5,10 @@ import {collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, w
 import {db, auth} from "../firebase";
 import {v4 as uuidv4} from "uuid";
 import "./ExpensesFilters.css"
-import {ConfigProvider, theme, Form, Input, Button, InputNumber, Select, Flex} from "antd";
+import {ConfigProvider, theme, Form, Input, Button, RadioChangeEvent, DatePicker, InputNumber, Select, Flex, Radio} from "antd";
 import { useForm } from "react-hook-form";
+
+const { RangePicker } = DatePicker;
 
 // ✅ Define the shape of an expense
 interface Expense {
@@ -41,7 +43,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
   const [filtered, setFiltered] = useState<Expense[]>([]);
   const [formFilter, setFormFilter] = useState<FormFilter>({
     category: "",
-    sortBy: "newest",
+    sortBy: "Newest",
     date: { start: getFirstDayOfMonth(), end: getLastDayOfMonth() },
   });
   const [showForm, setShowForm] = useState(false);
@@ -53,10 +55,16 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
   // ✅ Properly typed Refs
   const formRef = useRef<HTMLDivElement | null>(null);
   const filterButton = useRef<HTMLButtonElement | null>(null);
-  const [formSubmit] = Form.useForm()
+  const [formFilterSubmit] = Form.useForm()
 
   useEffect(() => {
     const fetchData = async () => {
+      formFilterSubmit.setFieldsValue({
+        category: "", 
+        sortBy: "Newest", 
+        // dateStart: getFirstDayOfMonth(), 
+        // dateEnd: getLastDayOfMonth()
+      })
       let updatedExpenses = [];
       const snap = await getDoc(doc(db, "users", user.uid));
       if (snap.exists()) {
@@ -72,7 +80,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
         return dbDate >= filterStart && dbDate <= filterEnd;
       });
 
-      if (formFilter.sortBy === "newest") {
+      if (formFilter.sortBy === "Newest") {
         updatedExpenses.sort((a: Expense, b: Expense): number => new Date(b.date).getTime() - new Date(a.date).getTime());
       }
 
@@ -87,7 +95,13 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
   // Overlay for formFilter
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (formRef.current && !formRef.current.contains(event.target as Node) && filterButton.current && !filterButton.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const clickedInsideSelectDropdown = !!(target as HTMLElement).closest('.ant-select-dropdown');
+      if (formRef.current && 
+          !formRef.current.contains(event.target as Node) && 
+          filterButton.current && 
+          !filterButton.current.contains(event.target as Node) &&
+          !clickedInsideSelectDropdown) {
         setShowForm(false);
         return;
       }
@@ -111,21 +125,61 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
     return new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split("T")[0];
   }
 
-  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRadioChange = (e: RadioChangeEvent) => {
     setApplyButton(false);
     setRstToDefaultButton(false);
     setFormFilter({...formFilter, sortBy: e.target.value});
   };
 
-  const onFinish = () => {
-    
+  const onFinish = (values: any) => {
+    setShowForm(false)
+    let updated = []
+    console.log(values)
+    setFormFilter({
+      category: values.category,
+      sortBy: values.sortBy,
+      date: {start: values.dateStart, end: values.dateEnd},
+    });
+    if (values.category) {
+      updated = expenses.filter((e) => {
+        return e.category === values.category;
+      });
+    } else updated = expenses;
+
+    // date filter
+    const filterStart = values.dateStart ? new Date(values.dateStart).getTime() : "";
+    const filterEnd = values.dateEnd ? new Date(values.dateEnd).getTime() : "";
+
+    if (filterStart || filterEnd) {
+      updated = updated.filter((e) => {
+        const dbDate = new Date(e.date).getTime();
+        return (!filterStart || dbDate >= filterStart) && (!filterEnd || dbDate <= filterEnd);
+      });
+    }
+
+    // sortBy filter
+    if (values.sortBy === "Oldest") {
+      updated.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    } else if (values.sortBy === "Newest") {
+      updated.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    } else if (values.sortBy === "Largest amount") {
+      updated.sort((a, b) => b.amount - a.amount);
+    } else if (values.sortBy === "Smallest amount") {
+      updated.sort((a, b) => a.amount - b.amount);
+    }
+    setFiltered(updated);
+    setApplyButton(true);
+    setRstToDefaultButton(false);
+
+    const total = updated.reduce((sum, e) => sum + e.amount, 0);
+    setTotalExpenses(total);
   }
 
-  const applyFilterChanges = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // if(e.target)
-    saveFilters();
-  };
+  // const applyFilterChanges = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   // if(e.target)
+  //   saveFilters();
+  // };
 
   // save form filter changes
   const saveFilters = (expensesToUse = expenses) => {
@@ -184,8 +238,15 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
 
     setFormFilter({
       category: "",
-      sortBy: "newest",
+      sortBy: "Newest",
       date: {start: getFirstDayOfMonth(), end: getLastDayOfMonth()},
+    });
+
+    formFilterSubmit.setFieldsValue({
+      category: "",
+      sortBy: "Newest",
+      // dateStart: getFirstDayOfMonth(),
+      // dateEnd: getLastDayOfMonth()
     });
 
     const total = updatedExpenses.reduce((sum, e) => sum + e.amount, 0);
@@ -200,8 +261,8 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
     toDefaultFilters();
     setApplyButton(true);
   };
-
-  const sortByList = ["newest", "oldest", "largest amount", "smallest amount"]
+ 
+  const sortByList = ["Newest", "Oldest", "Largest amount", "Smallest amount"]
 
   return (
     <>
@@ -228,13 +289,17 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
               algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
             }}>
             <Form
-              form={formSubmit}
-              name="trigger"
+              form={formFilterSubmit}
+              name="formFilterSubmit"
               style={{maxWidth: 600}}
               layout="vertical"
               onFinish={onFinish}
               autoComplete="on">
-              <Form.Item name="category" label="Category" rules={[{required: true}]}>
+              <Form.Item
+                name="category"
+                label="Category"
+                rules={[{}]}
+                initialValue={formFilter.category}>
                 <Select
                   allowClear
                   placeholder="Select a category"
@@ -243,6 +308,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
                     setRstToDefaultButton(false);
                   }}
                   options={[
+                    {label: "All", value: ""},
                     {label: "Food", value: "Food"},
                     {label: "Rent", value: "Rent"},
                     {label: "Transport", value: "Transport"},
@@ -251,10 +317,60 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
                   ]}
                 />
               </Form.Item>
+
+              <Form.Item name="sortBy" label="Sort By:" initialValue={"Newest"}>
+                <Radio.Group>
+                  {sortByList.map((opt) => (
+                    <Radio
+                      key={opt}
+                      value={opt}
+                      onChange={handleRadioChange}
+                      checked={formFilter.sortBy === opt}
+                      style={{display: "block", marginBottom: 8}}>
+                      {opt}{" "}
+                    </Radio>
+                  ))}
+                </Radio.Group>
+              </Form.Item>
+
+              <Form.Item 
+                label="RangePicker"
+                name="date">
+                  <RangePicker getPopupContainer={(trigger) => trigger.parentElement ?? document.body} />
+              </Form.Item>
+
+              <Button
+                className="newExpBtn"
+                type="primary"
+                htmlType="submit"
+                disabled={applyButton}
+                // onClick={() => handleSave(e.id)}
+                style={{
+                  fontWeight: "500",
+                  fontSize: "13px",
+                  border: "none",
+                }}>
+                Apply
+              </Button>
+
+              <Button
+                className="newExpBtn"
+                type="primary"
+                htmlType="button"
+                onClick={defaultFilter}
+                disabled={rstToDefaultButton}
+                // onClick={() => handleSave(e.id)}
+                style={{
+                  fontWeight: "500",
+                  fontSize: "13px",
+                  border: "none",
+                }}>
+                Reset to Default
+              </Button>
             </Form>
           </ConfigProvider>
 
-          <form className="formFilter" onSubmit={applyFilterChanges}>
+          {/* <form className="formFilter">
             <label htmlFor="category">Category: </label>
             <select
               id="category"
@@ -313,7 +429,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
             <button type="button" onClick={defaultFilter} disabled={rstToDefaultButton === true}>
               Reset to Default
             </button>
-          </form>
+          </form> */}
         </div>
       )}
       <h2>Expenses</h2>
