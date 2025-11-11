@@ -4,6 +4,9 @@ import {useState, useEffect, useRef} from "react";
 import {collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where} from "firebase/firestore";
 import {db, auth} from "../firebase";
 import {v4 as uuidv4} from "uuid";
+import "./ExpensesFilters.css"
+import {ConfigProvider, theme, Form, Input, Button, InputNumber, Select, Flex} from "antd";
+import { useForm } from "react-hook-form";
 
 // ✅ Define the shape of an expense
 interface Expense {
@@ -50,6 +53,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
   // ✅ Properly typed Refs
   const formRef = useRef<HTMLDivElement | null>(null);
   const filterButton = useRef<HTMLButtonElement | null>(null);
+  const [formSubmit] = Form.useForm()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,6 +116,10 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
     setRstToDefaultButton(false);
     setFormFilter({...formFilter, sortBy: e.target.value});
   };
+
+  const onFinish = () => {
+    
+  }
 
   const applyFilterChanges = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -197,19 +205,55 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
 
   return (
     <>
-      <button ref={filterButton} disabled={batchDelete} onClick={() => setShowForm((prev) => !prev)}>
+      <button
+        ref={filterButton}
+        disabled={batchDelete}
+        onClick={() => setShowForm((prev) => !prev)}>
         Filters
       </button>
       <br />
       {showForm && (
         <div
+          className="popupBg"
           ref={formRef}
           style={{
             position: "fixed",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
+            zIndex: "10",
           }}>
+          <ConfigProvider
+            theme={{
+              algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+            }}>
+            <Form
+              form={formSubmit}
+              name="trigger"
+              style={{maxWidth: 600}}
+              layout="vertical"
+              onFinish={onFinish}
+              autoComplete="on">
+              <Form.Item name="category" label="Category" rules={[{required: true}]}>
+                <Select
+                  allowClear
+                  placeholder="Select a category"
+                  onChange={(e) => {
+                    setApplyButton(false);
+                    setRstToDefaultButton(false);
+                  }}
+                  options={[
+                    {label: "Food", value: "Food"},
+                    {label: "Rent", value: "Rent"},
+                    {label: "Transport", value: "Transport"},
+                    {label: "Utilities", value: "Utilities"},
+                    {label: "Other", value: "Other"},
+                  ]}
+                />
+              </Form.Item>
+            </Form>
+          </ConfigProvider>
+
           <form className="formFilter" onSubmit={applyFilterChanges}>
             <label htmlFor="category">Category: </label>
             <select
@@ -229,7 +273,13 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
             </select>
             {sortByList.map((opt) => (
               <label key={opt}>
-                <input type="radio" name="opt" value={opt} checked={formFilter.sortBy === opt} onChange={handleRadioChange} />
+                <input
+                  type="radio"
+                  name="opt"
+                  value={opt}
+                  checked={formFilter.sortBy === opt}
+                  onChange={handleRadioChange}
+                />
                 {opt}
               </label>
             ))}
@@ -269,26 +319,24 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
       <h2>Expenses</h2>
       <ExpensesNew
         user={user}
-        setExpenses={setExpenses} 
-        setFiltered={setFiltered}  
-        filtered={filtered} 
-        expenses={expenses} 
+        setExpenses={setExpenses}
+        setFiltered={setFiltered}
+        filtered={filtered}
+        expenses={expenses}
         totalExpenses={totalExpenses}
         saveFilters={saveFilters}
-        batchDelete={batchDelete}>
-      </ExpensesNew>
-      
-      <Expenses 
+        batchDelete={batchDelete}></ExpensesNew>
+
+      <Expenses
         user={user}
-        setExpenses={setExpenses} 
-        setFiltered={setFiltered}  
-        filtered={filtered} 
-        expenses={expenses} 
+        setExpenses={setExpenses}
+        setFiltered={setFiltered}
+        filtered={filtered}
+        expenses={expenses}
         totalExpenses={totalExpenses}
         saveFilters={saveFilters}
         batchDelete={batchDelete}
-        setBatchDelete={setBatchDelete}>
-      </Expenses>
+        setBatchDelete={setBatchDelete}></Expenses>
     </>
   );
 }

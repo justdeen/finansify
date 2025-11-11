@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { v4 as uuidv4 } from 'uuid';
+import {ConfigProvider, theme, Form, Input, Button, InputNumber, Select, Flex} from "antd";
 import "./Expenses.css"
 
 interface Expense {
@@ -49,30 +50,36 @@ export default function Expenses({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [selectAll, setSelectAll] = useState(false)
   const [confirmSingleDelete, setConfirmSingleDelete] = useState<{ show: boolean, id: string }>({ show: false, id: "" });
+  const [formSubmit] = Form.useForm();
   
   // edit expense
   const editExpense = (id: string) => {
     const expenseToEdit = filtered.find((e) => e.id === id);
     if (expenseToEdit) {
-      setEditForm({ ...expenseToEdit });
+      // setEditForm({ ...expenseToEdit });
+      formSubmit.setFieldsValue({ ...expenseToEdit });
       setEditingId(id);
     }
   };
 
-  const applyEditChanges = (e: React.FormEvent<HTMLFormElement>) =>{
-    e.preventDefault();
-    if (editingId) handleSave(editingId);
+  const onFinish = (values: any) => {
+    if (editingId) handleSave(editingId, values);
   }
+
+  // const applyEditChanges = (e: React.FormEvent<HTMLFormElement>) =>{
+  //   e.preventDefault();
+  //   if (editingId) handleSave(editingId);
+  // }
 
   const cancelEdit = () =>{
     setEditingId(false)
   }
   
   // save edited expense
-  const handleSave = async (id: string) => {
+  const handleSave = async (id: string, values: any) => {
     const updated = expenses.map(e => {
         if (e.id === id) {
-            return {...e, ...editForm, amount: Number(editForm.amount), edited: true}
+            return {...e, ...values, edited: true}
         }
         return e;
     })
@@ -236,56 +243,128 @@ export default function Expenses({
                   hour: "2-digit",
                   minute: "2-digit",
                 })}
-                {e.edited && <span> - <i>edited</i></span>}
+                {e.edited && (
+                  <span>
+                    {" "}
+                    - <i>edited</i>
+                  </span>
+                )}
               </p>
-              <button disabled={batchDelete === true} onClick={() => singleDelete(e.id)}>
-                Delete
-              </button>
-              <button disabled={batchDelete === true} onClick={() => editExpense(e.id)}>
+              <Button
+                className="newExpBtn"
+                type="primary"
+                disabled={batchDelete}
+                onClick={() => editExpense(e.id)}
+                style={{
+                  fontWeight: "500",
+                  fontSize: "13px",
+                  border: "none",
+                  marginRight: "10px",
+                }}>
                 Edit
-              </button>
-              {confirmSingleDelete.show && <div className="singleDeletePopup">
-                <div className="popup2">
-                  <p>The selected expense will be deleted permanently!</p>
-                  <div>
-                    <button onClick={cancelSingleDelete}>Cancel</button>
-                    <button onClick={() => deleteExpense(confirmSingleDelete.id)}>Delete</button>
+              </Button>
+              <Button
+                className="newExpBtn"
+                type="primary"
+                disabled={batchDelete}
+                onClick={() => singleDelete(e.id)}
+                style={{
+                  fontWeight: "500",
+                  fontSize: "13px",
+                  border: "none",
+                }}
+                danger>
+                Delete
+              </Button>
+              {confirmSingleDelete.show && (
+                <div className="singleDeletePopup">
+                  <div className="popup2">
+                    <p>The selected expense will be deleted permanently!</p>
+                    <div>
+                      <button onClick={cancelSingleDelete}>Cancel</button>
+                      <button onClick={() => deleteExpense(confirmSingleDelete.id)}>Delete</button>
+                    </div>
                   </div>
                 </div>
-              </div>}
+              )}
             </div>
           )}
 
           {/* edit form */}
           {editingId === e.id && (
-            <form onSubmit={applyEditChanges}>
-              <select
-                value={editForm.category}
-                onChange={(e) => setEditForm({...editForm, category: e.target.value})}>
-                <option value="None">Select Category</option>
-                <option value="Food">Food</option>
-                <option value="Rent">Rent</option>
-                <option value="Transport">Transport</option>
-                <option value="Entertainment">Entertainment</option>
-                <option value="Utilities">Utilities</option>
-              </select>
-              <input
-                placeholder="Description"
-                value={editForm.description}
-                onChange={(e) => setEditForm({...editForm, description: e.target.value})}
-              />
-              <input
-                placeholder="Amount"
-                type="number"
-                value={editForm.amount}
-                onChange={(e) => setEditForm({...editForm, amount: Number(e.target.value)})}
-              />
-              <button type="submit">Save</button>
-              {/* <button type="submit" onClick={() => handleSave(e.id)}>Save</button> */}
-              <button type="button" onClick={() => cancelEdit()}>
-                Cancel
-              </button>
-            </form>
+            <ConfigProvider
+              theme={{
+                algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+              }}>
+              <Form
+                form={formSubmit}
+                name="trigger"
+                style={{maxWidth: 600}}
+                layout="vertical"
+                onFinish={onFinish}
+                autoComplete="on">
+                <Form.Item name="category" label="Category" rules={[{required: true}]}>
+                  <Select
+                    allowClear
+                    placeholder="Select a category"
+                    options={[
+                      {label: "Food", value: "Food"},
+                      {label: "Rent", value: "Rent"},
+                      {label: "Transport", value: "Transport"},
+                      {label: "Utilities", value: "Utilities"},
+                      {label: "Other", value: "Other"},
+                    ]}
+                  />
+                </Form.Item>
+                <Form.Item
+                  hasFeedback
+                  label="Description"
+                  name="description"
+                  validateFirst
+                  rules={[{required: true, min: 3, max: 70}]}>
+                  <Input placeholder="Enter description" />
+                </Form.Item>
+
+                <Form.Item
+                  hasFeedback
+                  label="Amount"
+                  name="amount"
+                  validateFirst
+                  style={{width: "100%"}}
+                  rules={[{required: true, type: "number", min: 1}]}>
+                  <InputNumber style={{width: "100%"}} placeholder="Enter amount" />
+                </Form.Item>
+
+                <Flex gap="middle" style={{width: "100%"}}>
+                  <Button
+                    className="newExpBtn"
+                    type="primary"
+                    htmlType="submit"
+                    disabled={batchDelete}
+                    // onClick={() => handleSave(e.id)}
+                    style={{
+                      fontWeight: "500",
+                      fontSize: "13px",
+                      border: "none",
+                    }}>
+                    Save
+                  </Button>
+                  <Button
+                    className="newExpBtn"
+                    type="primary"
+                    color="danger"
+                    onClick={() => cancelEdit()}
+                    style={{
+                      fontWeight: "500",
+                      fontSize: "13px",
+                      border: "none",
+                    }}
+                    danger>
+                    Cancel
+                  </Button>
+                </Flex>
+              </Form>
+            </ConfigProvider>
           )}
         </div>
       ))}
