@@ -10,7 +10,7 @@
     width: 100%;
 }
 
- .ant-picker-dropdown {
+.ant-picker-dropdown {
   transform: scale(0.90);
   transform-origin: top left;
 }

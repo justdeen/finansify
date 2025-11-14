@@ -1,6 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
+import {ConfigProvider, theme, Form, Input, Button, RadioChangeEvent, DatePicker, InputNumber, Select, Flex, Radio} from "antd";
+import dayjs from "dayjs";
+import "./Dashboard.css"
 
 interface User {
   uid: string; // user object must have a uid
@@ -30,13 +33,21 @@ export default function Dashboard({ user }: { user: User }) {
   const [applyButton, setApplyButton] = useState<boolean>(true);
   const [rstToDefaultButton, setRstToDefaultButton] = useState<boolean>(true);
   const [showForm, setShowForm] = useState<boolean>(false);
+  const [dashboardFormFilter] = Form.useForm()
 
   // ✅ Explicitly typed refs to elements
   const filterButton = useRef<HTMLButtonElement | null>(null);
   const formRef = useRef<HTMLDivElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
+      dashboardFormFilter.setFieldsValue({
+        category: "",
+        start: dayjs(getFirstDayOfMonth(), "YYYY-MM-DD"),
+        end: dayjs(getLastDayOfMonth(), "YYYY-MM-DD"),
+      });
+
       const docRef = doc(db, "users", user.uid);
       const snap = await getDoc(docRef);
       if (snap.exists()) {
@@ -64,7 +75,12 @@ export default function Dashboard({ user }: { user: User }) {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (formRef.current && !formRef.current.contains(event.target as Node) && !filterButton.current?.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const clickedInsideSelectDropdown = !!(target as HTMLElement).closest('.ant-select-dropdown');
+      if (formRef.current && 
+          !formRef.current.contains(event.target as Node) && 
+          !filterButton.current?.contains(event.target as Node) &&
+          !clickedInsideSelectDropdown) {
         setShowForm(false);
         return;
       }
@@ -92,15 +108,15 @@ export default function Dashboard({ user }: { user: User }) {
     e.preventDefault();
   }
 
-  const applyFilter = () => {
+  const onFinish = (values: any) => {
     let updatedExpenses = expenses;
 
-    if (formFilter.category) {
-      updatedExpenses = updatedExpenses.filter((e) => e.category === formFilter.category);
+    if (values.category) {
+      updatedExpenses = updatedExpenses.filter((e) => e.category === values.category);
     }
 
-    const filterStart = formFilter.start ? new Date(formFilter.start).getTime() : ""
-    const filterEnd = formFilter.end ? new Date(formFilter.end).getTime() : ""
+    const filterStart = values.start ? new Date(values.start).getTime() : ""
+    const filterEnd = values.end ? new Date(values.end).getTime() : ""
 
     if (filterStart || filterEnd) {
       updatedExpenses = updatedExpenses.filter(e => {
@@ -119,7 +135,11 @@ export default function Dashboard({ user }: { user: User }) {
   const defaultFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     let updatedExpenses = expenses;
-    setFormFilter({ ...formFilter, category: "", start: getFirstDayOfMonth(), end: getLastDayOfMonth() })
+    dashboardFormFilter.setFieldsValue({
+      category: "",
+      start: dayjs(getFirstDayOfMonth(), "YYYY-MM-DD"),
+      end: dayjs(getLastDayOfMonth(), "YYYY-MM-DD"),
+    });
     
     const filterStart = new Date(getFirstDayOfMonth()).getTime()
     const filterEnd = new Date(getLastDayOfMonth()).getTime()
@@ -136,53 +156,183 @@ export default function Dashboard({ user }: { user: User }) {
     setRstToDefaultButton(true)
   }
 
+   const sortByList = ["Newest", "Oldest", "Largest amount", "Smallest amount"]
+
   return (
     <div>
       <h2>Dashboard</h2>
       <p>Hello, {firstName}</p>
-      <button ref={filterButton} onClick={() => setShowForm((prev) => !prev)}>Filters</button>
-      {showForm && <div ref={formRef}
-        style={{
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-        }}
-      >
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="category">Category: </label>
-          <select
-            id="category"
-            value={formFilter.category}
-            onChange={(e) => {
-              setApplyButton(false);
-              setRstToDefaultButton(false);
-              setFormFilter({...formFilter, category: e.target.value});
+      <button ref={filterButton} onClick={() => setShowForm((prev) => !prev)}>
+        Filters
+      </button>
+      {showForm && (
+        <div
+          ref={formRef}
+          className="popupBg"
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}>
+          <ConfigProvider
+            theme={{
+              algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
             }}>
-            <option value="">All</option>
-            <option value="Food">Food</option>
-            <option value="Rent">Rent</option>
-            <option value="Transport">Transport</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Utilities">Utilities</option>
-          </select>
-          <label htmlFor="start">Start Date</label>
-          <input type="date" name="" id="start" value={formFilter.start} onChange={(e) => {
-            setFormFilter({...formFilter, start: e.target.value})
-            setApplyButton(false)
-            setRstToDefaultButton(false)
-          }} />
+            <Form
+              form={dashboardFormFilter}
+              name="formFilterSubmit"
+              // style={{maxWidth: 600}}
+              layout="vertical"
+              onFinish={onFinish}
+              autoComplete="on">
+              <Form.Item
+                name="category"
+                label="Category"
+                rules={[{}]}
+                initialValue={formFilter.category}>
+                <Select
+                  allowClear
+                  placeholder="Select a category"
+                  onChange={(e) => {
+                    setApplyButton(false);
+                    setRstToDefaultButton(false);
+                  }}
+                  options={[
+                    {label: "All", value: ""},
+                    {label: "Food", value: "Food"},
+                    {label: "Rent", value: "Rent"},
+                    {label: "Transport", value: "Transport"},
+                    {label: "Utilities", value: "Utilities"},
+                    {label: "Other", value: "Other"},
+                  ]}
+                />
+              </Form.Item>
 
-          <label htmlFor="end">End Date</label>
-          <input type="date" name="" id="end" value={formFilter.end} onChange={(e) => {
-            setFormFilter({...formFilter, end: e.target.value})
-            setApplyButton(false)
-            setRstToDefaultButton(false)
-          }} />
-          <button type="submit" disabled={applyButton === true} onClick={applyFilter}>Apply</button>
-          <button type="button" disabled={rstToDefaultButton === true} onClick={defaultFilter}>Reset to Default</button>
-        </form>
-      </div>}
+              {/* <Form.Item name="sortBy" label="Sort By:" initialValue={"Newest"}>
+                <Radio.Group>
+                  {sortByList.map((opt) => (
+                    <Radio
+                      key={opt}
+                      value={opt}
+                      // onChange={handleRadioChange}
+                      // checked={formFilter.sortBy === opt}
+                      style={{display: "block", marginBottom: 8}}>
+                      {opt}{" "}
+                    </Radio>
+                  ))}
+                </Radio.Group>
+              </Form.Item> */}
+
+              <Form.Item
+                label="Start date"
+                name="start"
+                // rules={[{message: "Please input!"}]}
+                >
+                <DatePicker  
+                  getPopupContainer={(trigger) => trigger.parentElement ?? document.body} 
+                  style={{width: "100%"}}
+                  onChange={(e) => {
+                    setApplyButton(false);
+                    setRstToDefaultButton(false);
+                  }}/>
+              </Form.Item>
+              
+              <Form.Item
+                label="End date"
+                name="end"
+                // rules={[{message: "Please input!"}]}
+                >
+                <DatePicker  
+                  getPopupContainer={(trigger) => trigger.parentElement ?? document.body} 
+                  style={{width: "100%"}}
+                  onChange={(e) => {
+                    setApplyButton(false);
+                    setRstToDefaultButton(false);
+                  }}/>
+              </Form.Item>
+
+              <Button
+                className="newExpBtn"
+                type="primary"
+                htmlType="submit"
+                disabled={applyButton}
+                // onClick={() => handleSave(e.id)}
+                style={{
+                  fontWeight: "500",
+                  fontSize: "13px",
+                  border: "none",
+                }}>
+                Apply
+              </Button>
+
+              <Button
+                className="newExpBtn"
+                type="primary"
+                htmlType="button"
+                onClick={defaultFilter}
+                disabled={rstToDefaultButton}
+                // onClick={() => handleSave(e.id)}
+                style={{
+                  fontWeight: "500",
+                  fontSize: "13px",
+                  border: "none",
+                }}>
+                Reset to Default
+              </Button>
+            </Form>
+          </ConfigProvider>
+          {/* <form onSubmit={handleSubmit}>
+            <label htmlFor="category">Category: </label>
+            <select
+              id="category"
+              value={formFilter.category}
+              onChange={(e) => {
+                setApplyButton(false);
+                setRstToDefaultButton(false);
+                setFormFilter({...formFilter, category: e.target.value});
+              }}>
+              <option value="">All</option>
+              <option value="Food">Food</option>
+              <option value="Rent">Rent</option>
+              <option value="Transport">Transport</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Utilities">Utilities</option>
+            </select>
+            <label htmlFor="start">Start Date</label>
+            <input
+              type="date"
+              name=""
+              id="start"
+              value={formFilter.start}
+              onChange={(e) => {
+                setFormFilter({...formFilter, start: e.target.value});
+                setApplyButton(false);
+                setRstToDefaultButton(false);
+              }}
+            />
+
+            <label htmlFor="end">End Date</label>
+            <input
+              type="date"
+              name=""
+              id="end"
+              value={formFilter.end}
+              onChange={(e) => {
+                setFormFilter({...formFilter, end: e.target.value});
+                setApplyButton(false);
+                setRstToDefaultButton(false);
+              }}
+            />
+            <button type="submit" disabled={applyButton === true} onClick={applyFilter}>
+              Apply
+            </button>
+            <button type="button" disabled={rstToDefaultButton === true} onClick={defaultFilter}>
+              Reset to Default
+            </button>
+          </form> */}
+        </div>
+      )}
       <p>Total Expenses: ₦{display.exp}</p>
     </div>
   );

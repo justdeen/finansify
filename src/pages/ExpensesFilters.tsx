@@ -65,11 +65,12 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
   useEffect(() => {
     const fetchData = async () => {
       formFilterSubmit.setFieldsValue({
-        category: "", 
-        sortBy: "Newest", 
-        // dateStart: getFirstDayOfMonth(), 
-        // dateEnd: getLastDayOfMonth()
-      })
+        category: "",
+        sortBy: "Newest",
+        start: dayjs(getFirstDayOfMonth(), "YYYY-MM-DD"),
+        end: dayjs(getLastDayOfMonth(), "YYYY-MM-DD"),
+      });
+      // console.log(formFilter.date.start)
       let updatedExpenses = [];
       const snap = await getDoc(doc(db, "users", user.uid));
       if (snap.exists()) {
@@ -153,19 +154,23 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
   // };
   
   const onFinish = (values: any) => {
-    console.log(values)
-    const [start, end] = values.date;
-    console.log({
-      start: start.format("YYYY-MM-DD"), // ✅ "2025-12-02"
-      end: end.format("YYYY-MM-DD"), // ✅ "2025-12-17"
-    });
+    // console.log(values)
+    const startDate = `${values.start.$y}-${values.start.$M + 1}-${values.start.$D}`
+    const endDate = `${values.end.$y}-${values.end.$M + 1}-${values.end.$D}`
+    // console.log(values.start)
+    // console.log(new Date(values.start).getTime())
+    // const [start, end] = values.date;
+    // console.log({
+    //   start: start.format("YYYY-MM-DD"), // ✅ "2025-12-02"
+    //   end: end.format("YYYY-MM-DD"), // ✅ "2025-12-17"
+    // });
 
     setShowForm(false)
     let updated = []
     setFormFilter({
       category: values.category,
       sortBy: values.sortBy,
-      date: {start: values.dateStart, end: values.dateEnd},
+      date: {start: values.start, end: values.end},
     });
     if (values.category) {
       updated = expenses.filter((e) => {
@@ -174,8 +179,8 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
     } else updated = expenses;
 
     // date filter
-    const filterStart = values.dateStart ? new Date(values.dateStart).getTime() : "";
-    const filterEnd = values.dateEnd ? new Date(values.dateEnd).getTime() : "";
+    const filterStart = values.start ? new Date(values.start).getTime() : "";
+    const filterEnd = values.end ? new Date(values.end).getTime() : "";
 
     if (filterStart || filterEnd) {
       updated = updated.filter((e) => {
@@ -233,14 +238,15 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
       });
     }
 
+    console.log(formFilter.sortBy)
     // sortBy filter
-    if (formFilter.sortBy === "oldest") {
+    if (formFilter.sortBy === "Oldest") {
       updated.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-    } else if (formFilter.sortBy === "newest") {
+    } else if (formFilter.sortBy === "Newest") {
       updated.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    } else if (formFilter.sortBy === "largest amount") {
+    } else if (formFilter.sortBy === "Largest amount") {
       updated.sort((a, b) => b.amount - a.amount);
-    } else if (formFilter.sortBy === "smallest amount") {
+    } else if (formFilter.sortBy === "Smallest amount") {
       updated.sort((a, b) => a.amount - b.amount);
     }
     setFiltered(updated);
@@ -252,6 +258,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
   };
 
   const toDefaultFilters = () => {
+    setShowForm(false);
     const filterStart = new Date(getFirstDayOfMonth()).getTime();
     const filterEnd = new Date(getLastDayOfMonth()).getTime();
 
@@ -272,8 +279,8 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
     formFilterSubmit.setFieldsValue({
       category: "",
       sortBy: "Newest",
-      // dateStart: getFirstDayOfMonth(),
-      // dateEnd: getLastDayOfMonth()
+      start: dayjs(getFirstDayOfMonth(), "YYYY-MM-DD"),
+      end: dayjs(getLastDayOfMonth(), "YYYY-MM-DD"),
     });
 
     const total = updatedExpenses.reduce((sum, e) => sum + e.amount, 0);
@@ -372,19 +379,29 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
               <Form.Item
                 label="Start date"
                 name="start"
-                rules={[{required: true, message: "Please input!"}]}>
+                // rules={[{message: "Please input!"}]}
+                >
                 <DatePicker  
                   getPopupContainer={(trigger) => trigger.parentElement ?? document.body} 
-                  style={{width: "100%"}}/>
+                  style={{width: "100%"}}
+                  onChange={(e) => {
+                    setApplyButton(false);
+                    setRstToDefaultButton(false);
+                  }}/>
               </Form.Item>
               
               <Form.Item
                 label="End date"
                 name="end"
-                rules={[{required: true, message: "Please input!"}]}>
+                // rules={[{message: "Please input!"}]}
+                >
                 <DatePicker  
                   getPopupContainer={(trigger) => trigger.parentElement ?? document.body} 
-                  style={{width: "100%"}}/>
+                  style={{width: "100%"}}
+                  onChange={(e) => {
+                    setApplyButton(false);
+                    setRstToDefaultButton(false);
+                  }}/>
               </Form.Item>
 
               <Button
@@ -418,7 +435,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
             </Form>
           </ConfigProvider>
 
-          <label htmlFor="start">Start Date</label>
+          {/* <label htmlFor="start">Start Date</label>
           <input
             type="date"
             name=""
@@ -427,7 +444,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
             onChange={(e) => {
               console.log(e.target.value);
             }}
-          />
+          /> */}
 
           {/* <form className="formFilter">
             <label htmlFor="category">Category: </label>

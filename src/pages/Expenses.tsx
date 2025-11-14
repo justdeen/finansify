@@ -50,6 +50,7 @@ export default function Expenses({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [selectAll, setSelectAll] = useState(false)
   const [confirmSingleDelete, setConfirmSingleDelete] = useState<{ show: boolean, id: string }>({ show: false, id: "" });
+  const [saveButton, setSaveButton] = useState(true)
   const [formSubmit] = Form.useForm();
   
   // edit expense
@@ -77,6 +78,7 @@ export default function Expenses({
   
   // save edited expense
   const handleSave = async (id: string, values: any) => {
+    setSaveButton(true);
     const updated = expenses.map(e => {
         if (e.id === id) {
             return {...e, ...values, edited: true}
@@ -107,6 +109,7 @@ export default function Expenses({
   const showBatchDelete = () => {
     setBatchDelete(true)
     setBatchDeleteBtnText(false)
+    setEditingId("")
     if(!batchDeleteBtnText){
       setBatchDeleteBtnText(true)
       setBatchDelete(false)
@@ -314,6 +317,7 @@ export default function Expenses({
                       {label: "Utilities", value: "Utilities"},
                       {label: "Other", value: "Other"},
                     ]}
+                    onChange={() => setSaveButton(false)}
                   />
                 </Form.Item>
                 <Form.Item
@@ -322,7 +326,7 @@ export default function Expenses({
                   name="description"
                   validateFirst
                   rules={[{required: true, min: 3, max: 70}]}>
-                  <Input placeholder="Enter description" />
+                  <Input placeholder="Enter description" onChange={() => setSaveButton(false)} />
                 </Form.Item>
 
                 <Form.Item
@@ -332,7 +336,11 @@ export default function Expenses({
                   validateFirst
                   style={{width: "100%"}}
                   rules={[{required: true, type: "number", min: 1}]}>
-                  <InputNumber style={{width: "100%"}} placeholder="Enter amount" />
+                  <InputNumber
+                    style={{width: "100%"}}
+                    placeholder="Enter amount"
+                    onChange={() => setSaveButton(false)}
+                  />
                 </Form.Item>
 
                 <Flex gap="middle" style={{width: "100%"}}>
@@ -340,7 +348,7 @@ export default function Expenses({
                     className="newExpBtn"
                     type="primary"
                     htmlType="submit"
-                    disabled={batchDelete}
+                    disabled={saveButton}
                     // onClick={() => handleSave(e.id)}
                     style={{
                       fontWeight: "500",
@@ -353,7 +361,10 @@ export default function Expenses({
                     className="newExpBtn"
                     type="primary"
                     color="danger"
-                    onClick={() => cancelEdit()}
+                    onClick={() => {
+                      cancelEdit();
+                      setSaveButton(true);
+                    }}
                     style={{
                       fontWeight: "500",
                       fontSize: "13px",
