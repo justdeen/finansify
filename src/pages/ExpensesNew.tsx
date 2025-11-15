@@ -133,6 +133,7 @@ export default function ExpensesNew({
         <Form
           form={formSubmit}
           name="trigger"
+          className="newExpForm"
           style={{maxWidth: 600}}
           layout="vertical"
           onFinish={onFinish}

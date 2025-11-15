@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PasswordRst from "./pages/PasswordRst";
 import { User } from "firebase/auth";
+import "./App.css"
 
 export default function App() {
   const [user, setUser] = useState<User | any>(() => {
@@ -38,11 +39,11 @@ export default function App() {
   // Authenticated user UI
   const AuthenticatedApp = () => (
     <>
-      <div className="xl:grid xl:grid-cols-6">
-        <div className="sticky top-0 xl:col-span-1">
+      <div className="xl:grid xl:grid-cols-6 xl:gap-2">
+        <div className="sticky top-0 xl:col-span-1 navbar">
           <Navbar />
         </div>
-        <div className="xl:col-span-5">
+        <div className="xl:col-span-5 p-4">
           <Routes>
             <Route path="/" element={user && <Dashboard user={user} />} />
             <Route path="/expenses" element={user && <ExpensesFilters user={user} />} />
