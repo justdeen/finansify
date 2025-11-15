@@ -38,13 +38,19 @@ export default function App() {
   // Authenticated user UI
   const AuthenticatedApp = () => (
     <>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={user && <Dashboard user={user} />} />
-        <Route path="/expenses" element={user && <ExpensesFilters user={user} />} />
-        <Route path="/reports" element={user && <Reports user={user} />} />
-        <Route path="/settings" element={user && <Settings user={user} />} />
-      </Routes>
+      <div className="xl:grid xl:grid-cols-6">
+        <div className="sticky top-0 xl:col-span-1">
+          <Navbar />
+        </div>
+        <div className="xl:col-span-5">
+          <Routes>
+            <Route path="/" element={user && <Dashboard user={user} />} />
+            <Route path="/expenses" element={user && <ExpensesFilters user={user} />} />
+            <Route path="/reports" element={user && <Reports user={user} />} />
+            <Route path="/settings" element={user && <Settings user={user} />} />
+          </Routes>
+        </div>
+      </div>
     </>
   );
 
