@@ -314,7 +314,7 @@ export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
           style={{
             position: "fixed",
             top: "50%",
-            left: "50%",
+            left: "60%",
             transform: "translate(-50%, -50%)",
             zIndex: "10",
           }}>

@@ -1,9 +1,10 @@
 .expense{
     margin-bottom: 20px;
     z-index: 1;
-    background-color: black;
-    border-radius: 5px;
+    background-color: #171b24;
+    border-radius: 7px;
     padding: 10px;
+    /* border: 2px solid rgb(0, 22, 121); */
 }
 
 .confirmDelete, .singleDeletePopup{
@@ -18,6 +19,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    z-index: 9999;
 }
 
 .popup, .popup2{

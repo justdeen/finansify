@@ -43,7 +43,7 @@ export default function App() {
         <div className="sticky top-0 xl:col-span-1 navbar">
           <Navbar />
         </div>
-        <div className="xl:col-span-5 p-4">
+        <div className="xl:col-span-5 p-2 pb-1">
           <Routes>
             <Route path="/" element={user && <Dashboard user={user} />} />
             <Route path="/expenses" element={user && <ExpensesFilters user={user} />} />
