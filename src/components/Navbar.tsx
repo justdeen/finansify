@@ -17,7 +17,7 @@ export default function Navbar() {
   return (
     <div className="sticky top-0" style={{width: "100%"}}>
       <div className="hidden xl:block navcon">
-        <p className="mb-14">Finansify</p>
+        <p className="mb-20">Finansify</p>
         <nav className="flex flex-col nav1">
           <div className="nav1con">
             <Link to="/">Dashboard</Link>
