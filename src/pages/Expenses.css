@@ -10,7 +10,7 @@
 .confirmDelete, .singleDeletePopup{
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.212);
     text-align: center;
     position: fixed;
     top: 0;

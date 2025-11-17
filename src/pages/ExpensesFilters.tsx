@@ -42,7 +42,7 @@ interface ExpensesFiltersProps {
   user: { uid: string };
 }
 
-export default function ExpensesFilters({ user }: ExpensesFiltersProps) {
+export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [filtered, setFiltered] = useState<Expense[]>([]);
   const [formFilter, setFormFilter] = useState<FormFilter>({

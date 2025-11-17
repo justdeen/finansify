@@ -1,29 +1,33 @@
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import {signOut} from "firebase/auth";
 import {auth} from "../firebase";
 import { useState, useEffect } from "react";
 import "./Navbar.css"
 
-
-// console.log(isMenuOpen)
-
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false); 
 
-  // useEffect(() => {
-  //   setIsMenuOpen(false)
-  // }, [])
+  const location = useLocation();
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <div className="sticky top-0" style={{width: "100%"}}>
       <div className="hidden xl:block navcon">
-        <p className="mb-20">Finansify</p>
+        <p className="mb-16">Finansify</p>
         <nav className="flex flex-col nav1">
           <div className="nav1con">
-            <Link to="/">Dashboard</Link>
+            <Link 
+            to="/" 
+            className={`navLink ${isActive("/") ? "activeNavLink" : ""}`}>
+              Dashboard
+            </Link>
             <Link to="/expenses">Expenses</Link>
             <Link to="/reports">Reports</Link>
-            <Link to="/settings">Settings</Link>
+            <Link
+            className={`navLink ${isActive("/settings") ? "activeNavLink" : ""}`} 
+            to="/settings">
+              Settings
+            </Link>
           </div>
         </nav>
         <Link to="/login" className="logout">

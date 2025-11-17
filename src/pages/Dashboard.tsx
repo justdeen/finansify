@@ -9,6 +9,10 @@ interface User {
   uid: string; // user object must have a uid
 }
 
+type DashboardProps = {
+  user: User;
+};
+
 interface Expense {
   amount: number;
   category: string;
@@ -25,7 +29,7 @@ interface Display {
   exp: number;
 }
 
-export default function Dashboard({ user }: { user: User }) {
+export default function Dashboard({ user,}: DashboardProps) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [display, setDisplay] = useState<Display>({exp: 0})
   const [formFilter, setFormFilter] = useState({category: "", start: getFirstDayOfMonth(), end: getLastDayOfMonth()})
@@ -59,7 +63,11 @@ export default function Dashboard({ user }: { user: User }) {
         const filterStart = new Date(getFirstDayOfMonth()).getTime();
         const filterEnd = new Date(getLastDayOfMonth()).getTime();
 
-        setFormFilter({...formFilter, start: getFirstDayOfMonth(), end: getLastDayOfMonth()});
+        setFormFilter((prev) => ({
+          ...prev,
+          start: getFirstDayOfMonth(),
+          end: getLastDayOfMonth(),
+        }));
 
         updatedExpenses = updatedExpenses.filter((e) => {
           const dbDate = new Date(e.date).getTime();
@@ -67,7 +75,10 @@ export default function Dashboard({ user }: { user: User }) {
         });
   
         const exp = updatedExpenses?.reduce((a, e) => a + e.amount, 0) || 0;
-        setDisplay({...display, exp: exp})
+        setDisplay((prev) => ({
+          ...prev,
+          exp,
+        }));
       }
     };
     if(typeof user !== 'string')fetchData();
@@ -172,7 +183,7 @@ export default function Dashboard({ user }: { user: User }) {
           style={{
             position: "fixed",
             top: "50%",
-            left: "50%",
+            left: "60%",
             transform: "translate(-50%, -50%)",
           }}>
           <ConfigProvider

@@ -13,12 +13,20 @@ import PasswordRst from "./pages/PasswordRst";
 import { User } from "firebase/auth";
 import "./App.css"
 
+
+
 export default function App() {
   const [user, setUser] = useState<User | any>(() => {
     const currUser = localStorage.getItem('user')
     return currUser ? currUser : null;
   });
   // const [logOrReg, setLogOrReg] = useState<boolean>(true);
+  // const [navState, setNavState] = useState({
+  //   dashboard: true, 
+  //   expenses: false, 
+  //   reports: false, 
+  //   settings: false
+  // })
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
@@ -41,7 +49,7 @@ export default function App() {
     <>
       <div className="xl:grid xl:grid-cols-6 xl:gap-2">
         <div className="sticky top-0 xl:col-span-1 navbar">
-          <Navbar />
+          <Navbar/>
         </div>
         <div className="xl:col-span-5 xl:pr-4 p-2 pb-1">
           <Routes>
