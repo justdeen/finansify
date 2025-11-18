@@ -300,12 +300,12 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
 
   return (
     <>
-      <button
+      {/* <button
         ref={filterButton}
         disabled={batchDelete}
         onClick={() => setShowForm((prev) => !prev)}>
         Filters
-      </button>
+      </button> */}
       <br />
       {showForm && (
         <div
@@ -529,7 +529,9 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
         totalExpenses={totalExpenses}
         saveFilters={saveFilters}
         batchDelete={batchDelete}
-        setBatchDelete={setBatchDelete}></Expenses>
+        setBatchDelete={setBatchDelete}
+        setShowForm={setShowForm}
+        filterButton={filterButton}></Expenses>
     </>
   );
 }

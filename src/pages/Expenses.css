@@ -39,3 +39,11 @@
 .newExpBtn{
     outline: none;
 }
+
+.filter, .bin{
+    outline: none !important;
+}
+
+.filter:hover{
+    border: 1px solid white !important;
+}

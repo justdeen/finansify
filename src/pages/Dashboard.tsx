@@ -216,7 +216,7 @@ export default function Dashboard({ user,}: DashboardProps) {
             style={{
               fontWeight: "500",
               fontSize: "17px",
-              border: "1px solid white",
+              // border: "1px solid white",
             }}>
             <img
               src="/src/assets/filter.png"
@@ -227,50 +227,6 @@ export default function Dashboard({ user,}: DashboardProps) {
               }}
               alt=""
             />
-          </Button>
-          
-          <Button
-            // className="newExpBtn"
-            variant="outlined"
-            color="primary"
-            // onClick={() => handleSave(e.id)}
-            style={{
-              fontWeight: "500",
-              fontSize: "17px",
-              // border: "none",
-            }}>
-            <img
-            src="/src/assets/plus.png"
-            style={{
-              width: "14px",
-              height: "14px",
-              display: "inline",
-              // marginLeft: "10px",
-            }}
-            alt=""
-          />
-          </Button>
-          
-          <Button
-            // className="newExpBtn"
-            variant="outlined"
-            color="danger"
-            // onClick={() => handleSave(e.id)}
-            style={{
-              fontWeight: "500",
-              fontSize: "17px",
-              // border: "none",
-            }}>
-            <img
-            src="/src/assets/bin.png"
-            style={{
-              width: "14px",
-              height: "14px",
-              display: "inline",
-              // marginLeft: "10px",
-            }}
-            alt=""
-          />
           </Button>
         </ConfigProvider>
       </div>

@@ -20,10 +20,12 @@ interface ExpensesProps {
   filtered: Expense[];
   totalExpenses: number;
   batchDelete: boolean;
-  setBatchDelete: React.Dispatch<React.SetStateAction<boolean>> 
+  setBatchDelete: React.Dispatch<React.SetStateAction<boolean>>
+  setShowForm: React.Dispatch<React.SetStateAction<boolean>>
   setExpenses: React.Dispatch<React.SetStateAction<Expense[]>>;
   setFiltered: React.Dispatch<React.SetStateAction<Expense[]>>;
   saveFilters: (updated: Expense[]) => void;
+  filterButton: React.RefObject<HTMLButtonElement | null>;
 }
 
 export default function Expenses({
@@ -33,9 +35,11 @@ export default function Expenses({
   totalExpenses,
   batchDelete,
   setBatchDelete,
+  setShowForm,
   setExpenses,
   setFiltered,
   saveFilters,
+  filterButton
 }: ExpensesProps) {
   const [form, setForm] = useState({ category: "", description: "", amount: "" });
   const [editForm, setEditForm] = useState<Expense | Omit<Expense, "id" | "date" | "edited">>({
@@ -189,20 +193,89 @@ export default function Expenses({
       </div>
       <br />
 
-      <button onClick={showBatchDelete}>{batchDeleteBtnText ? "Batch Delete" : "Cancel"}</button>
-      {!batchDeleteBtnText && <button onClick={deleteRequest}>Delete</button>}
-      {!batchDeleteBtnText && (
-        <>
-          <label>
-            <input
-              type="checkbox"
-              checked={selectAll}
-              onChange={(e) => handleSelectAll(e.target.checked)}
+      <ConfigProvider
+        theme={{
+          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+        }}>
+        <div style={{display: 'flex', alignItems: 'center'}}>
+          <Button
+            className="filter"
+            ref={filterButton}
+            disabled={batchDelete}
+            onClick={() => setShowForm((prev) => !prev)}
+            variant="outlined"
+            color="default"
+            style={
+              {
+                // border: "1px solid white",
+              }
+            }>
+            <img
+              src="/src/assets/filter.png"
+              style={{
+                width: "14px",
+                height: "14px",
+                // display: "inline",
+              }}
+              alt=""
             />
-            Select All
-          </label>
-        </>
-      )}
+          </Button>
+          <Button
+            className="bin"
+            onClick={showBatchDelete}
+            variant="outlined"
+            color="danger"
+            style={{
+              marginLeft: "10px",
+            }}>
+            {batchDeleteBtnText ? (
+              <img
+                src="/src/assets/bin.png"
+                style={{
+                  width: "14px",
+                  height: "14px",
+                  // display: "inline",
+                }}
+                alt=""
+              />
+            ) : (
+              "Cancel"
+            )}
+          </Button>
+          {!batchDeleteBtnText && <Button
+          style={{marginLeft: '10px', outline: 'none', border: 'none'}}
+          variant="solid"
+          color="danger"
+          onClick={deleteRequest}>
+            Delete
+          </Button>}
+        </div>
+
+        {/* <br /> */}
+
+        {!batchDeleteBtnText && (
+          <>
+            <label style={{display: 'block', marginTop: '10px'}}>
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={(e) => handleSelectAll(e.target.checked)}
+              />
+              Select All
+            </label>
+          </>
+        )}
+      </ConfigProvider>
+
+      {/* <button
+        // ref={filterButton}
+        disabled={batchDelete}
+        style={{marginRight: "15px"}}
+        onClick={() => setShowForm((prev) => !prev)}>
+        Filters
+      </button>
+      <button onClick={showBatchDelete}>{batchDeleteBtnText ? "Batch Delete" : "Cancel"}</button> */}
+
       {confirmDelete && (
         <div className="confirmDelete">
           <div className="popup">
@@ -216,7 +289,7 @@ export default function Expenses({
       )}
 
       <br />
-      <br />
+
       {!filtered[0] && <p>No expenses yet!</p>}
 
       {/* expenses list */}
