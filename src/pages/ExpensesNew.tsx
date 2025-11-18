@@ -140,7 +140,7 @@ export default function ExpensesNew({
           autoComplete="on">
           <Button
             className="newExpBtn"
-            // type="dashed"
+            block
             variant="outlined"
             color="primary"
             disabled={batchDelete}
@@ -148,7 +148,9 @@ export default function ExpensesNew({
             style={{
               fontWeight: "500", 
               fontSize: "13px", 
+              marginTop: "-10px",
               marginBottom: "10px", 
+              height: "37px"
             }}>
             Add Expense
           </Button>

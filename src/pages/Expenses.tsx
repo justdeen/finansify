@@ -188,16 +188,16 @@ export default function Expenses({
     <div>
       <br />
       {/* Total expenses; */}
-      <div>
-        <b>Total expenses: ₦{totalExpenses}</b>
+      <div style={{marginBottom: "13px"}}>
+        <b>Total: ₦{totalExpenses}</b>
       </div>
-      <br />
+      {/* <br /> */}
 
       <ConfigProvider
         theme={{
           algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
         }}>
-        <div style={{display: 'flex', alignItems: 'center'}}>
+        <div style={{display: "flex", alignItems: "center"}}>
           <Button
             className="filter"
             ref={filterButton}
@@ -205,11 +205,7 @@ export default function Expenses({
             onClick={() => setShowForm((prev) => !prev)}
             variant="outlined"
             color="default"
-            style={
-              {
-                // border: "1px solid white",
-              }
-            }>
+            style={{border: "1px solid #c4c4c4"}}>
             <img
               src="/src/assets/filter.png"
               style={{
@@ -242,28 +238,43 @@ export default function Expenses({
               "Cancel"
             )}
           </Button>
-          {!batchDeleteBtnText && <Button
-          style={{marginLeft: '10px', outline: 'none', border: 'none'}}
-          variant="solid"
-          color="danger"
-          onClick={deleteRequest}>
-            Delete
-          </Button>}
+          {!batchDeleteBtnText && (
+            <Button
+              style={{marginLeft: "10px", outline: "none", border: "none"}}
+              variant="solid"
+              color="danger"
+              onClick={deleteRequest}>
+              Delete
+            </Button>
+          )}
         </div>
 
         {/* <br /> */}
 
         {!batchDeleteBtnText && (
-          <>
-            <label style={{display: 'block', marginTop: '10px'}}>
-              <input
-                type="checkbox"
-                checked={selectAll}
-                onChange={(e) => handleSelectAll(e.target.checked)}
-              />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginTop: "20px",
+              padding: "6px 8px",
+              borderRadius: "5px",
+              width: "fit-content",
+              backgroundColor: "#1677FF",
+              fontSize: "14px",
+              // fontWeight: "500"
+            }}>
+            <label htmlFor="all" style={{marginRight: "6px"}}>
               Select All
             </label>
-          </>
+            <input
+              style={{marginTop: "2px"}}
+              id="all"
+              type="checkbox"
+              checked={selectAll}
+              onChange={(e) => handleSelectAll(e.target.checked)}
+            />
+          </div>
         )}
       </ConfigProvider>
 
@@ -297,20 +308,116 @@ export default function Expenses({
         <div className="expense" key={idx}>
           {editingId !== e.id && (
             <div>
-              {batchDelete && (
-                <div>
-                  <label htmlFor={idx.toString()}>Delete</label>
+              {/* {batchDelete && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "10px",
+                    marginTop: "5px",
+                    padding: "6px 8px",
+                    borderRadius: "5px",
+                    width: "fit-content",
+                    border: "1px solid #1677FF",
+                    fontSize: "14px",
+                  }}>
+                  <label style={{marginRight: "6px",}} htmlFor={idx.toString()}>Select</label>
                   <input
+                    style={{marginTop: "2px"}}
                     id={idx.toString()}
                     type="checkbox"
                     checked={expsToDelete.includes(e.id)}
                     onChange={() => selectItems(e.id)}
                   />
                 </div>
-              )}
-              <span>{e.category}</span> - <span>₦{e.amount}</span>
+              )} */}
+
+              <div style={{display: "flex", justifyContent: "space-between"}}>
+                <div style={{fontWeight: "500"}}>
+                  <span>{e.category}</span> -<span> ₦{e.amount}</span>
+                </div>
+                {!batchDelete && <div>
+                  <ConfigProvider
+                    theme={{
+                      algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+                    }}>
+                    <Button
+                      className="newExpBtn"
+                      variant="text"
+                      color="primary"
+                      disabled={batchDelete}
+                      onClick={() => editExpense(e.id)}
+                      style={{
+                        padding: "5px 7px",
+                        border: "none",
+                        // marginRight: "10px",
+                      }}>
+                      <img
+                        src="/src/assets/pencil.png"
+                        style={{
+                          width: "12px",
+                          height: "12px",
+                        }}
+                        alt=""
+                      />
+                    </Button>
+                    <Button
+                      className="newExpBtn"
+                      variant="text"
+                      color="danger"
+                      disabled={batchDelete}
+                      onClick={() => singleDelete(e.id)}
+                      style={{
+                        border: "none",
+                        padding: "5px 7px",
+                      }}
+                      danger>
+                      <img
+                        src="/src/assets/bin.png"
+                        style={{
+                          width: "12px",
+                          height: "12px",
+                        }}
+                        alt=""
+                      />
+                    </Button>
+                  </ConfigProvider>
+                </div>}
+                {batchDelete && (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "10px",
+                      marginTop: "0px",
+                      padding: "6px 8px",
+                      borderRadius: "5px",
+                      width: "fit-content",
+                      border: "1px solid #1677FF",
+                      fontSize: "14px",
+                    }}>
+                    <label style={{marginRight: "6px"}} htmlFor={idx.toString()}>
+                      Select
+                    </label>
+                    <input
+                      style={{marginTop: "2px"}}
+                      id={idx.toString()}
+                      type="checkbox"
+                      checked={expsToDelete.includes(e.id)}
+                      onChange={() => selectItems(e.id)}
+                    />
+                  </div>
+                )}
+              </div>
+
               <div>{e.description}</div>
-              <p>
+              <p
+                style={{
+                  fontSize: "13.5px",
+                  marginTop: "20px",
+                  // color: "#c4c4c4",
+                  color: "#919191",
+                }}>
                 {new Date(e.date).toLocaleString("en-US", {
                   timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                   year: "numeric",
@@ -326,39 +433,76 @@ export default function Expenses({
                   </span>
                 )}
               </p>
-              <Button
-                className="newExpBtn"
-                type="primary"
-                disabled={batchDelete}
-                onClick={() => editExpense(e.id)}
-                style={{
-                  fontWeight: "500",
-                  fontSize: "13px",
-                  border: "none",
-                  marginRight: "10px",
+              {/* <ConfigProvider
+                theme={{
+                  algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
                 }}>
-                Edit
-              </Button>
-              <Button
-                className="newExpBtn"
-                type="primary"
-                disabled={batchDelete}
-                onClick={() => singleDelete(e.id)}
-                style={{
-                  fontWeight: "500",
-                  fontSize: "13px",
-                  border: "none",
-                }}
-                danger>
-                Delete
-              </Button>
+                <Button
+                  className="newExpBtn"
+                  variant="outlined"
+                  color="primary"
+                  disabled={batchDelete}
+                  onClick={() => editExpense(e.id)}
+                  style={{
+                    padding: "5px 14px",
+                    border: "none",
+                    marginRight: "10px",
+                  }}>
+                  <img
+                    src="/src/assets/pencil.png"
+                    style={{
+                      width: "12px",
+                      height: "12px",
+                    }}
+                    alt=""
+                  />
+                </Button>
+                <Button
+                  className="newExpBtn"
+                  variant="outlined"
+                  color="danger"
+                  disabled={batchDelete}
+                  onClick={() => singleDelete(e.id)}
+                  style={{
+                    border: "none",
+                  }}
+                  danger>
+                  <img
+                    src="/src/assets/bin.png"
+                    style={{
+                      width: "12px",
+                      height: "12px",
+                    }}
+                    alt=""
+                  />
+                </Button>
+              </ConfigProvider> */}
               {confirmSingleDelete.show && (
                 <div className="singleDeletePopup">
                   <div className="popup2">
                     <p>The selected expense will be deleted permanently!</p>
                     <div>
-                      <button onClick={cancelSingleDelete}>Cancel</button>
-                      <button onClick={() => deleteExpense(confirmSingleDelete.id)}>Delete</button>
+                      <ConfigProvider
+                        theme={{
+                          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+                        }}>
+                        <Button
+                          style={{outline: "none"}}
+                          onClick={cancelSingleDelete}
+                          variant="outlined"
+                          color="danger">
+                          Cancel
+                        </Button>
+                        <Button
+                          style={{outline: "none", border: "none"}}
+                          onClick={() => deleteExpense(confirmSingleDelete.id)}
+                          variant="solid"
+                          color="danger">
+                          Delete
+                        </Button>
+                      </ConfigProvider>
+                      {/* <button onClick={cancelSingleDelete}>Cancel</button>
+                      <button onClick={() => deleteExpense(confirmSingleDelete.id)}>Delete</button> */}
                     </div>
                   </div>
                 </div>

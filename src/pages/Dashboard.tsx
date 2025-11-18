@@ -120,6 +120,7 @@ export default function Dashboard({ user,}: DashboardProps) {
   }
 
   const onFinish = (values: any) => {
+    setShowForm(false)
     let updatedExpenses = expenses;
 
     if (values.category) {
@@ -144,6 +145,7 @@ export default function Dashboard({ user,}: DashboardProps) {
   }
 
   const defaultFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setShowForm(false)
     e.preventDefault();
     let updatedExpenses = expenses;
     dashboardFormFilter.setFieldsValue({
@@ -171,7 +173,7 @@ export default function Dashboard({ user,}: DashboardProps) {
 
   return (
     <div>
-      <h2 style={{display: "flex", justifyContent: "space-between"}} className="heading">
+      <h2 style={{display: "flex", justifyContent: "space-between", alignItems: 'center'}} className="heading">
         <span>Dashboard</span>
         <img
           src="/src/assets/dashboard.png"
@@ -209,6 +211,7 @@ export default function Dashboard({ user,}: DashboardProps) {
             algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
           }}>
           <Button
+            className="filter"
             ref={filterButton}
             onClick={() => setShowForm((prev) => !prev)}
             variant="outlined"
@@ -216,7 +219,6 @@ export default function Dashboard({ user,}: DashboardProps) {
             style={{
               fontWeight: "500",
               fontSize: "17px",
-              // border: "1px solid white",
             }}>
             <img
               src="/src/assets/filter.png"

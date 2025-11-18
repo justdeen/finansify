@@ -161,7 +161,19 @@ export default function Settings({user}: SettingsProps) {
 
   return (
     <div>
-      <h2>Settings</h2>
+      <h2 style={{display: "flex", justifyContent: "space-between", alignItems: 'center'}} className="heading">
+        <span>Settings</span>
+        <img
+          src="/src/assets/setting.png"
+          style={{
+            width: "26px",
+            height: "26px",
+            display: "inline",
+            marginLeft: "10px",
+          }}
+          alt=""
+        />
+      </h2>
       <p>{data.email}</p>
       <ConfigProvider
         theme={{

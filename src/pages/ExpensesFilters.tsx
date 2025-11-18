@@ -306,7 +306,7 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
         onClick={() => setShowForm((prev) => !prev)}>
         Filters
       </button> */}
-      <br />
+      {/* <br /> */}
       {showForm && (
         <div
           className="popupBg"
@@ -509,7 +509,22 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
           </form> */}
         </div>
       )}
-      <h2>Expenses</h2>
+      
+      <h2 style={{display: "flex", justifyContent: "space-between", alignItems: 'center'}} className="heading">
+        <span>Expenses</span>
+        <img
+          src="/src/assets/expenses.png"
+          style={{
+            width: "26px",
+            height: "26px",
+            display: "inline",
+            marginLeft: "10px",
+          }}
+          alt=""
+        />
+      </h2>
+
+      {/* <h2 className="heading">Expenses</h2> */}
       <ExpensesNew
         user={user}
         setExpenses={setExpenses}
