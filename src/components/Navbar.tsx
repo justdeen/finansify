@@ -106,9 +106,40 @@ export default function Navbar() {
       </div>
 
       <div className="xl:hidden">
-        <div className="navbar px-2">
-          <span>Financify</span>
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)}>menu</button>
+        <div className="navbar px-4 py-2">
+          <div style={{marginTop: '5px'}}>
+            <img
+              src="/src/assets/blockchain.png"
+              style={{
+                width: "26px",
+                marginRight: "5px",
+                marginTop: '-4px',
+                // marginBottom: "3px",
+                height: "26px",
+                display: "inline",
+              }}
+              alt=""
+            />
+            <div
+              style={{
+                fontSize: "17px",
+                fontWeight: "500",
+                color: "#1677FF",
+                display: "inline",
+              }}>
+              Financify
+            </div>
+          </div>
+          <button className="menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <img
+              src="/src/assets/menu.png"
+              style={{
+                width: "30px",
+                height: "30px",
+              }}
+              alt=""
+            />
+          </button>
         </div>
         <div className={`mobile-menu ${isMenuOpen ? "mobile-menu-open" : ""}`}>
           <nav className="flex flex-col  nav2">
@@ -133,6 +164,7 @@ export default function Navbar() {
                   float: "right",
                   marginTop: "-2px",
                   marginLeft: "10px",
+                  padding: "10px 10px",
                   fontSize: "15px",
                   background: "none",
                 }}

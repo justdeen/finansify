@@ -134,7 +134,7 @@ export default function ExpensesNew({
           form={formSubmit}
           name="trigger"
           className="newExpForm"
-          style={{maxWidth: 600}}
+          // style={{maxWidth: 600}}
           layout="vertical"
           onFinish={onFinish}
           autoComplete="on">

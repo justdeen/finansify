@@ -171,18 +171,116 @@ export default function Dashboard({ user,}: DashboardProps) {
 
   return (
     <div>
-      <h2>Dashboard</h2>
-      <p>Hello, {firstName}</p>
-      <button ref={filterButton} onClick={() => setShowForm((prev) => !prev)}>
-        Filters
-      </button>
+      <h2 style={{display: "flex", justifyContent: "space-between"}} className="heading">
+        <span>Dashboard</span>
+        <img
+          src="/src/assets/dashboard.png"
+          style={{
+            width: "26px",
+            height: "26px",
+            display: "inline",
+            marginLeft: "10px",
+          }}
+          alt=""
+        />
+      </h2>
+      <p className="greeting px-2">Hello, {firstName}👋🏼</p>
+      <div
+        className="px-2"
+        style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+        <span className="font-medium">Total: ₦{display.exp}</span>
+        {/* <button
+          className="filterbtn"
+          ref={filterButton}
+          onClick={() => setShowForm((prev) => !prev)}>
+          <img
+            src="/src/assets/filter.png"
+            style={{
+              width: "14px",
+              height: "14px",
+              display: "inline",
+              // marginLeft: "10px",
+            }}
+            alt=""
+          />
+        </button> */}
+        <ConfigProvider
+          theme={{
+            algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+          }}>
+          <Button
+            ref={filterButton}
+            onClick={() => setShowForm((prev) => !prev)}
+            variant="outlined"
+            color="default"
+            style={{
+              fontWeight: "500",
+              fontSize: "17px",
+              border: "1px solid white",
+            }}>
+            <img
+              src="/src/assets/filter.png"
+              style={{
+                width: "14px",
+                height: "14px",
+                display: "inline",
+              }}
+              alt=""
+            />
+          </Button>
+          
+          <Button
+            // className="newExpBtn"
+            variant="outlined"
+            color="primary"
+            // onClick={() => handleSave(e.id)}
+            style={{
+              fontWeight: "500",
+              fontSize: "17px",
+              // border: "none",
+            }}>
+            <img
+            src="/src/assets/plus.png"
+            style={{
+              width: "14px",
+              height: "14px",
+              display: "inline",
+              // marginLeft: "10px",
+            }}
+            alt=""
+          />
+          </Button>
+          
+          <Button
+            // className="newExpBtn"
+            variant="outlined"
+            color="danger"
+            // onClick={() => handleSave(e.id)}
+            style={{
+              fontWeight: "500",
+              fontSize: "17px",
+              // border: "none",
+            }}>
+            <img
+            src="/src/assets/bin.png"
+            style={{
+              width: "14px",
+              height: "14px",
+              display: "inline",
+              // marginLeft: "10px",
+            }}
+            alt=""
+          />
+          </Button>
+        </ConfigProvider>
+      </div>
       {showForm && (
         <div
           ref={formRef}
           className="popupBg"
           style={{
             position: "fixed",
-            top: "50%",
+            top: "45%",
             left: "60%",
             transform: "translate(-50%, -50%)",
           }}>
@@ -239,28 +337,30 @@ export default function Dashboard({ user,}: DashboardProps) {
                 label="Start date"
                 name="start"
                 // rules={[{message: "Please input!"}]}
-                >
-                <DatePicker  
-                  getPopupContainer={(trigger) => trigger.parentElement ?? document.body} 
+              >
+                <DatePicker
+                  getPopupContainer={(trigger) => trigger.parentElement ?? document.body}
                   style={{width: "100%"}}
                   onChange={(e) => {
                     setApplyButton(false);
                     setRstToDefaultButton(false);
-                  }}/>
+                  }}
+                />
               </Form.Item>
-              
+
               <Form.Item
                 label="End date"
                 name="end"
                 // rules={[{message: "Please input!"}]}
-                >
-                <DatePicker  
-                  getPopupContainer={(trigger) => trigger.parentElement ?? document.body} 
+              >
+                <DatePicker
+                  getPopupContainer={(trigger) => trigger.parentElement ?? document.body}
                   style={{width: "100%"}}
                   onChange={(e) => {
                     setApplyButton(false);
                     setRstToDefaultButton(false);
-                  }}/>
+                  }}
+                />
               </Form.Item>
 
               <Button
@@ -288,6 +388,7 @@ export default function Dashboard({ user,}: DashboardProps) {
                   fontWeight: "500",
                   fontSize: "13px",
                   border: "none",
+                  marginLeft: "10px",
                 }}>
                 Reset to Default
               </Button>
@@ -344,7 +445,6 @@ export default function Dashboard({ user,}: DashboardProps) {
           </form> */}
         </div>
       )}
-      <p>Total Expenses: ₦{display.exp}</p>
     </div>
   );
 }

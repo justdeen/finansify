@@ -429,6 +429,7 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
                   fontWeight: "500",
                   fontSize: "13px",
                   border: "none",
+                  marginLeft: "10px"
                 }}>
                 Reset to Default
               </Button>

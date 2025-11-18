@@ -154,6 +154,22 @@
 
 .cancelBtn:hover{
   border: 1px solid #1677FF;
+  outline:  #1677FF;
+  /* padding: 3px !important;
+  margin-top: -2px;
+  margin-left: 10px; */
+}
+
+.menu{
+  background: none;
+  padding: 3px !important;
+  /* border: 1px solid #1677FF;
+  outline:  #1677FF; */
+}
+
+.menu:hover{
+  border: 1px solid #1677FF;
+  outline:  #1677FF;
 }
 }
 
