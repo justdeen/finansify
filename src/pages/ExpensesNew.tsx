@@ -157,8 +157,9 @@ export default function ExpensesNew({
 
           {newExpForm && (
             <div>
-              <Form.Item name="category" label="Category" rules={[{required: true}]}>
+              <Form.Item name="category" label={<span style={{fontSize: "14px"}}>Category</span>} rules={[{required: true}]}>
                 <Select
+                  style={{height: "37px", fontSize: "14px"}}
                   allowClear
                   placeholder="Select a category"
                   options={[
@@ -172,21 +173,25 @@ export default function ExpensesNew({
               </Form.Item>
               <Form.Item
                 hasFeedback
-                label="Description"
+                label={<span style={{fontSize: "14px"}}>Description</span>}
                 name="description"
                 validateFirst
                 rules={[{required: true, min: 3, max: 70}]}>
-                <Input placeholder="Enter description" />
+                <Input
+                style={{height: "37px", fontSize: "14px"}} 
+                placeholder="Enter description" />
               </Form.Item>
 
               <Form.Item
                 hasFeedback
-                label="Amount"
+                label={<span style={{fontSize: "14px"}}>Amount</span>}
                 name="amount"
                 validateFirst
                 style={{width: "100%"}}
                 rules={[{required: true, type: "number", min: 1}]}>
-                <InputNumber style={{width: "100%"}} placeholder="Enter amount" />
+                <InputNumber 
+                style={{width: "100%", height: "37px", fontSize: "14px"}} 
+                placeholder="Enter amount" />
               </Form.Item>
 
                 <Flex gap="middle" style={{width: "100%"}} >
@@ -197,8 +202,8 @@ export default function ExpensesNew({
                     disabled={batchDelete}
                     style={{
                       fontWeight: "500",
-                      fontSize: "13px",
-                      // width: "40%",
+                      fontSize: "14px",
+                      height: "37px",
                       flex: 1,
                       border: "none",
                     }}>
@@ -211,8 +216,8 @@ export default function ExpensesNew({
                     onClick={cancel}
                     style={{
                       fontWeight: "500", 
-                      fontSize: "13px", 
-                      // width: "40%", 
+                      fontSize: "14px", 
+                      height: "37px",
                       border: "none",
                       flex: 1,
                     }} danger>

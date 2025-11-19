@@ -50,95 +50,121 @@ export default function register() {
   }
 
   return (
-    <div>
-      <h2>Register</h2>
-      <ConfigProvider
-        theme={{
-          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
-        }}>
-        <Form
-          // form={form}
-          name="trigger"
-          style={{maxWidth: 600}}
-          layout="vertical"
-          onFinish={onFinish}
-          autoComplete="on">
-          <Form.Item
-            hasFeedback
-            label="First Name"
-            name="firstName"
-            validateFirst
-            rules={[{required: true, min: 2}]}>
-            <Input placeholder="Enter First Name" />
-          </Form.Item>
-
-          <Form.Item
-            hasFeedback
-            label="Last Name"
-            name="lastName"
-            validateFirst
-            rules={[{required: true, min: 2}]}>
-            <Input placeholder="Enter Last Name" />
-          </Form.Item>
-
-          <Form.Item
-            hasFeedback
-            label="Email"
-            name="email"
-            validateFirst
-            rules={[{required: true, type: "email"}]}>
-            <Input placeholder="Enter email" />
-          </Form.Item>
-
-          <Form.Item
-            hasFeedback
-            label="Password"
-            name="password"
-            validateFirst
-            rules={[{required: true}]}>
-            <Input.Password placeholder="Enter password" />
-          </Form.Item>
-
-          <Button
-            style={{fontWeight: "500", fontSize: "13px", marginBottom: "10px"}}
-            type="primary"
-            htmlType="submit"
-            block>
-            Register
-          </Button>
-
-          <Link to="/login">
+    <div className="p-2.5" style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+      <p className="my-6" style={{fontSize: "25px", fontWeight: "500", color: "#1677FF"}}>
+        <img
+          src="/src/assets/blockchain.png"
+          style={{
+            width: "35px",
+            marginRight: "8px",
+            // marginBottom: "2px",
+            height: "35px",
+            display: "inline",
+          }}
+          alt=""
+        />
+        Finansify
+      </p>
+      <div style={{width: "100%", maxWidth: "800px", padding: "6px"}}>
+        <div className="heading" style={{textAlign: "center"}}>
+          <h2>Create an account 📝</h2>
+        </div>
+        <ConfigProvider
+          theme={{
+            algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+          }}>
+          <Form
+            // form={form}
+            name="trigger"
+            // style={{maxWidth: 600}}
+            layout="vertical"
+            onFinish={onFinish}
+            autoComplete="on">
+            <Form.Item
+              hasFeedback
+              label={<span style={{fontSize: "14px"}}>First Name</span>}
+              name="firstName"
+              validateFirst
+              rules={[{required: true, min: 2}]}>
+              <Input style={{height: "37px", fontSize: "14px"}} placeholder="Enter First Name" />
+            </Form.Item>
+            <Form.Item
+              hasFeedback
+              label={<span style={{fontSize: "14px"}}>Last Name</span>}
+              name="lastName"
+              validateFirst
+              rules={[{required: true, min: 2}]}>
+              <Input style={{height: "37px", fontSize: "14px"}} placeholder="Enter Last Name" />
+            </Form.Item>
+            <Form.Item
+              hasFeedback
+              label={<span style={{fontSize: "14px"}}>Email</span>}
+              name="email"
+              validateFirst
+              rules={[{required: true, type: "email"}]}>
+              <Input style={{height: "37px", fontSize: "14px"}} placeholder="Enter email" />
+            </Form.Item>
+            <Form.Item
+              hasFeedback
+              label={<span style={{fontSize: "14px"}}>Password</span>}
+              name="password"
+              validateFirst
+              rules={[{required: true}]}>
+              <Input.Password
+                style={{height: "37px", fontSize: "14px"}}
+                placeholder="Enter password"
+              />
+            </Form.Item>
             <Button
-              // onClick={register}
-              style={{fontWeight: "500", fontSize: "13px", marginBottom: "10px"}}
+              style={{
+                fontWeight: "500",
+                fontSize: "14px",
+                height: "37px",
+                marginBottom: "10px",
+                outline: "none",
+              }}
               type="primary"
+              htmlType="submit"
+              block>
+              Register
+            </Button>
+            <Link to="/login">
+              <Button
+                // onClick={register}
+                style={{
+                  fontWeight: "500",
+                  fontSize: "14px",
+                  height: "37px",
+                  marginBottom: "10px",
+                  outline: "none",
+                }}
+                type="primary"
+                block>
+                Login
+              </Button>
+            </Link>
+            {/* <Button
+              onClick={login}
+              type="primary"
+              style={{fontWeight: "500", fontSize: "13px", marginBottom: "10px"}}
               block>
               Login
+            </Button> */}
+            <Button
+              icon={
+                <img
+                  src="/src/assets/google-logo.png"
+                  alt="Google"
+                  style={{width: 20, height: 20,}}
+                />
+              }
+              style={{fontWeight: "500", fontSize: "14px", height: "37px", width: "100%"}}
+              onClick={googleLogin}>
+              Continue With Google
             </Button>
-          </Link>
-
-          {/* <Button
-            onClick={login}
-            type="primary"
-            style={{fontWeight: "500", fontSize: "13px", marginBottom: "10px"}}
-            block>
-            Login
-          </Button> */}
-
-          <Button
-            icon={
-              <img
-                src="/src/assets/google-logo.png"
-                alt="Google"
-                style={{width: 20, height: 20, marginRight: 8, marginTop: 4}}
-              />
-            }
-            style={{fontWeight: "500", fontSize: "13px", width: "100%"}}
-            onClick={googleLogin}>
-            Continue With Google
-          </Button>
-        </Form>
-      </ConfigProvider>
+          </Form>
+        </ConfigProvider>
+      </div>
     </div>
   );
 }

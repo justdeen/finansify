@@ -322,11 +322,28 @@ export default function Expenses({
 
       {confirmDelete && (
         <div className="confirmDelete">
-          <div className="popup">
+          <div className="popup2">
             <p>The selected expense(s) will be deleted permanently!</p>
             <div>
-              <button onClick={cancelDeleteRequest}>Cancel</button>
-              <button onClick={handleDeleteExps}>Delete</button>
+              <ConfigProvider
+                theme={{
+                  algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+                }}>
+                  <Button
+                  variant="outlined" 
+                  color="danger"
+                  onClick={cancelDeleteRequest}>
+                    Cancel
+                  </Button>
+                  <Button
+                  variant="solid" 
+                  color="danger"
+                  onClick={handleDeleteExps}>
+                    Delete
+                  </Button>
+              </ConfigProvider>
+              {/* <button onClick={cancelDeleteRequest}>Cancel</button>
+              <button onClick={handleDeleteExps}>Delete</button> */}
             </div>
           </div>
         </div>
@@ -335,11 +352,14 @@ export default function Expenses({
       <br />
 
       {/* {!filtered[0] && <p>No expenses yet!</p>} */}
-      {!filtered[0] && <ConfigProvider theme={{
-          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
-        }}>
-        <Empty description="No expenses here!" />
-      </ConfigProvider>}
+      {!filtered[0] && (
+        <ConfigProvider
+          theme={{
+            algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+          }}>
+          <Empty description="No expenses here!" />
+        </ConfigProvider>
+      )}
 
       {/* expenses list */}
       {paginatedExpenses.map((e, idx) => (
@@ -647,19 +667,20 @@ export default function Expenses({
           )}
         </div>
       ))}
-      {paginatedExpenses[0] && <ConfigProvider theme={{algorithm: theme.darkAlgorithm}}>
-        <Pagination
-          current={currentPage}
-          pageSize={pageSize}
-          total={filtered.length}
-          onChange={(page,) => {
-            setCurrentPage(page);
-            // setPageSize(size);
-          }}
-          style={{marginTop: "25px", marginBottom: "15px", textAlign: "center"}}
-          
-        />
-      </ConfigProvider>}
+      {paginatedExpenses[0] && (
+        <ConfigProvider theme={{algorithm: theme.darkAlgorithm}}>
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={filtered.length}
+            onChange={(page) => {
+              setCurrentPage(page);
+              // setPageSize(size);
+            }}
+            style={{marginTop: "25px", marginBottom: "15px", textAlign: "center"}}
+          />
+        </ConfigProvider>
+      )}
     </div>
   );
 }
