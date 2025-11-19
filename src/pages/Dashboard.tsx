@@ -1,7 +1,20 @@
 import { useEffect, useState, useRef } from "react";
 import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import {ConfigProvider, theme, Form, Input, Button, RadioChangeEvent, DatePicker, InputNumber, Select, Flex, Radio} from "antd";
+import {
+  ConfigProvider,
+  theme,
+  Form,
+  Input,
+  Button,
+  RadioChangeEvent,
+  DatePicker,
+  InputNumber,
+  Select,
+  Flex,
+  Radio,
+  Empty
+} from "antd";
 import dayjs from "dayjs";
 import "./Dashboard.css"
 
@@ -38,6 +51,7 @@ export default function Dashboard({ user,}: DashboardProps) {
   const [rstToDefaultButton, setRstToDefaultButton] = useState<boolean>(true);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [dashboardFormFilter] = Form.useForm()
+  const [filteredExp, setFilteredExp] = useState<Expense[]>([])
 
   // ✅ Explicitly typed refs to elements
   const filterButton = useRef<HTMLButtonElement | null>(null);
@@ -79,6 +93,8 @@ export default function Dashboard({ user,}: DashboardProps) {
           ...prev,
           exp,
         }));
+
+        setFilteredExp(updatedExpenses)
       }
     };
     if(typeof user !== 'string')fetchData();
@@ -139,6 +155,7 @@ export default function Dashboard({ user,}: DashboardProps) {
 
     const exp = updatedExpenses.reduce((a, e) => a + e.amount, 0) || 0;
 
+    setFilteredExp(updatedExpenses)
     setDisplay({...display, exp: exp})
     setApplyButton(true)
     setRstToDefaultButton(false)
@@ -164,6 +181,7 @@ export default function Dashboard({ user,}: DashboardProps) {
   
     const exp = updatedExpenses.reduce((a, e) => a + e.amount, 0) || 0;
     
+    setFilteredExp(updatedExpenses)
     setDisplay({...display, exp: exp})    
     setApplyButton(true)
     setRstToDefaultButton(true)
@@ -190,7 +208,7 @@ export default function Dashboard({ user,}: DashboardProps) {
       <div
         className="px-2"
         style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-        <span className="font-medium">Total: ₦{display.exp}</span>
+        <span className="font-medium">Total: ₦{display.exp.toLocaleString()}</span>
         {/* <button
           className="filterbtn"
           ref={filterButton}
@@ -232,6 +250,13 @@ export default function Dashboard({ user,}: DashboardProps) {
           </Button>
         </ConfigProvider>
       </div>
+
+      {!filteredExp[0] && <ConfigProvider theme={{
+          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+        }}>
+        <Empty description="No expenses here!" />
+      </ConfigProvider>}
+      
       {showForm && (
         <div
           ref={formRef}

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { v4 as uuidv4 } from 'uuid';
-import {ConfigProvider, theme, Form, Input, Button, InputNumber, Select, Flex} from "antd";
+import {ConfigProvider, theme, Form, Input, Button, InputNumber, Select, Flex, Tag, Pagination, Empty} from "antd";
 import "./Expenses.css"
 
 interface Expense {
@@ -41,7 +41,7 @@ export default function Expenses({
   saveFilters,
   filterButton
 }: ExpensesProps) {
-  const [form, setForm] = useState({ category: "", description: "", amount: "" });
+  const [form, setForm] = useState({category: "", description: "", amount: ""});
   const [editForm, setEditForm] = useState<Expense | Omit<Expense, "id" | "date" | "edited">>({
     category: "",
     description: "",
@@ -52,87 +52,96 @@ export default function Expenses({
   const [expsToDelete, setExpsToDelete] = useState<string[]>([]);
   const [batchDeleteBtnText, setBatchDeleteBtnText] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [selectAll, setSelectAll] = useState(false)
-  const [confirmSingleDelete, setConfirmSingleDelete] = useState<{ show: boolean, id: string }>({ show: false, id: "" });
-  const [saveButton, setSaveButton] = useState(true)
+  const [selectAll, setSelectAll] = useState(false);
+  const [confirmSingleDelete, setConfirmSingleDelete] = useState<{show: boolean; id: string}>({
+    show: false,
+    id: "",
+  });
+  const [saveButton, setSaveButton] = useState(true);
   const [formSubmit] = Form.useForm();
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6); // show 6 expenses per page
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filtered]);
+
   // edit expense
   const editExpense = (id: string) => {
     const expenseToEdit = filtered.find((e) => e.id === id);
     if (expenseToEdit) {
       // setEditForm({ ...expenseToEdit });
-      formSubmit.setFieldsValue({ ...expenseToEdit });
+      formSubmit.setFieldsValue({...expenseToEdit});
       setEditingId(id);
     }
   };
 
   const onFinish = (values: any) => {
     if (editingId) handleSave(editingId, values);
-  }
+  };
 
   // const applyEditChanges = (e: React.FormEvent<HTMLFormElement>) =>{
   //   e.preventDefault();
   //   if (editingId) handleSave(editingId);
   // }
 
-  const cancelEdit = () =>{
-    setEditingId(false)
-  }
-  
+  const cancelEdit = () => {
+    setEditingId(false);
+  };
+
   // save edited expense
   const handleSave = async (id: string, values: any) => {
     setSaveButton(true);
-    const updated = expenses.map(e => {
-        if (e.id === id) {
-            return {...e, ...values, edited: true}
-        }
-        return e;
-    })
-    setEditingId(false)
+    const updated = expenses.map((e) => {
+      if (e.id === id) {
+        return {...e, ...values, edited: true};
+      }
+      return e;
+    });
+    setEditingId(false);
     setExpenses(updated);
     saveFilters(updated);
-    await updateDoc(doc(db, "users", user.uid), { expenses: updated });
-  }
-    
+    await updateDoc(doc(db, "users", user.uid), {expenses: updated});
+  };
+
   // delete an expense
   const deleteExpense = async (id: string) => {
-    console.log(id)
-    setConfirmSingleDelete({show: false, id: ""})
+    console.log(id);
+    setConfirmSingleDelete({show: false, id: ""});
     try {
       const updated = expenses.filter((e) => e.id !== id);
       setExpenses(updated);
-      setFiltered(updated)
+      setFiltered(updated);
       await updateDoc(doc(db, "users", user.uid), {expenses: updated});
-      saveFilters(updated)
+      saveFilters(updated);
     } catch (err) {
       console.error("Error deleting expense:", err);
-    } 
+    }
   };
 
   const showBatchDelete = () => {
-    setBatchDelete(true)
-    setBatchDeleteBtnText(false)
-    setEditingId("")
-    if(!batchDeleteBtnText){
-      setBatchDeleteBtnText(true)
-      setBatchDelete(false)
-      setExpsToDelete([])
-      setSelectAll(false)
+    setBatchDelete(true);
+    setBatchDeleteBtnText(false);
+    setEditingId("");
+    if (!batchDeleteBtnText) {
+      setBatchDeleteBtnText(true);
+      setBatchDelete(false);
+      setExpsToDelete([]);
+      setSelectAll(false);
     }
-  }
+  };
 
-  const singleDelete = (id: string) =>{
-    setConfirmSingleDelete({ show: true, id });
-    console.log(id)
-  }
+  const singleDelete = (id: string) => {
+    setConfirmSingleDelete({show: true, id});
+    console.log(id);
+  };
 
   const cancelSingleDelete = () => {
     setConfirmSingleDelete({show: false, id: ""});
-  }
+  };
 
   const selectItems = (id: string) => {
-    const exp = expsToDelete.find(e => e === id)
+    const exp = expsToDelete.find((e) => e === id);
     if (exp) {
       const updated = expsToDelete.filter((e) => e !== id);
       setExpsToDelete(updated);
@@ -144,8 +153,8 @@ export default function Expenses({
       if (updated.length === filtered.length && filtered.length > 0) {
         setSelectAll(true);
       }
-    }    
-  }
+    }
+  };
 
   const handleSelectAll = (checked: boolean) => {
     setSelectAll(checked);
@@ -160,19 +169,19 @@ export default function Expenses({
   };
 
   const deleteRequest = () => {
-    if(!expsToDelete[0]){
-      alert("Select expenses to delete!")
+    if (!expsToDelete[0]) {
+      alert("Select expenses to delete!");
       return;
     }
-    setConfirmDelete(true)
-  }
+    setConfirmDelete(true);
+  };
 
   const cancelDeleteRequest = () => {
-    setConfirmDelete(false)
-  }
+    setConfirmDelete(false);
+  };
 
   const handleDeleteExps = async () => {
-    setConfirmDelete(false)
+    setConfirmDelete(false);
     setBatchDeleteBtnText(true);
     setBatchDelete(false);
     setExpsToDelete([]);
@@ -184,12 +193,34 @@ export default function Expenses({
     saveFilters(remainingExpenses);
   };
 
+  type CategoryKey = "Food" | "Rent" | "Transport" | "Utilities" | "Other";
+  const cat: Record<CategoryKey, string> = {
+    Food: "gold",
+    Rent: "magenta",
+    Transport: "cyan",
+    Utilities: "purple",
+    Other: "lime",
+  };
+
+  // const categories: Record<CategoryKey, string> = {
+  //   Food: "Food",
+  //   Rent: "Rent",
+  //   Transport: "Transport",
+  //   Utilities: "Utilities",
+  //   Other: "Other",
+  // };
+
+  // Slice filtered expenses based on current page
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedExpenses = filtered.slice(startIndex, startIndex + pageSize);
+
+
   return (
     <div>
       <br />
       {/* Total expenses; */}
       <div style={{marginBottom: "13px"}}>
-        <b>Total: ₦{totalExpenses}</b>
+        <b>Total: ₦{totalExpenses.toLocaleString()}</b>
       </div>
       {/* <br /> */}
 
@@ -216,28 +247,30 @@ export default function Expenses({
               alt=""
             />
           </Button>
-          <Button
-            className="bin"
-            onClick={showBatchDelete}
-            variant="outlined"
-            color="danger"
-            style={{
-              marginLeft: "10px",
-            }}>
-            {batchDeleteBtnText ? (
-              <img
-                src="/src/assets/bin.png"
-                style={{
-                  width: "14px",
-                  height: "14px",
-                  // display: "inline",
-                }}
-                alt=""
-              />
-            ) : (
-              "Cancel"
-            )}
-          </Button>
+          {filtered[0] && (
+            <Button
+              className="bin"
+              onClick={showBatchDelete}
+              variant="outlined"
+              color="danger"
+              style={{
+                marginLeft: "10px",
+              }}>
+              {batchDeleteBtnText ? (
+                <img
+                  src="/src/assets/bin.png"
+                  style={{
+                    width: "14px",
+                    height: "14px",
+                    // display: "inline",
+                  }}
+                  alt=""
+                />
+              ) : (
+                "Cancel"
+              )}
+            </Button>
+          )}
           {!batchDeleteBtnText && (
             <Button
               style={{marginLeft: "10px", outline: "none", border: "none"}}
@@ -301,10 +334,15 @@ export default function Expenses({
 
       <br />
 
-      {!filtered[0] && <p>No expenses yet!</p>}
+      {/* {!filtered[0] && <p>No expenses yet!</p>} */}
+      {!filtered[0] && <ConfigProvider theme={{
+          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+        }}>
+        <Empty description="No expenses here!" />
+      </ConfigProvider>}
 
       {/* expenses list */}
-      {filtered.map((e, idx) => (
+      {paginatedExpenses.map((e, idx) => (
         <div className="expense" key={idx}>
           {editingId !== e.id && (
             <div>
@@ -333,56 +371,69 @@ export default function Expenses({
               )} */}
 
               <div style={{display: "flex", justifyContent: "space-between"}}>
-                <div style={{fontWeight: "500"}}>
-                  <span>{e.category}</span> -<span> ₦{e.amount}</span>
-                </div>
-                {!batchDelete && <div>
+                <div style={{fontWeight: "500", marginBottom: "8px"}}>
                   <ConfigProvider
                     theme={{
                       algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
                     }}>
-                    <Button
-                      className="newExpBtn"
-                      variant="text"
-                      color="primary"
-                      disabled={batchDelete}
-                      onClick={() => editExpense(e.id)}
-                      style={{
-                        padding: "5px 7px",
-                        border: "none",
-                        // marginRight: "10px",
-                      }}>
-                      <img
-                        src="/src/assets/pencil.png"
-                        style={{
-                          width: "12px",
-                          height: "12px",
-                        }}
-                        alt=""
-                      />
-                    </Button>
-                    <Button
-                      className="newExpBtn"
-                      variant="text"
-                      color="danger"
-                      disabled={batchDelete}
-                      onClick={() => singleDelete(e.id)}
-                      style={{
-                        border: "none",
-                        padding: "5px 7px",
-                      }}
-                      danger>
-                      <img
-                        src="/src/assets/bin.png"
-                        style={{
-                          width: "12px",
-                          height: "12px",
-                        }}
-                        alt=""
-                      />
-                    </Button>
+                    <Tag
+                      style={{padding: "4px 7px", fontSize: "14px"}}
+                      color={cat[e.category as CategoryKey]}>
+                      {e.category} -<span> ₦{e.amount.toLocaleString()} </span>
+                    </Tag>
+                    {/* <span>{e.category}</span>  */}
+                    {/* -<span> ₦{e.amount} </span> */}
                   </ConfigProvider>
-                </div>}
+                </div>
+                {!batchDelete && (
+                  <div>
+                    <ConfigProvider
+                      theme={{
+                        algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+                      }}>
+                      <Button
+                        className="newExpBtn"
+                        variant="text"
+                        color="primary"
+                        disabled={batchDelete}
+                        onClick={() => editExpense(e.id)}
+                        style={{
+                          padding: "5px 7px",
+                          border: "none",
+                          // marginRight: "10px",
+                        }}>
+                        <img
+                          src="/src/assets/pencil.png"
+                          style={{
+                            width: "14px",
+                            height: "14px",
+                          }}
+                          alt=""
+                        />
+                      </Button>
+                      <Button
+                        className="newExpBtn"
+                        variant="text"
+                        color="danger"
+                        disabled={batchDelete}
+                        onClick={() => singleDelete(e.id)}
+                        style={{
+                          border: "none",
+                          padding: "5px 7px",
+                        }}
+                        danger>
+                        <img
+                          src="/src/assets/bin.png"
+                          style={{
+                            width: "14px",
+                            height: "14px",
+                          }}
+                          alt=""
+                        />
+                      </Button>
+                    </ConfigProvider>
+                  </div>
+                )}
                 {batchDelete && (
                   <div
                     style={{
@@ -519,7 +570,7 @@ export default function Expenses({
               <Form
                 form={formSubmit}
                 name="trigger"
-                style={{maxWidth: 600}}
+                // style={{maxWidth: 600}}
                 layout="vertical"
                 onFinish={onFinish}
                 autoComplete="on">
@@ -596,6 +647,19 @@ export default function Expenses({
           )}
         </div>
       ))}
+      {paginatedExpenses[0] && <ConfigProvider theme={{algorithm: theme.darkAlgorithm}}>
+        <Pagination
+          current={currentPage}
+          pageSize={pageSize}
+          total={filtered.length}
+          onChange={(page,) => {
+            setCurrentPage(page);
+            // setPageSize(size);
+          }}
+          style={{marginTop: "25px", marginBottom: "15px", textAlign: "center"}}
+          
+        />
+      </ConfigProvider>}
     </div>
   );
 }

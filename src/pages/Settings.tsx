@@ -11,7 +11,7 @@ import {
   GoogleAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth";
-import { ConfigProvider, theme, Form, Input, Button } from 'antd';
+import { ConfigProvider, theme, Form, Input, Button, Tag } from 'antd';
 import './Settings.css'
 
 interface SettingsProps {
@@ -174,7 +174,18 @@ export default function Settings({user}: SettingsProps) {
           alt=""
         />
       </h2>
-      <p>{data.email}</p>
+
+      <ConfigProvider theme={{
+          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+        }}>
+        <Tag 
+        color="blue"
+        style={{fontSize: "14px", marginBottom: "15px", padding: "5px 7px"}}>
+          {data.email}
+        </Tag>
+      </ConfigProvider>
+
+      {/* <p>{data.email}</p> */}
       <ConfigProvider
         theme={{
           algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
@@ -352,7 +363,10 @@ export default function Settings({user}: SettingsProps) {
             theme={{
               algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
             }}>
-            <Form onFinish={saveNewPassword} layout="vertical">
+            <Form 
+            onFinish={saveNewPassword} 
+            layout="vertical"
+            style={{marginBottom: "12px"}}>
               <Form.Item
                 hasFeedback
                 label={<span style={{fontSize: "14px"}}>Old Password</span>}
