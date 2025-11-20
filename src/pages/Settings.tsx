@@ -11,7 +11,8 @@ import {
   GoogleAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth";
-import { ConfigProvider, theme, Form, Input, Button, Tag } from 'antd';
+import { ConfigProvider, theme, Form, Input, Button, Tag, message } from 'antd';
+import {useNavigate} from "react-router-dom";
 import './Settings.css'
 
 interface SettingsProps {
@@ -43,6 +44,8 @@ export default function Settings({user}: SettingsProps) {
   const [deleteAccForm, setDeleteAccForm] = useState(false)
   const [confirmAccDelete, setConfirmAccDelete] = useState(false)
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchData = async () => {
       const docRef = doc(db, "users", user.uid);
@@ -65,12 +68,85 @@ export default function Settings({user}: SettingsProps) {
     if(typeof user !== 'string')fetchData();
   }, []);
 
+  const [messageApi, contextHolder] = message.useMessage();
+  message.config({
+    top: 100,
+    duration: 2,
+  });
+  
+   const profileToast = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Changes saved!',
+      // className: 'custom-class',
+      style: {
+        marginTop: '6vh',
+        
+      },
+    });
+  };
+   
+  const pwToast = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Password changed!',
+      // className: 'custom-class',
+      style: {
+        marginTop: '6vh',
+        
+      },
+    });
+  };
+  
+  const deleteAccSucc = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Goodbye!',
+      // className: 'custom-class',
+      style: {
+        marginTop: '6vh',
+        
+      },
+    });
+  };
+  
+  
+  const deleteAccToast = () => {
+    messageApi.open({
+      type: 'error',
+      content: 'Wrong password!',
+      // className: 'custom-class',
+      style: {
+        marginTop: '6vh',
+        
+      },
+    });
+  };
+  
+  const oldPwErr = () => {
+    messageApi.open({
+      type: 'error',
+      content: 'Old password incorrect!',
+      // className: 'custom-class',
+      style: {
+        marginTop: '6vh',
+        
+      },
+    });
+  };
+
+  
+
   const saveNewPassword = async (values: any) => {
-    const credential = EmailAuthProvider.credential(user.email, values.oldPassword);
+    try {const credential = EmailAuthProvider.credential(user.email, values.oldPassword);
     await reauthenticateWithCredential(user, credential);
     if (data.newPassword) await updatePassword(auth.currentUser!, values.newPassword);
     setChangePassword(false);
-    alert("Password Changed!");
+    pwToast()} catch (e){
+      console.error(e)
+      oldPwErr();
+      console.log('rrrrrrrrrr')
+    }
   };
 
   const handlePasswordChange = async () => {
@@ -129,11 +205,11 @@ export default function Settings({user}: SettingsProps) {
       await reauthenticateWithCredential(user, credential);
       await deleteUser(user);
       await deleteDoc(doc(db, "users", user.uid));
-      alert("Account deleted successfully.");
-      // Optionally: sign out or redirect the user
+      // alert("Account deleted successfully.");
+      navigate("/login")
     } catch (error) {
       console.error("Error deleting account:", error);
-      alert("Failed to delete account. Please check your credentials and try again.");
+      deleteAccToast();
     } finally {
       setDeleteAccForm(false);
       setDeleteAccWithPw("");
@@ -155,12 +231,17 @@ export default function Settings({user}: SettingsProps) {
         lastName: values.lastName,
       });
       setData({...data, firstName: values.firstName, lastName: values.lastName});
-      alert("Updated!");
+      profileToast();
     }
   };
 
   return (
     <div>
+      <ConfigProvider theme={{
+          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+        }}>
+        <div style={{zIndex: "999999"}}>{contextHolder}</div>
+      </ConfigProvider>
       <h2 style={{display: "flex", justifyContent: "space-between", alignItems: 'center'}} className="heading">
         <span>Settings</span>
         <img

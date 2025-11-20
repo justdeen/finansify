@@ -233,13 +233,13 @@ export default function Dashboard({ user,}: DashboardProps) {
             ref={filterButton}
             onClick={() => setShowForm((prev) => !prev)}
             variant="outlined"
-            color="default"
+            color="primary"
             style={{
               fontWeight: "500",
               fontSize: "17px",
             }}>
             <img
-              src="/src/assets/filter.png"
+              src="/src/assets/filter2.png"
               style={{
                 width: "14px",
                 height: "14px",

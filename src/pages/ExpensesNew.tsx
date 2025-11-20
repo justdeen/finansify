@@ -2,7 +2,7 @@ import {useState, useEffect, useRef} from "react";
 import {collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where} from "firebase/firestore";
 import {db, auth} from "../firebase";
 import {v4 as uuidv4} from "uuid";
-import {ConfigProvider, theme, Form, Input, Button, InputNumber, Select, Flex} from "antd";
+import {ConfigProvider, theme, Form, Input, Button, InputNumber, Select, Flex, message} from "antd";
 import "./ExpensesNew.css"
 
 interface Expense {
@@ -60,6 +60,24 @@ export default function ExpensesNew({
   //   addExpense();
   // };
 
+  const [messageApi, contextHolder] = message.useMessage();
+  message.config({
+    top: 100,
+    duration: 2,
+  });
+  
+   const success = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Expense added!',
+      // className: 'custom-class',
+      style: {
+        marginTop: '5vh',
+        
+      },
+    });
+  };
+
   const onFinish = async (values: any) => {
     formSubmit.resetFields();
     const newExp = {...values, id: uuidv4(), date: new Date().toISOString(), edited: false};
@@ -69,7 +87,8 @@ export default function ExpensesNew({
     setExpenses(updated);
     setFiltered(updated);
     saveFilters(updated);
-    setNewExpForm(false)
+    setNewExpForm(false);
+    success();
   };
 
   // async function addExpense() {
@@ -125,6 +144,11 @@ export default function ExpensesNew({
           </div>
         )}
       </form> */}
+      <ConfigProvider theme={{
+          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+        }}>
+        <div style={{zIndex: "999999"}}>{contextHolder}</div>
+      </ConfigProvider>
 
       <ConfigProvider
         theme={{

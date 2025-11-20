@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
@@ -49,7 +49,7 @@ export default function App() {
     <>
       <div className="xl:grid xl:grid-cols-6 xl:gap-2">
         <div className="sticky top-0 xl:col-span-1 navbar">
-          <Navbar/>
+          <Navbar />
         </div>
         <div className="xl:col-span-5 xl:pr-4 p-2 pb-1">
           <Routes>
@@ -57,6 +57,11 @@ export default function App() {
             <Route path="/expenses" element={user && <ExpensesFilters user={user} />} />
             <Route path="/reports" element={user && <Reports user={user} />} />
             <Route path="/settings" element={user && <Settings user={user} />} />
+
+            <Route path="/login" element={<Navigate to="/" replace />} />
+            <Route path="/register" element={<Navigate to="/" replace />} />
+            {/* Catch-all redirect */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </div>

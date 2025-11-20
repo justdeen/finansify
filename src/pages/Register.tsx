@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import {auth, provider, db} from "../firebase";
 import {signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup} from "firebase/auth";
 import {doc, setDoc, where, query, collection, getDocs} from "firebase/firestore";
-import {ConfigProvider, theme, Form, Input, Button} from "antd";
+import {ConfigProvider, theme, Form, Input, Button, message} from "antd";
 
 interface RegisterProps {
   setLogOrReg: (val: string) => void;
@@ -13,15 +13,44 @@ interface RegisterProps {
 export default function register() {
   const navigate = useNavigate();
 
+  const [messageApi, contextHolder] = message.useMessage();
+  message.config({
+    top: 100,
+    duration: 2,
+  });
+  
+   const invalidEmail = () => {
+    messageApi.open({
+      type: 'error',
+      content: 'Email already in use!',
+      // className: 'custom-class',
+      style: {
+        marginTop: '6vh',
+        
+      },
+    });
+  };
+
+  // const onFinish = async (values: any) => {
+  //   const userCred = await createUserWithEmailAndPassword(auth, values.email, values.password);
+  //   await setDoc(doc(db, "users", userCred.user.uid), {
+  //     firstName: values.firstName,
+  //     lastName: values.lastName,
+  //     email: values.email,
+  //     expenses: [],
+  //   });
+  //   navigate("/");
+  // };
+
   const onFinish = async (values: any) => {
-    const userCred = await createUserWithEmailAndPassword(auth, values.email, values.password);
+    try {const userCred = await createUserWithEmailAndPassword(auth, values.email, values.password);
     await setDoc(doc(db, "users", userCred.user.uid), {
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,
       expenses: [],
     });
-    navigate("/");
+    navigate("/");} catch{invalidEmail();}
   };
 
   async function googleLogin() {
@@ -51,6 +80,11 @@ export default function register() {
 
   return (
     <div className="p-2.5" style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+      <ConfigProvider theme={{
+          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+        }}>
+        <div style={{zIndex: "999999"}}>{contextHolder}</div>
+      </ConfigProvider>
       <p className="my-6" style={{fontSize: "25px", fontWeight: "500", color: "#1677FF"}}>
         <img
           src="/src/assets/blockchain.png"

@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {auth, provider, db} from "../firebase";
 import {signInWithEmailAndPassword, signInWithPopup} from "firebase/auth";
 import {doc, setDoc, getDocs, where, query, collection} from "firebase/firestore";
-import {ConfigProvider, theme, Form, Input, Button} from "antd";
+import {ConfigProvider, theme, Form, Input, Button, message} from "antd";
 
 // interface LoginProps {
 //   setLogOrReg: (val: string) => void;
@@ -17,9 +17,23 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  function register() {
-    // setLogOrReg("reg");
-  }
+  const [messageApi, contextHolder] = message.useMessage();
+  message.config({
+    top: 100,
+    duration: 2,
+  });
+  
+   const invalidPw = () => {
+    messageApi.open({
+      type: 'error',
+      content: 'Invalid password!',
+      // className: 'custom-class',
+      style: {
+        marginTop: '6vh',
+        
+      },
+    });
+  };
 
   async function googleLogin() {
     try {
@@ -51,12 +65,18 @@ export default function Login() {
   }
 
   const onFinish = async (values: any) => {
-    await signInWithEmailAndPassword(auth, values.email, values.password);
+    try {await signInWithEmailAndPassword(auth, values.email, values.password);}
+    catch{invalidPw();}
     navigate("/");
   };
 
   return (
     <div className="p-2.5" style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+      <ConfigProvider theme={{
+          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+        }}>
+        <div style={{zIndex: "999999"}}>{contextHolder}</div>
+      </ConfigProvider>
       <p
           className="my-6"
           style={{fontSize: "25px", fontWeight: "500", color: "#1677FF"}}>

@@ -2,7 +2,20 @@ import { useState, useEffect, useRef } from "react";
 import { collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { v4 as uuidv4 } from 'uuid';
-import {ConfigProvider, theme, Form, Input, Button, InputNumber, Select, Flex, Tag, Pagination, Empty} from "antd";
+import {
+  ConfigProvider,
+  theme,
+  Form,
+  Input,
+  Button,
+  InputNumber,
+  Select,
+  Flex,
+  Tag,
+  Pagination,
+  Empty,
+  message,
+} from "antd";
 import "./Expenses.css"
 
 interface Expense {
@@ -66,6 +79,48 @@ export default function Expenses({
     setCurrentPage(1);
   }, [filtered]);
 
+  const [messageApi, contextHolder] = message.useMessage();
+  message.config({
+    top: 100,
+    duration: 2,
+  });
+  
+   const editToast = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Expense saved successfully!',
+      // className: 'custom-class',
+      style: {
+        marginTop: '5vh',
+        
+      },
+    });
+  };
+
+  const deleteToast = () => {
+    messageApi.open({
+      type: 'success',
+      content: 'Expense(s) deleted successfully!',
+      // className: 'custom-class',
+      style: {
+        marginTop: '5vh',
+        
+      },
+    });
+  };
+  
+  const deleteErrToast = () => {
+    messageApi.open({
+      type: 'error',
+      content: 'Select expense(s)!',
+      // className: 'custom-class',
+      style: {
+        marginTop: '5vh',
+        
+      },
+    });
+  };
+
   // edit expense
   const editExpense = (id: string) => {
     const expenseToEdit = filtered.find((e) => e.id === id);
@@ -101,6 +156,7 @@ export default function Expenses({
     setEditingId(false);
     setExpenses(updated);
     saveFilters(updated);
+    editToast();
     await updateDoc(doc(db, "users", user.uid), {expenses: updated});
   };
 
@@ -114,6 +170,7 @@ export default function Expenses({
       setFiltered(updated);
       await updateDoc(doc(db, "users", user.uid), {expenses: updated});
       saveFilters(updated);
+      deleteToast();
     } catch (err) {
       console.error("Error deleting expense:", err);
     }
@@ -170,7 +227,7 @@ export default function Expenses({
 
   const deleteRequest = () => {
     if (!expsToDelete[0]) {
-      alert("Select expenses to delete!");
+      deleteErrToast();
       return;
     }
     setConfirmDelete(true);
@@ -191,6 +248,7 @@ export default function Expenses({
     setFiltered(remainingExpenses);
     await updateDoc(doc(db, "users", user.uid), {expenses: remainingExpenses});
     saveFilters(remainingExpenses);
+    deleteToast();
   };
 
   type CategoryKey = "Food" | "Rent" | "Transport" | "Utilities" | "Other";
@@ -217,6 +275,11 @@ export default function Expenses({
 
   return (
     <div>
+      <ConfigProvider theme={{
+          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+        }}>
+        <div style={{zIndex: "999999"}}>{contextHolder}</div>
+      </ConfigProvider>
       <br />
       {/* Total expenses; */}
       <div style={{marginBottom: "13px"}}>
@@ -235,10 +298,10 @@ export default function Expenses({
             disabled={batchDelete}
             onClick={() => setShowForm((prev) => !prev)}
             variant="outlined"
-            color="default"
-            style={{border: "1px solid #c4c4c4"}}>
+            color="primary"
+            style={{}}>
             <img
-              src="/src/assets/filter.png"
+              src="/src/assets/filter2.png"
               style={{
                 width: "14px",
                 height: "14px",
@@ -332,13 +395,15 @@ export default function Expenses({
                   <Button
                   variant="outlined" 
                   color="danger"
-                  onClick={cancelDeleteRequest}>
+                  onClick={cancelDeleteRequest}
+                  style={{outline: "none"}}>
                     Cancel
                   </Button>
                   <Button
                   variant="solid" 
                   color="danger"
-                  onClick={handleDeleteExps}>
+                  onClick={handleDeleteExps}
+                  style={{border: "none"}}>
                     Delete
                   </Button>
               </ConfigProvider>
@@ -636,6 +701,7 @@ export default function Expenses({
                     className="newExpBtn"
                     type="primary"
                     htmlType="submit"
+                    // onClick={success}
                     disabled={saveButton}
                     // onClick={() => handleSave(e.id)}
                     style={{
