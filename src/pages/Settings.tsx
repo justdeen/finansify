@@ -11,7 +11,7 @@ import {
   GoogleAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth";
-import { ConfigProvider, theme, Form, Input, Button, Tag, message } from 'antd';
+import { ConfigProvider, theme, Form, Input, Button, Tag, message, Spin } from 'antd';
 import {useNavigate} from "react-router-dom";
 import './Settings.css'
 
@@ -43,6 +43,7 @@ export default function Settings({user}: SettingsProps) {
   const [deleteAccWithPw, setDeleteAccWithPw] = useState("")
   const [deleteAccForm, setDeleteAccForm] = useState(false)
   const [confirmAccDelete, setConfirmAccDelete] = useState(false)
+  const [loadState, setLoadState] = useState(true)
 
   const navigate = useNavigate();
 
@@ -64,6 +65,7 @@ export default function Settings({user}: SettingsProps) {
         (provider: any) => provider.providerId === "password"
       );
       if (checkPasswordChange) setCanChangePassword(true);
+      setLoadState(false)
     };
     if(typeof user !== 'string')fetchData();
   }, []);
@@ -135,17 +137,18 @@ export default function Settings({user}: SettingsProps) {
     });
   };
 
-  
-
   const saveNewPassword = async (values: any) => {
-    try {const credential = EmailAuthProvider.credential(user.email, values.oldPassword);
+    try {
+    setLoadState(true)
+    const credential = EmailAuthProvider.credential(user.email, values.oldPassword);
     await reauthenticateWithCredential(user, credential);
     if (data.newPassword) await updatePassword(auth.currentUser!, values.newPassword);
     setChangePassword(false);
-    pwToast()} catch (e){
-      console.error(e)
+    pwToast()
+    } catch (e){
       oldPwErr();
-      console.log('rrrrrrrrrr')
+    } finally {
+      setLoadState(false)
     }
   };
 
@@ -201,6 +204,7 @@ export default function Settings({user}: SettingsProps) {
     if (!user) return;
 
     try {
+      setLoadState(true)
       const credential = EmailAuthProvider.credential(user.email!, values.password);
       await reauthenticateWithCredential(user, credential);
       await deleteUser(user);
@@ -213,6 +217,7 @@ export default function Settings({user}: SettingsProps) {
     } finally {
       setDeleteAccForm(false);
       setDeleteAccWithPw("");
+      setLoadState(false)
     }
   }
 
@@ -226,17 +231,24 @@ export default function Settings({user}: SettingsProps) {
     if (data.firstName === values.firstName && data.lastName === values.lastName) {
       return;
     } else {
+      setLoadState(true)
       await updateDoc(doc(db, "users", currUser.uid), {
         firstName: values.firstName,
         lastName: values.lastName,
       });
       setData({...data, firstName: values.firstName, lastName: values.lastName});
+      setLoadState(false)
       profileToast();
     }
   };
 
   return (
     <div>
+      {loadState && (<div className="flex justify-center spin">
+        <div className="spinCont">
+          <Spin size="large" />
+        </div>
+      </div>)}
       <ConfigProvider theme={{
           algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
         }}>
@@ -245,6 +257,7 @@ export default function Settings({user}: SettingsProps) {
       <h2 style={{display: "flex", justifyContent: "space-between", alignItems: 'center'}} className="heading">
         <span>Settings</span>
         <img
+          onContextMenu={(e) => e.preventDefault()}
           src="/src/assets/setting.png"
           style={{
             width: "26px",
@@ -298,7 +311,7 @@ export default function Settings({user}: SettingsProps) {
           <Button
             type="primary"
             htmlType="submit"
-            style={{outline: "none", height: "37px", fontSize: "14px"}}
+            style={{outline: "none", height: "37px", fontSize: "14px", border: "none"}}
             block>
             Submit
           </Button>

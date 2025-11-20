@@ -8,6 +8,7 @@ export default function Reports({user}: SettingsProps) {
       <h2 style={{display: "flex", justifyContent: "space-between", alignItems: 'center'}} className="heading">
           <span>Reports</span>
           <img
+            onContextMenu={(e) => e.preventDefault()}
             src="/src/assets/report.png"
             style={{
               width: "26px",

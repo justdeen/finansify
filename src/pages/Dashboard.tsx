@@ -13,7 +13,8 @@ import {
   Select,
   Flex,
   Radio,
-  Empty
+  Empty,
+  Spin
 } from "antd";
 import dayjs from "dayjs";
 import "./Dashboard.css"
@@ -57,6 +58,7 @@ export default function Dashboard({ user,}: DashboardProps) {
   const filterButton = useRef<HTMLButtonElement | null>(null);
   const formRef = useRef<HTMLDivElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const [loadState, setLoadState] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,6 +97,7 @@ export default function Dashboard({ user,}: DashboardProps) {
         }));
 
         setFilteredExp(updatedExpenses)
+        setLoadState(false)
       }
     };
     if(typeof user !== 'string')fetchData();
@@ -136,6 +139,7 @@ export default function Dashboard({ user,}: DashboardProps) {
   }
 
   const onFinish = (values: any) => {
+    setLoadState(true)
     setShowForm(false)
     let updatedExpenses = expenses;
 
@@ -159,6 +163,7 @@ export default function Dashboard({ user,}: DashboardProps) {
     setDisplay({...display, exp: exp})
     setApplyButton(true)
     setRstToDefaultButton(false)
+    setLoadState(false)
   }
 
   const defaultFilter = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -185,6 +190,7 @@ export default function Dashboard({ user,}: DashboardProps) {
     setDisplay({...display, exp: exp})    
     setApplyButton(true)
     setRstToDefaultButton(true)
+    setLoadState(false)
   }
 
    const sortByList = ["Newest", "Oldest", "Largest amount", "Smallest amount"]
@@ -194,6 +200,7 @@ export default function Dashboard({ user,}: DashboardProps) {
       <h2 style={{display: "flex", justifyContent: "space-between", alignItems: 'center'}} className="heading">
         <span>Dashboard</span>
         <img
+          onContextMenu={(e) => e.preventDefault()}
           src="/src/assets/dashboard.png"
           style={{
             width: "26px",
@@ -251,10 +258,14 @@ export default function Dashboard({ user,}: DashboardProps) {
         </ConfigProvider>
       </div>
 
-      {!filteredExp[0] && <ConfigProvider theme={{
+      {loadState && (<div className="flex justify-center mt-4">
+        <Spin size="large" />
+      </div>)}
+
+      {!filteredExp[0] && !loadState && <ConfigProvider theme={{
           algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
         }}>
-        <Empty description="No expenses here!" />
+        <Empty style={{marginTop: "25px"}} description="No expenses here yet! Add expenses on the 'Expenses' page." />
       </ConfigProvider>}
       
       {showForm && (

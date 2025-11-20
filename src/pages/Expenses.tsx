@@ -15,6 +15,7 @@ import {
   Pagination,
   Empty,
   message,
+  Spin
 } from "antd";
 import "./Expenses.css"
 
@@ -74,9 +75,12 @@ export default function Expenses({
   const [formSubmit] = Form.useForm();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(6); // show 6 expenses per page
+  const [loadState, setLoadState] = useState(true)
+  const [loadState2, setLoadState2] = useState(false)
 
   useEffect(() => {
     setCurrentPage(1);
+    if(filtered[0]) setLoadState(false)
   }, [filtered]);
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -146,6 +150,7 @@ export default function Expenses({
 
   // save edited expense
   const handleSave = async (id: string, values: any) => {
+    setLoadState2(true)
     setSaveButton(true);
     const updated = expenses.map((e) => {
       if (e.id === id) {
@@ -156,13 +161,14 @@ export default function Expenses({
     setEditingId(false);
     setExpenses(updated);
     saveFilters(updated);
-    editToast();
     await updateDoc(doc(db, "users", user.uid), {expenses: updated});
+    setLoadState2(false)
+    editToast();
   };
 
   // delete an expense
   const deleteExpense = async (id: string) => {
-    console.log(id);
+    setLoadState2(true)
     setConfirmSingleDelete({show: false, id: ""});
     try {
       const updated = expenses.filter((e) => e.id !== id);
@@ -173,6 +179,8 @@ export default function Expenses({
       deleteToast();
     } catch (err) {
       console.error("Error deleting expense:", err);
+    } finally {
+      setLoadState2(false)
     }
   };
 
@@ -238,6 +246,7 @@ export default function Expenses({
   };
 
   const handleDeleteExps = async () => {
+    setLoadState2(true)
     setConfirmDelete(false);
     setBatchDeleteBtnText(true);
     setBatchDelete(false);
@@ -248,6 +257,7 @@ export default function Expenses({
     setFiltered(remainingExpenses);
     await updateDoc(doc(db, "users", user.uid), {expenses: remainingExpenses});
     saveFilters(remainingExpenses);
+    setLoadState2(false)
     deleteToast();
   };
 
@@ -275,6 +285,11 @@ export default function Expenses({
 
   return (
     <div>
+      {loadState2 && (<div className="flex justify-center spin">
+        <div className="spinCont">
+          <Spin size="large" />
+        </div>
+      </div>)}
       <ConfigProvider theme={{
           algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
         }}>
@@ -301,6 +316,7 @@ export default function Expenses({
             color="primary"
             style={{}}>
             <img
+              onContextMenu={(e) => e.preventDefault()}
               src="/src/assets/filter2.png"
               style={{
                 width: "14px",
@@ -321,6 +337,7 @@ export default function Expenses({
               }}>
               {batchDeleteBtnText ? (
                 <img
+                  onContextMenu={(e) => e.preventDefault()}
                   src="/src/assets/bin.png"
                   style={{
                     width: "14px",
@@ -417,7 +434,11 @@ export default function Expenses({
       <br />
 
       {/* {!filtered[0] && <p>No expenses yet!</p>} */}
-      {!filtered[0] && (
+      {!filtered[0] && loadState && (<div className="flex justify-center">
+        <Spin size="large" />
+      </div>)}
+
+      {!filtered[0] && !loadState &&(
         <ConfigProvider
           theme={{
             algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
@@ -488,6 +509,7 @@ export default function Expenses({
                           // marginRight: "10px",
                         }}>
                         <img
+                          onContextMenu={(e) => e.preventDefault()}
                           src="/src/assets/pencil.png"
                           style={{
                             width: "14px",
@@ -508,6 +530,7 @@ export default function Expenses({
                         }}
                         danger>
                         <img
+                          onContextMenu={(e) => e.preventDefault()}
                           src="/src/assets/bin.png"
                           style={{
                             width: "14px",

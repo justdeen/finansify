@@ -4,13 +4,14 @@ import { Link } from "react-router-dom";
 import {auth, provider, db} from "../firebase";
 import {signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup} from "firebase/auth";
 import {doc, setDoc, where, query, collection, getDocs} from "firebase/firestore";
-import {ConfigProvider, theme, Form, Input, Button, message} from "antd";
+import {ConfigProvider, theme, Form, Input, Button, message, Spin} from "antd";
 
 interface RegisterProps {
   setLogOrReg: (val: string) => void;
 }
 
 export default function register() {
+  const [loadState, setLoadState] = useState(false)
   const navigate = useNavigate();
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -43,14 +44,16 @@ export default function register() {
   // };
 
   const onFinish = async (values: any) => {
-    try {const userCred = await createUserWithEmailAndPassword(auth, values.email, values.password);
+    try {
+    setLoadState(true)
+    const userCred = await createUserWithEmailAndPassword(auth, values.email, values.password);
     await setDoc(doc(db, "users", userCred.user.uid), {
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,
       expenses: [],
     });
-    navigate("/");} catch{invalidEmail();}
+    navigate("/");} catch{invalidEmail();} finally {setLoadState(false)}
   };
 
   async function googleLogin() {
@@ -80,6 +83,12 @@ export default function register() {
 
   return (
     <div className="p-2.5" style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+      {loadState && (<div className="flex justify-center spin">
+        <div className="spinCont">
+          <Spin size="large" />
+        </div>
+      </div>)}
+
       <ConfigProvider theme={{
           algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
         }}>
@@ -187,6 +196,7 @@ export default function register() {
             <Button
               icon={
                 <img
+                  onContextMenu={(e) => e.preventDefault()}
                   src="/src/assets/google-logo.png"
                   alt="Google"
                   style={{width: 20, height: 20,}}

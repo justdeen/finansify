@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {auth, provider, db} from "../firebase";
 import {signInWithEmailAndPassword, signInWithPopup} from "firebase/auth";
 import {doc, setDoc, getDocs, where, query, collection} from "firebase/firestore";
-import {ConfigProvider, theme, Form, Input, Button, message} from "antd";
+import {ConfigProvider, theme, Form, Input, Button, message, Spin} from "antd";
 
 // interface LoginProps {
 //   setLogOrReg: (val: string) => void;
@@ -14,6 +14,7 @@ import {ConfigProvider, theme, Form, Input, Button, message} from "antd";
 export default function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [loadState, setLoadState] = useState(false)
 
   const navigate = useNavigate();
 
@@ -65,13 +66,22 @@ export default function Login() {
   }
 
   const onFinish = async (values: any) => {
-    try {await signInWithEmailAndPassword(auth, values.email, values.password);}
-    catch{invalidPw();}
+    try {
+      setLoadState(true)
+      await signInWithEmailAndPassword(auth, values.email, values.password);
+    } catch{invalidPw();}
     navigate("/");
+    setLoadState(false)
   };
 
   return (
     <div className="p-2.5" style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+      {loadState && (<div className="flex justify-center spin">
+        <div className="spinCont">
+          <Spin size="large" />
+        </div>
+      </div>)}
+
       <ConfigProvider theme={{
           algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
         }}>
@@ -156,6 +166,7 @@ export default function Login() {
             <Button
               icon={
                 <img
+                  onContextMenu={(e) => e.preventDefault()}
                   src="/src/assets/google-logo.png"
                   alt="Google"
                   style={{width: 20, height: 20,}}

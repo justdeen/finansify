@@ -109,6 +109,7 @@ export default function Navbar() {
         <div className="navbar px-4 py-2">
           <div style={{marginTop: '5px'}}>
             <img
+              onContextMenu={(e) => e.preventDefault()}
               src="/src/assets/blockchain.png"
               style={{
                 width: "26px",
@@ -132,6 +133,7 @@ export default function Navbar() {
           </div>
           <button className="menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <img
+              onContextMenu={(e) => e.preventDefault()}
               src="/src/assets/menu.png"
               style={{
                 width: "30px",
@@ -147,6 +149,7 @@ export default function Navbar() {
               className="mb-8 mt-8 pl-2 pt-2"
               style={{fontSize: "20px", fontWeight: "500", color: "#1677FF"}}>
               <img
+                onContextMenu={(e) => e.preventDefault()}
                 src="/src/assets/blockchain.png"
                 style={{
                   width: "30px",
@@ -170,6 +173,7 @@ export default function Navbar() {
                 }}
                 onClick={() => setIsMenuOpen(false)}>
                 <img
+                  onContextMenu={(e) => e.preventDefault()}
                   src="/src/assets/close.png"
                   style={{
                     width: "15px",
@@ -184,6 +188,7 @@ export default function Navbar() {
               to="/"
               onClick={() => setIsMenuOpen(false)}>
               <img
+                onContextMenu={(e) => e.preventDefault()}
                 src="/src/assets/dashboard.png"
                 style={{
                   width: "20px",
@@ -202,6 +207,7 @@ export default function Navbar() {
               to="/expenses"
               onClick={() => setIsMenuOpen(false)}>
               <img
+                onContextMenu={(e) => e.preventDefault()}
                 src="/src/assets/expenses.png"
                 style={{
                   width: "20px",
@@ -220,6 +226,7 @@ export default function Navbar() {
               to="/reports"
               onClick={() => setIsMenuOpen(false)}>
               <img
+                onContextMenu={(e) => e.preventDefault()}
                 src="/src/assets/report.png"
                 style={{
                   width: "20px",
@@ -240,6 +247,7 @@ export default function Navbar() {
                 setIsMenuOpen(false);
               }}>
               <img
+                onContextMenu={(e) => e.preventDefault()}
                 src="/src/assets/setting.png"
                 style={{
                   width: "20px",
@@ -261,6 +269,7 @@ export default function Navbar() {
                 signOut(auth);
               }}>
               <img
+                onContextMenu={(e) => e.preventDefault()}
                 src="/src/assets/power-off.png"
                 style={{width: "20px", marginRight: "10px", height: "20px", display: "inline"}}
                 alt=""

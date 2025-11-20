@@ -2,7 +2,7 @@ import {useState, useEffect, useRef} from "react";
 import {collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where} from "firebase/firestore";
 import {db, auth} from "../firebase";
 import {v4 as uuidv4} from "uuid";
-import {ConfigProvider, theme, Form, Input, Button, InputNumber, Select, Flex, message} from "antd";
+import {ConfigProvider, theme, Form, Input, Button, InputNumber, Select, Flex, message, Spin} from "antd";
 import "./ExpensesNew.css"
 
 interface Expense {
@@ -44,6 +44,7 @@ export default function ExpensesNew({
   const [form, setForm] = useState({ category: "", description: "", amount: "" });
   const [newExpForm, setNewExpForm] = useState(false)
   const [formSubmit] = Form.useForm();
+  const [loadState, setLoadState] = useState(false)
 
   const showForm = () => {
     setNewExpForm(true)
@@ -79,6 +80,7 @@ export default function ExpensesNew({
   };
 
   const onFinish = async (values: any) => {
+    setLoadState(true);
     formSubmit.resetFields();
     const newExp = {...values, id: uuidv4(), date: new Date().toISOString(), edited: false};
     console.log(newExp.id)
@@ -88,6 +90,7 @@ export default function ExpensesNew({
     setFiltered(updated);
     saveFilters(updated);
     setNewExpForm(false);
+    setLoadState(false)
     success();
   };
 
@@ -104,6 +107,11 @@ export default function ExpensesNew({
 
   return (
     <div>
+      {loadState && (<div className="flex justify-center spin">
+        <div className="spinCont">
+          <Spin size="large" />
+        </div>
+      </div>)}
       {/* <form onSubmit={handleNewExpense}>
         <button onClick={showForm} disabled={batchDelete}>
           Add Expense

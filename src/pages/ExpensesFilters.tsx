@@ -513,6 +513,7 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
       <h2 style={{display: "flex", justifyContent: "space-between", alignItems: 'center'}} className="heading">
         <span>Expenses</span>
         <img
+          onContextMenu={(e) => e.preventDefault()}
           src="/src/assets/expenses.png"
           style={{
             width: "26px",
