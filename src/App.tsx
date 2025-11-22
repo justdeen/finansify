@@ -12,7 +12,7 @@ import Register from "./pages/Register";
 import PasswordRst from "./pages/PasswordRst";
 import { User } from "firebase/auth";
 import "./App.css"
-
+import "./chart-setup";
 
 
 export default function App() {

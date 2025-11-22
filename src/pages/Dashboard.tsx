@@ -16,8 +16,17 @@ import {
   Empty,
   Spin
 } from "antd";
+import { Line, Pie } from "react-chartjs-2";
+import "chartjs-adapter-date-fns";
+
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+// import ChartDataLabels from 'chartjs-plugin-datalabels';
+// ChartJS.register(ChartDataLabels);
+
+ChartJS.register(ArcElement, Tooltip, Legend,);
 import dayjs from "dayjs";
 import "./Dashboard.css"
+
 
 interface User {
   uid: string; // user object must have a uid
@@ -43,6 +52,11 @@ interface Display {
   exp: number;
 }
 
+interface CategoryTotal {
+  category: string;
+  amount: number;
+}
+
 export default function Dashboard({ user,}: DashboardProps) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [display, setDisplay] = useState<Display>({exp: 0})
@@ -59,6 +73,8 @@ export default function Dashboard({ user,}: DashboardProps) {
   const formRef = useRef<HTMLDivElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [loadState, setLoadState] = useState(true)
+  const [sorted, setSorted] = useState<Expense[]>([])
+  const [sorted2, setSorted2] = useState<CategoryTotal[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,6 +111,25 @@ export default function Dashboard({ user,}: DashboardProps) {
           ...prev,
           exp,
         }));
+
+        // Line chart----------
+        const sorted = [...updatedExpenses].sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+        );
+        
+        // Pie chart----------
+        const categoryTotals = updatedExpenses.reduce<Record<string, number>>((acc, item) => {
+          if (!acc[item.category]) acc[item.category] = 0;
+          acc[item.category] += item.amount;
+          return acc;
+        }, {});
+
+        const categoryTotalsArray: CategoryTotal[] = Object.entries(categoryTotals).map(
+          ([category, amount]) => ({category, amount})
+        );
+
+        setSorted(sorted)
+        setSorted2(categoryTotalsArray)
 
         setFilteredExp(updatedExpenses)
         setLoadState(false)
@@ -159,6 +194,12 @@ export default function Dashboard({ user,}: DashboardProps) {
 
     const exp = updatedExpenses.reduce((a, e) => a + e.amount, 0) || 0;
 
+    const sorted = [...updatedExpenses].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+
+    setSorted(sorted)
+
     setFilteredExp(updatedExpenses)
     setDisplay({...display, exp: exp})
     setApplyButton(true)
@@ -185,6 +226,12 @@ export default function Dashboard({ user,}: DashboardProps) {
     })
   
     const exp = updatedExpenses.reduce((a, e) => a + e.amount, 0) || 0;
+
+    const sorted = [...updatedExpenses].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+
+    setSorted(sorted)
     
     setFilteredExp(updatedExpenses)
     setDisplay({...display, exp: exp})    
@@ -194,10 +241,124 @@ export default function Dashboard({ user,}: DashboardProps) {
   }
 
    const sortByList = ["Newest", "Oldest", "Largest amount", "Smallest amount"]
+  //  const COLORS = ["#1677FF", "#00C49F", "#FFBB28", "#FF8042", "#845EF7"];
+
+  // Line chart
+   const chartData = {
+     labels: sorted.map((d) => d.date),
+     datasets: [
+       {
+         label: "Line chart",
+         data: sorted.map((d) => Number(d.amount)),
+         borderColor: "#1677FF",
+         backgroundColor: "rgba(22,119,255,0.2)",
+         tension: 0.2,
+         fill: true,
+       },
+     ],
+   };
+
+  const isSmall = window.innerWidth < 640;
+  const options = {
+    responsive: true,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context: any) {
+            const index = context.dataIndex;
+            const category = sorted[index].category;
+            const amount = sorted[index].amount.toLocaleString();
+
+            return `${category}: ₦${amount}`;
+          },
+        },
+      },
+      title: {
+        display: true,
+        text: "Line Chart",
+      },
+    },
+    scales: {
+      x: {
+        type: "time" as any, // ✅ MUST BE EXACT LITERAL
+        time: {
+          unit: "day",
+        },
+        ticks: {
+          font: {
+            size: isSmall ? 11 : 15,
+          },
+        },
+      },
+      y: {
+        beginAtZero: false,
+        ticks: {
+          font: {
+            size: isSmall ? 11 : 15,
+          },
+        },
+      },
+    },
+  };
+
+  // Pie chart
+  const total = sorted2.reduce((sum, item) => sum + item.amount, 0);
+  const chartData2 = {
+    labels: sorted2.map((item) => {
+      const percent = ((item.amount / total) * 100).toFixed(2);
+      return `${item.category} (${percent}%)`; // include percentage in the label
+    }),
+    datasets: [
+      {
+        data: sorted2.map((item) => item.amount),
+        backgroundColor: [
+          "#1677FF", // blue
+          "#00C49F", // green
+          "#FFBB28", // yellow-orange
+          "#FF8042", // orange
+          "#845EF7", // purple
+          "#E03E36", // red
+          "#FF69B4", // hot pink
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const isSmallScreen = window.innerWidth < 400;
+  const options2 = {
+    responsive: true,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (context: any) => {
+            const value = Number(context.raw ?? 0);
+            const dataset = context.chart.data.datasets[0];
+            const total = dataset.data.reduce((sum: number, val: number) => sum + val, 0);
+            const percent = ((value / total) * 100).toFixed(1);
+            return ` ₦${value.toLocaleString()} (${percent}%)`;
+          },
+        },
+      },
+      legend: {
+        position: "bottom" as const,
+        labels: {
+        boxWidth: 10,   // default is 40
+        boxHeight: 10,  // reduces height (Chart.js v4+)
+        padding: 10,
+        font: {
+          size: isSmallScreen ? 10 : 15,
+        }
+      }
+      },
+    },
+  };
 
   return (
     <div>
-      <h2 style={{display: "flex", justifyContent: "space-between", alignItems: 'center'}} className="heading">
+      <h2
+        style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}
+        className="heading">
         <span>Dashboard</span>
         <img
           onContextMenu={(e) => e.preventDefault()}
@@ -257,17 +418,38 @@ export default function Dashboard({ user,}: DashboardProps) {
           </Button>
         </ConfigProvider>
       </div>
-
-      {loadState && (<div className="flex justify-center mt-4">
-        <Spin size="large" />
-      </div>)}
-
-      {!filteredExp[0] && !loadState && <ConfigProvider theme={{
-          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
-        }}>
-        <Empty style={{marginTop: "25px"}} description="No expenses here yet! Add expenses on the 'Expenses' page." />
-      </ConfigProvider>}
       
+      
+      {filteredExp[0] && !loadState && <div>
+        {/* <p className="chart text-xl font-semibold mb-7">Line Chart</p> */}
+        <Line data={chartData} options={options} style={{marginTop: "25px"}}/>
+      </div>}
+      
+      {filteredExp[0] && !loadState && sorted2.length > 0 && <div>
+        {/* <p className="chart text-xl font-semibold mb-7">Pie Chart</p> */}
+        <div className="pie" style={{ width: "350px", height: "350px", margin: "0 auto" }}>
+          <Pie data={chartData2} options={options2} style={{marginTop: "55px", width: "100%"}}/>
+        </div>
+      </div>}
+
+      {loadState && (
+        <div className="flex justify-center mt-4">
+          <Spin size="large" />
+        </div>
+      )}
+
+      {!filteredExp[0] && !loadState && (
+        <ConfigProvider
+          theme={{
+            algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+          }}>
+          <Empty
+            style={{marginTop: "25px"}}
+            description="No expenses here yet! Add expenses on the 'Expenses' page."
+          />
+        </ConfigProvider>
+      )}
+
       {showForm && (
         <div
           ref={formRef}
@@ -306,6 +488,8 @@ export default function Dashboard({ user,}: DashboardProps) {
                     {label: "Food", value: "Food"},
                     {label: "Rent", value: "Rent"},
                     {label: "Transport", value: "Transport"},
+                    {label: "Shopping", value: "Shopping"},
+                    {label: "Entertainment", value: "Entertainment"},
                     {label: "Utilities", value: "Utilities"},
                     {label: "Other", value: "Other"},
                   ]}

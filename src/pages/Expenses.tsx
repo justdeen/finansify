@@ -261,11 +261,13 @@ export default function Expenses({
     deleteToast();
   };
 
-  type CategoryKey = "Food" | "Rent" | "Transport" | "Utilities" | "Other";
+  type CategoryKey = "Food" | "Rent" | "Transport" | "Shopping" | "Entertainment" | "Utilities" | "Other";
   const cat: Record<CategoryKey, string> = {
     Food: "gold",
     Rent: "magenta",
     Transport: "cyan",
+    Shopping: "green",
+    Entertainment: "red",
     Utilities: "purple",
     Other: "lime",
   };
@@ -690,6 +692,8 @@ export default function Expenses({
                       {label: "Food", value: "Food"},
                       {label: "Rent", value: "Rent"},
                       {label: "Transport", value: "Transport"},
+                      {label: "Shopping", value: "Shopping"},
+                      {label: "Entertainment", value: "Entertainment"},
                       {label: "Utilities", value: "Utilities"},
                       {label: "Other", value: "Other"},
                     ]}

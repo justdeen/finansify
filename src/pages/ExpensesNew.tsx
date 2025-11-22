@@ -198,6 +198,8 @@ export default function ExpensesNew({
                     {label: "Food", value: "Food"},
                     {label: "Rent", value: "Rent"},
                     {label: "Transport", value: "Transport"},
+                    {label: "Shopping", value: "Shopping"},
+                    {label: "Entertainment", value: "Entertainment"},
                     {label: "Utilities", value: "Utilities"},
                     {label: "Other", value: "Other"},
                   ]}
