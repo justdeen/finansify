@@ -194,11 +194,24 @@ export default function Dashboard({ user,}: DashboardProps) {
 
     const exp = updatedExpenses.reduce((a, e) => a + e.amount, 0) || 0;
 
+    // Line chart
     const sorted = [...updatedExpenses].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
+    // Pie chart
+    const categoryTotals = updatedExpenses.reduce<Record<string, number>>((acc, item) => {
+      if (!acc[item.category]) acc[item.category] = 0;
+      acc[item.category] += item.amount;
+      return acc;
+    }, {});
+
+    const categoryTotalsArray: CategoryTotal[] = Object.entries(categoryTotals).map(
+      ([category, amount]) => ({category, amount})
+    );
+
     setSorted(sorted)
+    setSorted2(categoryTotalsArray)
 
     setFilteredExp(updatedExpenses)
     setDisplay({...display, exp: exp})
@@ -227,11 +240,24 @@ export default function Dashboard({ user,}: DashboardProps) {
   
     const exp = updatedExpenses.reduce((a, e) => a + e.amount, 0) || 0;
 
+    // Line chart
     const sorted = [...updatedExpenses].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
+    // Pie chart
+    const categoryTotals = updatedExpenses.reduce<Record<string, number>>((acc, item) => {
+      if (!acc[item.category]) acc[item.category] = 0;
+      acc[item.category] += item.amount;
+      return acc;
+    }, {});
+
+    const categoryTotalsArray: CategoryTotal[] = Object.entries(categoryTotals).map(
+      ([category, amount]) => ({category, amount})
+    );
+
     setSorted(sorted)
+    setSorted2(categoryTotalsArray)
     
     setFilteredExp(updatedExpenses)
     setDisplay({...display, exp: exp})    

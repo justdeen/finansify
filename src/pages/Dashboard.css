@@ -60,7 +60,7 @@
 
 @media (max-width: 450px){
     .pie{
-        width:320px !important;
-        height: 320px !important;
+        width:300px !important;
+        height: 300px !important;
     }
 }
