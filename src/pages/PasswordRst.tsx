@@ -25,23 +25,6 @@ export default function PasswordRst() {
     navigate("/login");
   };
 
-  // const handleReset = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-
-  //   const isLocalhost = window.location.hostname === "localhost";
-  //   const actionCodeSettings = {
-  //     url: isLocalhost ? "http://localhost:3000/login" : "",
-  //     handleCodeInApp: false,
-  //   };
-
-  //   try {
-  //     await sendPasswordResetEmail(auth, email, actionCodeSettings);
-  //   } catch (e: any) {
-  //     console.log(e.message);
-  //   }
-  //   navigate("/login");
-  // };
-
   return (
     <div className="p-2.5" style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
       <p className="my-6" style={{fontSize: "25px", fontWeight: "500", color: "#1677FF"}}>
@@ -50,7 +33,6 @@ export default function PasswordRst() {
           style={{
             width: "35px",
             marginRight: "8px",
-            // marginBottom: "2px",
             height: "35px",
             display: "inline",
           }}
@@ -72,9 +54,7 @@ export default function PasswordRst() {
             algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
           }}>
           <Form
-            // form={form}
             name="trigger"
-            // style={{maxWidth: 600}}
             layout="vertical"
             onFinish={onFinish}
             autoComplete="on">

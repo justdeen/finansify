@@ -70,7 +70,7 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
         start: dayjs(getFirstDayOfMonth(), "YYYY-MM-DD"),
         end: dayjs(getLastDayOfMonth(), "YYYY-MM-DD"),
       });
-      // console.log(formFilter.date.start)
+      
       let updatedExpenses = [];
       const snap = await getDoc(doc(db, "users", user.uid));
       if (snap.exists()) {
@@ -136,35 +136,8 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
     setRstToDefaultButton(false);
     setFormFilter({...formFilter, sortBy: e.target.value});
   };
-
-  // const handleOpenChange = (isOpen: boolean) => setOpen(isOpen);
-
-  // const handleChange = (dates: any) => {
-  //   // Only normalize when the picker is closed (i.e. selection completed)
-  //   if (!dates) {
-  //     formFilterSubmit.setFieldsValue({ date: undefined });
-  //     return;
-  //   }
-
-  //   // If picker is still open, do nothing (prevents UI jumps)
-  //   if (open) return;
-
-  //   const [start, end] = dates.map((d: any) => dayjs(d).startOf("day"));
-  //   formFilterSubmit.setFieldsValue({ date: [start, end] });
-  // };
   
   const onFinish = (values: any) => {
-    // console.log(values)
-    const startDate = `${values.start.$y}-${values.start.$M + 1}-${values.start.$D}`
-    const endDate = `${values.end.$y}-${values.end.$M + 1}-${values.end.$D}`
-    // console.log(values.start)
-    // console.log(new Date(values.start).getTime())
-    // const [start, end] = values.date;
-    // console.log({
-    //   start: start.format("YYYY-MM-DD"), // ✅ "2025-12-02"
-    //   end: end.format("YYYY-MM-DD"), // ✅ "2025-12-17"
-    // });
-
     setShowForm(false)
     let updated = []
     setFormFilter({
@@ -206,12 +179,6 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
     const total = updated.reduce((sum, e) => sum + e.amount, 0);
     setTotalExpenses(total);
   }
-
-  // const applyFilterChanges = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   // if(e.target)
-  //   saveFilters();
-  // };
 
   // save form filter changes
   const saveFilters = (expensesToUse = expenses) => {
@@ -300,13 +267,6 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
 
   return (
     <>
-      {/* <button
-        ref={filterButton}
-        disabled={batchDelete}
-        onClick={() => setShowForm((prev) => !prev)}>
-        Filters
-      </button> */}
-      {/* <br /> */}
       {showForm && (
         <div
           className="popupBg"
@@ -325,7 +285,6 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
             <Form
               form={formFilterSubmit}
               name="formFilterSubmit"
-              // style={{maxWidth: 600}}
               layout="vertical"
               onFinish={onFinish}
               autoComplete="on">
@@ -369,19 +328,10 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
                 </Radio.Group>
               </Form.Item>
 
-              {/* <Form.Item label="RangePicker" name="date">
-                <RangePicker
-                  getPopupContainer={(trigger) => trigger.parentElement ?? document.body}
-                  // onChange={handleChange}
-                  // onOpenChange={handleOpenChange}
-                  showTime={false}
-                />
-              </Form.Item> */}
-
               <Form.Item
                 label="Start date"
                 name="start"
-                // rules={[{message: "Please input!"}]}
+                rules={[{message: "Please input!", required: true}]}
                 >
                 <DatePicker  
                   getPopupContainer={(trigger) => trigger.parentElement ?? document.body} 
@@ -395,7 +345,7 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
               <Form.Item
                 label="End date"
                 name="end"
-                // rules={[{message: "Please input!"}]}
+                rules={[{message: "Please input!", required: true}]}
                 >
                 <DatePicker  
                   getPopupContainer={(trigger) => trigger.parentElement ?? document.body} 
@@ -411,7 +361,6 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
                 type="primary"
                 htmlType="submit"
                 disabled={applyButton}
-                // onClick={() => handleSave(e.id)}
                 style={{
                   fontWeight: "500",
                   fontSize: "13px",
@@ -426,7 +375,6 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
                 htmlType="button"
                 onClick={defaultFilter}
                 disabled={rstToDefaultButton}
-                // onClick={() => handleSave(e.id)}
                 style={{
                   fontWeight: "500",
                   fontSize: "13px",
@@ -437,97 +385,26 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
               </Button>
             </Form>
           </ConfigProvider>
-
-          {/* <label htmlFor="start">Start Date</label>
-          <input
-            type="date"
-            name=""
-            id="start"
-            // value={formFilter.date.start}
-            onChange={(e) => {
-              console.log(e.target.value);
-            }}
-          /> */}
-
-          {/* <form className="formFilter">
-            <label htmlFor="category">Category: </label>
-            <select
-              id="category"
-              value={formFilter.category}
-              onChange={(e) => {
-                setApplyButton(false);
-                setRstToDefaultButton(false);
-                setFormFilter({...formFilter, category: e.target.value});
-              }}>
-              <option value="">All</option>
-              <option value="Food">Food</option>
-              <option value="Rent">Rent</option>
-              <option value="Transport">Transport</option>
-              <option value="Entertainment">Entertainment</option>
-              <option value="Utilities">Utilities</option>
-            </select>
-            {sortByList.map((opt) => (
-              <label key={opt}>
-                <input
-                  type="radio"
-                  name="opt"
-                  value={opt}
-                  checked={formFilter.sortBy === opt}
-                  onChange={handleRadioChange}
-                />
-                {opt}
-              </label>
-            ))}
-            <label htmlFor="start">Start Date</label>
-            <input
-              type="date"
-              name=""
-              id="start"
-              value={formFilter.date.start}
-              onChange={(e) => {
-                setApplyButton(false);
-                setRstToDefaultButton(false);
-                setFormFilter({...formFilter, date: {...formFilter.date, start: e.target.value}});
-              }}
-            />
-            <label htmlFor="end">End Date</label>
-            <input
-              type="date"
-              name=""
-              id="end"
-              value={formFilter.date.end}
-              onChange={(e) => {
-                setApplyButton(false);
-                setRstToDefaultButton(false);
-                setFormFilter({...formFilter, date: {...formFilter.date, end: e.target.value}});
-              }}
-            />
-            <button type="submit" onClick={() => saveFilters} disabled={applyButton === true}>
-              Apply
-            </button>
-            <button type="button" onClick={defaultFilter} disabled={rstToDefaultButton === true}>
-              Reset to Default
-            </button>
-          </form> */}
         </div>
       )}
       
-      <h2 style={{display: "flex", justifyContent: "space-between", alignItems: 'center'}} className="heading">
-        <span>Expenses</span>
-        <img
-          onContextMenu={(e) => e.preventDefault()}
-          src="/src/assets/expenses.png"
-          style={{
-            width: "26px",
-            height: "26px",
-            display: "inline",
-            marginLeft: "10px",
-          }}
-          alt=""
-        />
-      </h2>
+      <div className="px-2">
+        <h2 style={{display: "flex", justifyContent: "space-between", alignItems: 'center'}} className="heading">
+          <span>Expenses</span>
+          <img
+            onContextMenu={(e) => e.preventDefault()}
+            src="/src/assets/expenses.png"
+            style={{
+              width: "26px",
+              height: "26px",
+              display: "inline",
+              marginLeft: "10px",
+            }}
+            alt=""
+          />
+        </h2>
+      </div>
 
-      {/* <h2 className="heading">Expenses</h2> */}
       <ExpensesNew
         user={user}
         setExpenses={setExpenses}

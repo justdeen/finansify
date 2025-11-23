@@ -55,12 +55,6 @@ export default function ExpensesNew({
     formSubmit.resetFields();
   }
 
-  // const handleNewExpense = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (!form.category || !form.description || !form.amount) return;
-  //   addExpense();
-  // };
-
   const [messageApi, contextHolder] = message.useMessage();
   message.config({
     top: 100,
@@ -71,7 +65,6 @@ export default function ExpensesNew({
     messageApi.open({
       type: 'success',
       content: 'Expense added!',
-      // className: 'custom-class',
       style: {
         marginTop: '5vh',
         
@@ -94,64 +87,14 @@ export default function ExpensesNew({
     success();
   };
 
-  // async function addExpense() {
-  //   const newExp = {...form, amount: parseInt(form.amount), id: uuidv4(), date: new Date().toISOString(), edited: false};
-  //   const updated = [...expenses, newExp];
-  //   await updateDoc(doc(db, "users", user.uid), {expenses: updated});
-  //   setExpenses(updated);
-  //   setFiltered(updated);
-  //   saveFilters(updated);
-  //   setForm({category: "", description: "", amount: ""});
-  //   setNewExpForm(false)
-  // }
-
   return (
-    <div>
+    <div className="px-2">
       {loadState && (<div className="flex justify-center spin">
         <div className="spinCont">
           <Spin size="large" />
         </div>
       </div>)}
-      {/* <form onSubmit={handleNewExpense}>
-        <button onClick={showForm} disabled={batchDelete}>
-          Add Expense
-        </button>
-
-        {newExpForm && (
-          <div>
-            <select
-              value={form.category}
-              onChange={(e) => setForm({...form, category: e.target.value})}
-              required>
-              <option value="">Select Category</option>
-              <option value="Food">Food</option>
-              <option value="Rent">Rent</option>
-              <option value="Transport">Transport</option>
-              <option value="Entertainment">Entertainment</option>
-              <option value="Utilities">Utilities</option>
-            </select>
-            <input
-              placeholder="Description"
-              value={form.description}
-              onChange={(e) => setForm({...form, description: e.target.value})}
-              required
-            />
-            <input
-              placeholder="Amount"
-              type="number"
-              value={form.amount}
-              onChange={(e) => setForm({...form, amount: e.target.value})}
-              required
-            />
-            <button type="submit" disabled={batchDelete}>
-              Save
-            </button>
-            <button onClick={cancel} type="button">
-              Cancel
-            </button>
-          </div>
-        )}
-      </form> */}
+    
       <ConfigProvider theme={{
           algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
         }}>
@@ -166,7 +109,6 @@ export default function ExpensesNew({
           form={formSubmit}
           name="trigger"
           className="newExpForm"
-          // style={{maxWidth: 600}}
           layout="vertical"
           onFinish={onFinish}
           autoComplete="on">

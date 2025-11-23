@@ -4,7 +4,7 @@ interface SettingsProps {
 
 export default function Reports({user}: SettingsProps) {
   return (
-    <div>
+    <div className="px-2">
       <h2
         style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}
         className="heading">
@@ -21,7 +21,6 @@ export default function Reports({user}: SettingsProps) {
           alt=""
         />
       </h2>
-      {/* <h2>Reports (Charts will go here later)</h2> */}
       
       <div style={{marginTop: "100px"}} className="flex flex-col justify-center items-center">
         <h2 className="text-center font-semibold mb-2">I promise I'll be back with more features 😊</h2>
@@ -35,15 +34,6 @@ export default function Reports({user}: SettingsProps) {
           }}
           alt=""
         />
-        {/* <div
-              style={{
-                fontSize: "17px",
-                fontWeight: "500",
-                color: "#1677FF",
-                display: "inline",
-              }}>
-              Financify
-            </div> */}
       </div>
     </div>
   );

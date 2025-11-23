@@ -112,10 +112,11 @@ export default function Login() {
           theme={{
             algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
           }}>
+          <div className="text-sm mb-4">
+            <Link to="/home">Back to home</Link>
+          </div>
           <Form
-            // form={form}
             name="trigger"
-            // style={{maxWidth: "600px"}}
             layout="vertical"
             onFinish={onFinish}
             autoComplete="on">
@@ -155,20 +156,12 @@ export default function Login() {
             </Button>
             <Link to="/register">
               <Button
-                // onClick={register}
                 style={{fontWeight: "500", fontSize: "14px", marginBottom: "10px", outline: "none"}}
                 type="primary"
                 block>
                 Register
               </Button>
             </Link>
-            {/* <Button
-              onClick={register}
-              style={{fontWeight: "500", fontSize: "13px", marginBottom: '10px'}}
-              type="primary"
-              block>
-              Register
-            </Button> */}
             <Button
               icon={
                 <img

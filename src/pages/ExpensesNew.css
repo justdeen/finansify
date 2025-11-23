@@ -1,17 +1,8 @@
 .newExpBtn:focus{
     outline: none ;
-    /* box-shadow: none !important; */
 }
 
 .newExpBtn{
     z-index: 1 !important;
     position: relative !important;
 }
-
-/* .newExpBtn:focus-visible{
-    outline: none !important;
-} */
-
-/* .newExpBtn::-moz-focus-inner{
-    border: 0 !important;
-} */

@@ -243,7 +243,7 @@ export default function Settings({user}: SettingsProps) {
   };
 
   return (
-    <div>
+    <div className="px-2">
       {loadState && (<div className="flex justify-center spin">
         <div className="spinCont">
           <Spin size="large" />
@@ -279,7 +279,6 @@ export default function Settings({user}: SettingsProps) {
         </Tag>
       </ConfigProvider>
 
-      {/* <p>{data.email}</p> */}
       <ConfigProvider
         theme={{
           algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
@@ -379,28 +378,9 @@ export default function Settings({user}: SettingsProps) {
                 </Button>
               </div>
             </Form>
-
-            {/* <form className="popup2" onSubmit={handleAccDelete}>
-              <label htmlFor="pw">Enter Password</label>
-              <input
-                id="pw"
-                type="text"
-                value={deleteAccWithPw}
-                onChange={(e) => setDeleteAccWithPw(e.target.value)}
-                placeholder="password"
-              />
-              <div style={{marginTop: "20px"}}>
-                <button type="button" onClick={cancelAccDelete}>
-                  Cancel
-                </button>
-                <button type="submit">Delete Account</button>
-              </div>
-            </form> */}
           </div>
         )}
       </ConfigProvider>
-
-      {/* <button onClick={deleteAccountReq}>Delete Account</button> */}
       {confirmAccDelete && (
         <div className="confirmAccDelete">
           <div className="popup2">
@@ -425,9 +405,6 @@ export default function Settings({user}: SettingsProps) {
                   Yes
                 </Button>
               </ConfigProvider>
-
-              {/* <button onClick={accDeleteFalse}>No</button>
-              <button onClick={accDeleteTrue}>Yes</button> */}
             </div>
           </div>
         </div>
@@ -436,21 +413,6 @@ export default function Settings({user}: SettingsProps) {
       <br />
       <br />
 
-      {/* {canChangePassword && (
-        <ConfigProvider
-          theme={{
-            algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
-          }}>
-          <Button
-            variant="filled"
-            color="cyan"
-            onClick={handlePasswordChange}
-            // type="primary"
-            style={{outline: "none", height: "37px", fontSize: "14px", marginTop: "50px"}}>
-            Change Password
-          </Button>
-        </ConfigProvider>
-      )} */}
       {canChangePassword && changePassword && (
         <div style={{marginTop: "20px"}}>
           <ConfigProvider
@@ -504,33 +466,6 @@ export default function Settings({user}: SettingsProps) {
               </Button>
             </Form>
           </ConfigProvider>
-
-          {/* <label htmlFor="oldPassword">Old Password</label>
-          <input
-            id="oldPassword"
-            placeholder="Old Password"
-            onChange={(e) =>
-              setData({
-                ...data,
-                oldPassword: e.target.value,
-              })
-            }
-          />
-          <br />
-          <label htmlFor="newPassword">New Password</label>
-          <input
-            id="newPassword"
-            placeholder="New Password"
-            onChange={(e) =>
-              setData({
-                ...data,
-                newPassword: e.target.value,
-              })
-            }
-          />
-          <br />
-          <button onClick={saveNewPassword}>Save Password</button>
-          <button onClick={cancelPassword}>Cancel</button> */}
         </div>
       )}
     </div>

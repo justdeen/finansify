@@ -1,34 +1,22 @@
 .mobile-menu {
-  display: none;
-}
-
-/* Visible state */
-.mobile-menu-open {
-  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-20px);
+  transition: all 0.4s ease;
   width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.432);
-    
-    position: fixed;
-    top: 0;
-    /* left: 10%;
-    right: 0; */
-    /* display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly; */
-    z-index: 9999 !important;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.432);
+  position: fixed;
+  top: 0;
+  z-index: 9999 !important;
 }
 
-/* .mobile-menu-open {
-  display: block;
-  width: 80vw;
-    height: 100vh;
-    background: rgb(0, 1, 32);
-    position: fixed;
-    left: 0;
-    z-index: 9999 !important;
-} */
+.mobile-menu-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
 
 /* Large screen */
 @media (min-width: 1280px) {
@@ -86,7 +74,6 @@
     flex-direction: column;
     align-items: left;
     gap: 13px;
-    /* justify-content: space-evenly; */
     height: 100%;
     width: 80%;
     font-size: 20px;
@@ -95,6 +82,7 @@
     padding: 0px 15px 0px 15px;
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
+    transition: all 1s ease;
 }
 
 .logout2{
@@ -110,16 +98,6 @@
 .logout2:hover{
   background-color: rgb(255, 59, 59) !important;
 }
-  /* .nav2{
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    justify-content: space-evenly;
-    height: 100%;
-    font-size: 20px;
-    background-color: #171b24;
-    padding: 0px 10px 0px 10px;
-} */
 
 .navbar{
   width: 100%;
@@ -148,23 +126,17 @@
 .activeNavLink{
   background-color: #1677FF !important;
   color: white !important;
-  /* padding: 10px 10px 10px 10px; */
   border-radius: 7px;
 }
 
 .cancelBtn:hover, .cancelBtn:active, .cancelBtn:focus{
   border: 1px solid #1677FF;
   outline:  #1677FF;
-  /* padding: 3px !important;
-  margin-top: -2px;
-  margin-left: 10px; */
 }
 
 .menu{
   background: none;
   padding: 3px !important;
-  /* border: 1px solid #1677FF;
-  outline:  #1677FF; */
 }
 
 .menu:hover, .menu:active, .menu:focus{

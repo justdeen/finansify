@@ -21,13 +21,6 @@ export default function App() {
     const currUser = localStorage.getItem('user')
     return currUser ? currUser : null;
   });
-  // const [logOrReg, setLogOrReg] = useState<boolean>(true);
-  // const [navState, setNavState] = useState({
-  //   dashboard: true, 
-  //   expenses: false, 
-  //   reports: false, 
-  //   settings: false
-  // })
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
@@ -72,7 +65,6 @@ export default function App() {
   // Unauthenticated user UI
   const UnauthenticatedApp = () => (
     <>
-      {/* <Login/> */}
       <Routes>
         <Route path="/home" element={<Home/>}></Route>
         <Route path="/login" element={<Login/>} />
@@ -80,7 +72,6 @@ export default function App() {
         <Route path="/passwordRst" element={<PasswordRst/>} />
         <Route path="*" element={<Home/>} />
       </Routes>
-      {/* {logOrReg ? <Login setLogOrReg={setLogOrReg} /> : <Register setLogOrReg={setLogOrReg} />} */}
     </>
   );
 

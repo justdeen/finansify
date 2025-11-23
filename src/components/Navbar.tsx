@@ -115,7 +115,6 @@ export default function Navbar() {
                 width: "26px",
                 marginRight: "5px",
                 marginTop: '-4px',
-                // marginBottom: "3px",
                 height: "26px",
                 display: "inline",
               }}
@@ -276,7 +275,6 @@ export default function Navbar() {
               />
               Logout
             </Link>
-            {/* <button onClick={() => setIsMenuOpen(false)}>Close</button> */}
           </nav>
         </div>
       </div>

@@ -4,7 +4,6 @@
     background-color: #171b24;
     border-radius: 7px;
     padding: 10px;
-    /* border: 2px solid rgb(0, 22, 121); */
 }
 
 .confirmDelete, .singleDeletePopup{
@@ -43,7 +42,3 @@
 .filter, .bin{
     outline: none !important;
 }
-
-/* .filter:hover{
-    border: 1px solid white !important;
-} */

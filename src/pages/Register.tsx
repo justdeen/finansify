@@ -24,24 +24,12 @@ export default function register() {
     messageApi.open({
       type: 'error',
       content: 'Email already in use!',
-      // className: 'custom-class',
       style: {
         marginTop: '6vh',
         
       },
     });
   };
-
-  // const onFinish = async (values: any) => {
-  //   const userCred = await createUserWithEmailAndPassword(auth, values.email, values.password);
-  //   await setDoc(doc(db, "users", userCred.user.uid), {
-  //     firstName: values.firstName,
-  //     lastName: values.lastName,
-  //     email: values.email,
-  //     expenses: [],
-  //   });
-  //   navigate("/");
-  // };
 
   const onFinish = async (values: any) => {
     try {
@@ -77,10 +65,6 @@ export default function register() {
     navigate("/");
   }
 
-  function login() {
-    // setLogOrReg("log");
-  }
-
   return (
     <div className="p-2.5" style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
       {loadState && (<div className="flex justify-center spin">
@@ -100,7 +84,6 @@ export default function register() {
           style={{
             width: "35px",
             marginRight: "8px",
-            // marginBottom: "2px",
             height: "35px",
             display: "inline",
           }}
@@ -116,10 +99,11 @@ export default function register() {
           theme={{
             algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
           }}>
+          <div className="text-sm mb-4">
+            <Link to="/home">Back to home</Link>
+          </div>
           <Form
-            // form={form}
             name="trigger"
-            // style={{maxWidth: 600}}
             layout="vertical"
             onFinish={onFinish}
             autoComplete="on">

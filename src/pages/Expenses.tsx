@@ -55,14 +55,7 @@ export default function Expenses({
   saveFilters,
   filterButton
 }: ExpensesProps) {
-  const [form, setForm] = useState({category: "", description: "", amount: ""});
-  const [editForm, setEditForm] = useState<Expense | Omit<Expense, "id" | "date" | "edited">>({
-    category: "",
-    description: "",
-    amount: 0,
-  });
   const [editingId, setEditingId] = useState<string | false>(false);
-  // const [batchDelete, setBatchDelete] = useState(false);
   const [expsToDelete, setExpsToDelete] = useState<string[]>([]);
   const [batchDeleteBtnText, setBatchDeleteBtnText] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -93,7 +86,6 @@ export default function Expenses({
     messageApi.open({
       type: 'success',
       content: 'Expense saved successfully!',
-      // className: 'custom-class',
       style: {
         marginTop: '5vh',
         
@@ -105,7 +97,6 @@ export default function Expenses({
     messageApi.open({
       type: 'success',
       content: 'Expense(s) deleted successfully!',
-      // className: 'custom-class',
       style: {
         marginTop: '5vh',
         
@@ -117,7 +108,6 @@ export default function Expenses({
     messageApi.open({
       type: 'error',
       content: 'Select expense(s)!',
-      // className: 'custom-class',
       style: {
         marginTop: '5vh',
         
@@ -129,7 +119,6 @@ export default function Expenses({
   const editExpense = (id: string) => {
     const expenseToEdit = filtered.find((e) => e.id === id);
     if (expenseToEdit) {
-      // setEditForm({ ...expenseToEdit });
       formSubmit.setFieldsValue({...expenseToEdit});
       setEditingId(id);
     }
@@ -138,11 +127,6 @@ export default function Expenses({
   const onFinish = (values: any) => {
     if (editingId) handleSave(editingId, values);
   };
-
-  // const applyEditChanges = (e: React.FormEvent<HTMLFormElement>) =>{
-  //   e.preventDefault();
-  //   if (editingId) handleSave(editingId);
-  // }
 
   const cancelEdit = () => {
     setEditingId(false);
@@ -272,21 +256,12 @@ export default function Expenses({
     Other: "lime",
   };
 
-  // const categories: Record<CategoryKey, string> = {
-  //   Food: "Food",
-  //   Rent: "Rent",
-  //   Transport: "Transport",
-  //   Utilities: "Utilities",
-  //   Other: "Other",
-  // };
-
-  // Slice filtered expenses based on current page
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedExpenses = filtered.slice(startIndex, startIndex + pageSize);
 
 
   return (
-    <div>
+    <div className="px-2">
       {loadState2 && (<div className="flex justify-center spin">
         <div className="spinCont">
           <Spin size="large" />
@@ -298,11 +273,10 @@ export default function Expenses({
         <div style={{zIndex: "999999"}}>{contextHolder}</div>
       </ConfigProvider>
       <br />
-      {/* Total expenses; */}
+
       <div style={{marginBottom: "13px"}}>
         <b>Total: ₦{totalExpenses.toLocaleString()}</b>
       </div>
-      {/* <br /> */}
 
       <ConfigProvider
         theme={{
