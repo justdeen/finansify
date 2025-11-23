@@ -76,34 +76,35 @@ export default function Login() {
 
   return (
     <div className="p-2.5" style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
-      {loadState && (<div className="flex justify-center spin">
-        <div className="spinCont">
-          <Spin size="large" />
+      {loadState && (
+        <div className="flex justify-center spin">
+          <div className="spinCont">
+            <Spin size="large" />
+          </div>
         </div>
-      </div>)}
+      )}
 
-      <ConfigProvider theme={{
+      <ConfigProvider
+        theme={{
           algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
         }}>
         <div style={{zIndex: "999999"}}>{contextHolder}</div>
       </ConfigProvider>
-      <p
-          className="my-6"
-          style={{fontSize: "25px", fontWeight: "500", color: "#1677FF"}}>
-          <img
-            src="/src/assets/blockchain.png"
-            style={{
-              width: "35px",
-              marginRight: "8px",
-              // marginBottom: "2px",
-              height: "35px",
-              display: "inline",
-            }}
-            alt=""
-          />
-          Finansify
-        </p>
-      <div style={{ width: "100%", maxWidth: "800px", padding: "6px", }}>
+      <p className="my-6" style={{fontSize: "25px", fontWeight: "500", color: "#1677FF"}}>
+        <img
+          src="/src/assets/blockchain.png"
+          style={{
+            width: "35px",
+            marginRight: "8px",
+            // marginBottom: "2px",
+            height: "35px",
+            display: "inline",
+          }}
+          alt=""
+        />
+        Finansify
+      </p>
+      <div style={{width: "100%", maxWidth: "800px", padding: "6px"}}>
         <div className="heading" style={{textAlign: "center"}}>
           <h2>Welcome back ✨</h2>
         </div>
@@ -124,9 +125,7 @@ export default function Login() {
               name="email"
               validateFirst
               rules={[{required: true, type: "email"}]}>
-              <Input
-              style={{height: "37px", fontSize: "14px"}}
-              placeholder="Enter email" />
+              <Input style={{height: "37px", fontSize: "14px"}} placeholder="Enter email" />
             </Form.Item>
             <Form.Item
               hasFeedback
@@ -135,15 +134,22 @@ export default function Login() {
               validateFirst
               rules={[{required: true}]}>
               <Input.Password
-              style={{height: "37px", fontSize: "14px"}}
-              placeholder="Enter password" />
+                style={{height: "37px", fontSize: "14px"}}
+                placeholder="Enter password"
+              />
             </Form.Item>
             <Link to="/passwordRst">Forgot password?</Link>
-        
+
             <Button
               type="primary"
               htmlType="submit"
-              style={{fontWeight: "500", fontSize: "14px", marginBottom: "10px", marginTop: "10px", outline: "none"}}
+              style={{
+                fontWeight: "500",
+                fontSize: "14px",
+                marginBottom: "10px",
+                marginTop: "10px",
+                outline: "none",
+              }}
               block>
               Login
             </Button>
@@ -169,7 +175,7 @@ export default function Login() {
                   onContextMenu={(e) => e.preventDefault()}
                   src="/src/assets/google-logo.png"
                   alt="Google"
-                  style={{width: 20, height: 20,}}
+                  style={{width: 20, height: 20}}
                 />
               }
               style={{fontWeight: "500", fontSize: "14px", height: "37px", width: "100%"}}

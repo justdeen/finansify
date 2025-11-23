@@ -95,7 +95,7 @@ export default function Navbar() {
             </Link>
           </div>
         </nav>
-        <Link to="/login" className="logout" onClick={() => signOut(auth)}>
+        <Link to="/home" className="logout" onClick={() => signOut(auth)}>
           <img
             src="/src/assets/power-off.png"
             style={{width: "20px", marginRight: "8px", height: "20px", display: "inline"}}

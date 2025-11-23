@@ -10,6 +10,7 @@ import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PasswordRst from "./pages/PasswordRst";
+import Home from "./pages/Home";
 import { User } from "firebase/auth";
 import "./App.css"
 import "./chart-setup";
@@ -73,10 +74,11 @@ export default function App() {
     <>
       {/* <Login/> */}
       <Routes>
-        <Route path="*" element={<Login/>} />
+        <Route path="/home" element={<Home/>}></Route>
         <Route path="/login" element={<Login/>} />
         <Route path="/register" element={<Register/>} />
         <Route path="/passwordRst" element={<PasswordRst/>} />
+        <Route path="*" element={<Home/>} />
       </Routes>
       {/* {logOrReg ? <Login setLogOrReg={setLogOrReg} /> : <Register setLogOrReg={setLogOrReg} />} */}
     </>

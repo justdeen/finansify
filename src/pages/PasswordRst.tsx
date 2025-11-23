@@ -43,50 +43,62 @@ export default function PasswordRst() {
   // };
 
   return (
-    <div>
-      <h2>Password Reset</h2>
+    <div className="p-2.5" style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+      <p className="my-6" style={{fontSize: "25px", fontWeight: "500", color: "#1677FF"}}>
+        <img
+          src="/src/assets/blockchain.png"
+          style={{
+            width: "35px",
+            marginRight: "8px",
+            // marginBottom: "2px",
+            height: "35px",
+            display: "inline",
+          }}
+          alt=""
+        />
+        Finansify
+      </p>
+      <div style={{width: "100%", maxWidth: "800px", padding: "6px"}}>
+        <div className="heading" style={{textAlign: "center"}}>
+          <h2>Password Reset 🔐</h2>
+        </div>
 
-      <p>A link to reset your password will be sent to this email.</p>
+        <p 
+        className="mb-4 font-semibold" 
+        style={{fontSize: "14px"}}>A link to reset your password will be sent to this Email.</p>
 
-      {/* <form onSubmit={handleReset}>
-        <label htmlFor="email">Email</label>
-        <input value={email} type="email" id="email" onChange={(e) => setEmail(e.target.value)} />
-        <button type="submit">Submit</button>
-      </form> */}
+        <ConfigProvider
+          theme={{
+            algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
+          }}>
+          <Form
+            // form={form}
+            name="trigger"
+            // style={{maxWidth: 600}}
+            layout="vertical"
+            onFinish={onFinish}
+            autoComplete="on">
+            <Form.Item
+              hasFeedback
+              label="Email"
+              name="email"
+              validateFirst
+              rules={[{required: true, type: "email"}]}>
+              <Input placeholder="Enter email" />
+            </Form.Item>
 
-      <ConfigProvider
-        theme={{
-          algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
-        }}>
-        <Form
-          // form={form}
-          name="trigger"
-          style={{maxWidth: 600}}
-          layout="vertical"
-          onFinish={onFinish}
-          autoComplete="on">
-          <Form.Item
-            hasFeedback
-            label="Email"
-            name="email"
-            validateFirst
-            rules={[{required: true, type: "email"}]}>
-            <Input placeholder="Enter email" />
-          </Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{fontWeight: "500", fontSize: "13px", marginBottom: "10px"}}
+              block>
+              Submit
+            </Button>
+          </Form>
+        </ConfigProvider>
 
-         
-
-          <Button
-            type="primary"
-            htmlType="submit"
-            style={{fontWeight: "500", fontSize: "13px", marginBottom: "10px"}}
-            block>
-            Submit
-          </Button>
-        </Form>
-      </ConfigProvider>
-
-      <Link to="/login">Back to Login</Link>
+        <Link to="/login" style={{fontSize: "14px"}}>Back to Login</Link>
+      </div>
     </div>
   );
 }
