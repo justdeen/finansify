@@ -70,7 +70,7 @@ export default function Home(){
                 style={{borderRadius: "40px", padding: "20px"}}
                 variant="solid"
                 color="primary">
-                <Link to="/register" style={{fontSize: "14px"}}>
+                <Link to="/financify/register" style={{fontSize: "14px"}}>
                   <span className="getstarted">Get Started</span>
                 </Link>
               </Button>
