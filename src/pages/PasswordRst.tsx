@@ -29,7 +29,7 @@ export default function PasswordRst() {
     <div className="p-2.5" style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
       <p className="my-6" style={{fontSize: "25px", fontWeight: "500", color: "#1677FF"}}>
         <img
-          src="/src/assets/blockchain.png"
+          src="blockchain.png"
           style={{
             width: "35px",
             marginRight: "8px",

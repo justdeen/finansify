@@ -393,7 +393,7 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
           <span>Expenses</span>
           <img
             onContextMenu={(e) => e.preventDefault()}
-            src="/src/assets/expenses.png"
+            src="expenses.png"
             style={{
               width: "26px",
               height: "26px",

@@ -11,7 +11,7 @@ export default function Reports({user}: SettingsProps) {
         <span>Reports</span>
         <img
           onContextMenu={(e) => e.preventDefault()}
-          src="/src/assets/report.png"
+          src="report.png"
           style={{
             width: "26px",
             height: "26px",
@@ -26,7 +26,7 @@ export default function Reports({user}: SettingsProps) {
         <h2 className="text-center font-semibold mb-2">I promise I'll be back with more features 😊</h2>
         <img
           onContextMenu={(e) => e.preventDefault()}
-          src="/src/assets/blockchain.png"
+          src="blockchain.png"
           style={{
             width: "150px",
             marginRight: "5px",

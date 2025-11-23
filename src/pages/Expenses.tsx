@@ -293,7 +293,7 @@ export default function Expenses({
             style={{}}>
             <img
               onContextMenu={(e) => e.preventDefault()}
-              src="/src/assets/filter2.png"
+              src="filter2.png"
               style={{
                 width: "14px",
                 height: "14px",
@@ -314,7 +314,7 @@ export default function Expenses({
               {batchDeleteBtnText ? (
                 <img
                   onContextMenu={(e) => e.preventDefault()}
-                  src="/src/assets/bin.png"
+                  src="bin.png"
                   style={{
                     width: "14px",
                     height: "14px",
@@ -486,7 +486,7 @@ export default function Expenses({
                         }}>
                         <img
                           onContextMenu={(e) => e.preventDefault()}
-                          src="/src/assets/pencil.png"
+                          src="pencil.png"
                           style={{
                             width: "14px",
                             height: "14px",
@@ -507,7 +507,7 @@ export default function Expenses({
                         danger>
                         <img
                           onContextMenu={(e) => e.preventDefault()}
-                          src="/src/assets/bin.png"
+                          src="bin.png"
                           style={{
                             width: "14px",
                             height: "14px",
@@ -568,50 +568,6 @@ export default function Expenses({
                   </span>
                 )}
               </p>
-              {/* <ConfigProvider
-                theme={{
-                  algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
-                }}>
-                <Button
-                  className="newExpBtn"
-                  variant="outlined"
-                  color="primary"
-                  disabled={batchDelete}
-                  onClick={() => editExpense(e.id)}
-                  style={{
-                    padding: "5px 14px",
-                    border: "none",
-                    marginRight: "10px",
-                  }}>
-                  <img
-                    src="/src/assets/pencil.png"
-                    style={{
-                      width: "12px",
-                      height: "12px",
-                    }}
-                    alt=""
-                  />
-                </Button>
-                <Button
-                  className="newExpBtn"
-                  variant="outlined"
-                  color="danger"
-                  disabled={batchDelete}
-                  onClick={() => singleDelete(e.id)}
-                  style={{
-                    border: "none",
-                  }}
-                  danger>
-                  <img
-                    src="/src/assets/bin.png"
-                    style={{
-                      width: "12px",
-                      height: "12px",
-                    }}
-                    alt=""
-                  />
-                </Button>
-              </ConfigProvider> */}
               {confirmSingleDelete.show && (
                 <div className="singleDeletePopup">
                   <div className="popup2">

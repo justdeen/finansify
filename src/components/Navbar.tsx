@@ -17,7 +17,7 @@ export default function Navbar() {
           className="mb-10 pl-2 pt-2"
           style={{fontSize: "20px", fontWeight: "500", color: "#1677FF"}}>
           <img
-            src="/src/assets/blockchain.png"
+            src="blockchain.png"
             style={{
               width: "30px",
               marginRight: "8px",
@@ -33,7 +33,7 @@ export default function Navbar() {
           <div className="nav1con">
             <Link to="/" className={`navLink ${isActive("/") ? "activeNavLink" : ""}`}>
               <img
-                src="/src/assets/dashboard.png"
+                src="dashboard.png"
                 style={{
                   width: "20px",
                   marginRight: "8px",
@@ -49,7 +49,7 @@ export default function Navbar() {
               to="/expenses"
               className={`navLink ${isActive("/expenses") ? "activeNavLink" : ""}`}>
               <img
-                src="/src/assets/expenses.png"
+                src="expenses.png"
                 style={{
                   width: "20px",
                   marginRight: "8px",
@@ -65,7 +65,7 @@ export default function Navbar() {
               to="/reports"
               className={`navLink ${isActive("/reports") ? "activeNavLink" : ""}`}>
               <img
-                src="/src/assets/report.png"
+                src="report.png"
                 style={{
                   width: "20px",
                   marginRight: "8px",
@@ -81,7 +81,7 @@ export default function Navbar() {
               to="/settings"
               className={`navLink ${isActive("/settings") ? "activeNavLink" : ""}`}>
               <img
-                src="/src/assets/setting.png"
+                src="setting.png"
                 style={{
                   width: "20px",
                   marginRight: "8px",
@@ -97,7 +97,7 @@ export default function Navbar() {
         </nav>
         <Link to="/home" className="logout" onClick={() => signOut(auth)}>
           <img
-            src="/src/assets/power-off.png"
+            src="power-off.png"
             style={{width: "20px", marginRight: "8px", height: "20px", display: "inline"}}
             alt=""
           />
@@ -110,7 +110,7 @@ export default function Navbar() {
           <div style={{marginTop: '5px'}}>
             <img
               onContextMenu={(e) => e.preventDefault()}
-              src="/src/assets/blockchain.png"
+              src="blockchain.png"
               style={{
                 width: "26px",
                 marginRight: "5px",
@@ -133,7 +133,7 @@ export default function Navbar() {
           <button className="menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <img
               onContextMenu={(e) => e.preventDefault()}
-              src="/src/assets/menu.png"
+              src="menu.png"
               style={{
                 width: "30px",
                 height: "30px",
@@ -149,7 +149,7 @@ export default function Navbar() {
               style={{fontSize: "20px", fontWeight: "500", color: "#1677FF"}}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
-                src="/src/assets/blockchain.png"
+                src="blockchain.png"
                 style={{
                   width: "30px",
                   marginRight: "8px",
@@ -173,7 +173,7 @@ export default function Navbar() {
                 onClick={() => setIsMenuOpen(false)}>
                 <img
                   onContextMenu={(e) => e.preventDefault()}
-                  src="/src/assets/close.png"
+                  src="close.png"
                   style={{
                     width: "15px",
                     height: "15px",
@@ -188,7 +188,7 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
-                src="/src/assets/dashboard.png"
+                src="dashboard.png"
                 style={{
                   width: "20px",
                   marginRight: "10px",
@@ -207,7 +207,7 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
-                src="/src/assets/expenses.png"
+                src="expenses.png"
                 style={{
                   width: "20px",
                   marginRight: "10px",
@@ -226,7 +226,7 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
-                src="/src/assets/report.png"
+                src="report.png"
                 style={{
                   width: "20px",
                   marginRight: "10px",
@@ -247,7 +247,7 @@ export default function Navbar() {
               }}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
-                src="/src/assets/setting.png"
+                src="setting.png"
                 style={{
                   width: "20px",
                   marginRight: "10px",
@@ -269,7 +269,7 @@ export default function Navbar() {
               }}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
-                src="/src/assets/power-off.png"
+                src="power-off.png"
                 style={{width: "20px", marginRight: "10px", height: "20px", display: "inline"}}
                 alt=""
               />

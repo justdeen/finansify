@@ -9,14 +9,10 @@ export default function Home(){
 
     return (
       <div >
-        <div>
-          <img src="vite.svg" alt="" />
-          <img src="bin.png" alt="" />
-        </div>
         <div className="flex justify-between py-4 px-4">
           <p style={{fontSize: "20px", fontWeight: "500", color: "#1677FF"}}>
             <img
-              src="/src/assets/blockchain.png"
+              src="blockchain.png"
               style={{
                 width: "30px",
                 marginRight: "8px",
@@ -52,7 +48,7 @@ export default function Home(){
             <img
               onContextMenu={(e) => e.preventDefault()}
               className="rotate"
-              src="/src/assets/blockchain.png"
+              src="blockchain.png"
               style={{
                 width: "200px",
                 height: "200px",

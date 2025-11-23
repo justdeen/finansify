@@ -383,7 +383,7 @@ export default function Dashboard({ user,}: DashboardProps) {
         <span>Dashboard</span>
         <img
           onContextMenu={(e) => e.preventDefault()}
-          src="/src/assets/dashboard.png"
+          src="dashboard.png"
           style={{
             width: "26px",
             height: "26px",
@@ -415,7 +415,7 @@ export default function Dashboard({ user,}: DashboardProps) {
               fontSize: "17px",
             }}>
             <img
-              src="/src/assets/filter2.png"
+              src="filter2.png"
               style={{
                 width: "14px",
                 height: "14px",

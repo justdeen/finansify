@@ -258,7 +258,7 @@ export default function Settings({user}: SettingsProps) {
         <span>Settings</span>
         <img
           onContextMenu={(e) => e.preventDefault()}
-          src="/src/assets/setting.png"
+          src="setting.png"
           style={{
             width: "26px",
             height: "26px",

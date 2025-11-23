@@ -92,7 +92,7 @@ export default function Login() {
       </ConfigProvider>
       <p className="my-6" style={{fontSize: "25px", fontWeight: "500", color: "#1677FF"}}>
         <img
-          src="/src/assets/blockchain.png"
+          src="blockchain.png"
           style={{
             width: "35px",
             marginRight: "8px",
@@ -166,7 +166,7 @@ export default function Login() {
               icon={
                 <img
                   onContextMenu={(e) => e.preventDefault()}
-                  src="/src/assets/google-logo.png"
+                  src="google-logo.png"
                   alt="Google"
                   style={{width: 20, height: 20}}
                 />
