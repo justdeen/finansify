@@ -9,6 +9,7 @@ export default function Home(){
 
     return (
       <div >
+        <img src="vite.svg" alt="" />
         <div className="flex justify-between py-4 px-4">
           <p style={{fontSize: "20px", fontWeight: "500", color: "#1677FF"}}>
             <img
