@@ -1,8 +1,0 @@
-.newExpBtn:focus{
-    outline: none ;
-}
-
-.newExpBtn{
-    z-index: 1 !important;
-    position: relative !important;
-}
