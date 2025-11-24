@@ -14,6 +14,7 @@ import {
 import { ConfigProvider, theme, Form, Input, Button, Tag, message, Spin } from 'antd';
 import {useNavigate} from "react-router-dom";
 import './Settings.css'
+import settingIcon from "../assets/setting.png"
 
 interface SettingsProps {
   user: any; // You can make this more strict if you have a User type
@@ -258,7 +259,7 @@ export default function Settings({user}: SettingsProps) {
         <span>Settings</span>
         <img
           onContextMenu={(e) => e.preventDefault()}
-          src="setting.png"
+          src={settingIcon}
           style={{
             width: "26px",
             height: "26px",

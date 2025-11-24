@@ -5,6 +5,8 @@ import {auth, provider, db} from "../firebase";
 import {signInWithEmailAndPassword, signInWithPopup} from "firebase/auth";
 import {doc, setDoc, getDocs, where, query, collection} from "firebase/firestore";
 import {ConfigProvider, theme, Form, Input, Button, message, Spin} from "antd";
+import blockchainIcon from "../assets/blockchain.png"
+import googleIcon from "../assets/google-logo.png"
 
 // interface LoginProps {
 //   setLogOrReg: (val: string) => void;
@@ -58,7 +60,7 @@ export default function Login() {
           },
           {merge: true}
         );
-        navigate("/");
+        navigate("/financify/dashboard");
       }
     } catch (error: any) {
       console.error("Google sign-in error:", error.message);
@@ -69,9 +71,11 @@ export default function Login() {
     try {
       setLoadState(true)
       await signInWithEmailAndPassword(auth, values.email, values.password);
-    } catch{invalidPw();}
-    navigate("/");
-    setLoadState(false)
+      navigate("/financify/dashboard");
+    } catch{
+      setLoadState(false)
+      invalidPw();
+    }
   };
 
   return (
@@ -92,7 +96,8 @@ export default function Login() {
       </ConfigProvider>
       <p className="my-6" style={{fontSize: "25px", fontWeight: "500", color: "#1677FF"}}>
         <img
-          src="blockchain.png"
+          onContextMenu={(e) => e.preventDefault()}
+          src={blockchainIcon}
           style={{
             width: "35px",
             marginRight: "8px",
@@ -113,7 +118,7 @@ export default function Login() {
             algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
           }}>
           <div className="text-sm mb-4">
-            <Link to="/home">Back to home</Link>
+            <Link to="/financify/home">Back to home</Link>
           </div>
           <Form
             name="trigger"
@@ -139,7 +144,7 @@ export default function Login() {
                 placeholder="Enter password"
               />
             </Form.Item>
-            <Link to="/passwordRst">Forgot password?</Link>
+            <Link to="/financify/passwordRst">Forgot password?</Link>
 
             <Button
               type="primary"
@@ -166,7 +171,7 @@ export default function Login() {
               icon={
                 <img
                   onContextMenu={(e) => e.preventDefault()}
-                  src="google-logo.png"
+                  src={googleIcon}
                   alt="Google"
                   style={{width: 20, height: 20}}
                 />

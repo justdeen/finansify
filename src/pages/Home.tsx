@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {useNavigate} from "react-router-dom";
 import { Button, ConfigProvider, theme, Tag } from "antd";
 import "./Home.css"
+import blockchainIcon from "../assets/blockchain.png"
 
 export default function Home(){
     const navigate = useNavigate();
@@ -12,7 +13,8 @@ export default function Home(){
         <div className="flex justify-between py-4 px-4">
           <p style={{fontSize: "20px", fontWeight: "500", color: "#1677FF"}}>
             <img
-              src="blockchain.png"
+              onContextMenu={(e) => e.preventDefault()}
+              src={blockchainIcon}
               style={{
                 width: "30px",
                 marginRight: "8px",
@@ -28,11 +30,13 @@ export default function Home(){
             theme={{
               algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
             }}>
+            <Link className="signin" to="/financify/login">
             <Button style={{borderRadius: "40px", padding: "2px 17px", outline: "none"}} variant="outlined" color="primary">
-              <Link className="signin" to="/login">
+              
                 Sign In
-              </Link>
+              
             </Button>
+            </Link>
           </ConfigProvider>
         </div>
 
@@ -48,7 +52,7 @@ export default function Home(){
             <img
               onContextMenu={(e) => e.preventDefault()}
               className="rotate"
-              src="blockchain.png"
+              src={blockchainIcon}
               style={{
                 width: "200px",
                 height: "200px",
@@ -66,14 +70,16 @@ export default function Home(){
               algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
             }}>
             <div className="text-center mt-9">
+              <Link to="/financify/register" style={{}}>
               <Button
-                style={{borderRadius: "40px", padding: "20px"}}
+                style={{borderRadius: "40px", padding: "20px", fontSize: "14px", outline: "none"}}
                 variant="solid"
                 color="primary">
-                <Link to="/financify/register" style={{fontSize: "14px"}}>
+                
                   <span className="getstarted">Get Started</span>
-                </Link>
+                
               </Button>
+              </Link>
             </div>
           </ConfigProvider>
         </div>

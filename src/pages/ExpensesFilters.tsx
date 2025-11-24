@@ -9,6 +9,7 @@ import {ConfigProvider, theme, Form, Input, Button, RadioChangeEvent, DatePicker
 import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import expensesIcon from "../assets/expenses.png"
 
 dayjs.extend(utc);
 
@@ -393,7 +394,7 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
           <span>Expenses</span>
           <img
             onContextMenu={(e) => e.preventDefault()}
-            src="expenses.png"
+            src={expensesIcon}
             style={{
               width: "26px",
               height: "26px",

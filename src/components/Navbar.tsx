@@ -3,6 +3,15 @@ import {signOut} from "firebase/auth";
 import {auth} from "../firebase";
 import { useState, useEffect } from "react";
 import "./Navbar.css"
+import blockchainIcon from "../assets/blockchain.png";
+import dashboardIcon from "../assets/dashboard.png";
+import expensesIcon from "../assets/expenses.png";
+import reportIcon from "../assets/report.png";
+import settingIcon from "../assets/setting.png";
+import menuIcon from "../assets/menu.png";
+import closeIcon from "../assets/close.png";
+import powerOffIcon from "../assets/power-off.png";
+
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false); 
@@ -17,7 +26,7 @@ export default function Navbar() {
           className="mb-10 pl-2 pt-2"
           style={{fontSize: "20px", fontWeight: "500", color: "#1677FF"}}>
           <img
-            src="blockchain.png"
+            src={blockchainIcon}
             style={{
               width: "30px",
               marginRight: "8px",
@@ -31,9 +40,9 @@ export default function Navbar() {
         </p>
         <nav className="flex flex-col nav1">
           <div className="nav1con">
-            <Link to="/" className={`navLink ${isActive("/") ? "activeNavLink" : ""}`}>
+            <Link to="/financify/dashboard" className={`navLink ${isActive("/financify/dashboard") ? "activeNavLink" : ""}`}>
               <img
-                src="dashboard.png"
+                src={dashboardIcon}
                 style={{
                   width: "20px",
                   marginRight: "8px",
@@ -46,10 +55,10 @@ export default function Navbar() {
               Dashboard
             </Link>
             <Link
-              to="/expenses"
-              className={`navLink ${isActive("/expenses") ? "activeNavLink" : ""}`}>
+              to="/financify/expenses"
+              className={`navLink ${isActive("/financify/expenses") ? "activeNavLink" : ""}`}>
               <img
-                src="expenses.png"
+                src={expensesIcon}
                 style={{
                   width: "20px",
                   marginRight: "8px",
@@ -62,10 +71,10 @@ export default function Navbar() {
               Expenses
             </Link>
             <Link
-              to="/reports"
-              className={`navLink ${isActive("/reports") ? "activeNavLink" : ""}`}>
+              to="/financify/reports"
+              className={`navLink ${isActive("/financify/reports") ? "activeNavLink" : ""}`}>
               <img
-                src="report.png"
+                src={reportIcon}
                 style={{
                   width: "20px",
                   marginRight: "8px",
@@ -78,10 +87,10 @@ export default function Navbar() {
               Reports
             </Link>
             <Link
-              to="/settings"
-              className={`navLink ${isActive("/settings") ? "activeNavLink" : ""}`}>
+              to="/financify/settings"
+              className={`navLink ${isActive("/financify/settings") ? "activeNavLink" : ""}`}>
               <img
-                src="setting.png"
+                src={settingIcon}
                 style={{
                   width: "20px",
                   marginRight: "8px",
@@ -95,9 +104,9 @@ export default function Navbar() {
             </Link>
           </div>
         </nav>
-        <Link to="/home" className="logout" onClick={() => signOut(auth)}>
+        <Link to="/financify/home" className="logout" onClick={() => signOut(auth)}>
           <img
-            src="power-off.png"
+            src={powerOffIcon}
             style={{width: "20px", marginRight: "8px", height: "20px", display: "inline"}}
             alt=""
           />
@@ -110,7 +119,7 @@ export default function Navbar() {
           <div style={{marginTop: '5px'}}>
             <img
               onContextMenu={(e) => e.preventDefault()}
-              src="blockchain.png"
+              src={blockchainIcon}
               style={{
                 width: "26px",
                 marginRight: "5px",
@@ -133,7 +142,7 @@ export default function Navbar() {
           <button className="menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <img
               onContextMenu={(e) => e.preventDefault()}
-              src="menu.png"
+              src={menuIcon}
               style={{
                 width: "30px",
                 height: "30px",
@@ -149,7 +158,7 @@ export default function Navbar() {
               style={{fontSize: "20px", fontWeight: "500", color: "#1677FF"}}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
-                src="blockchain.png"
+                src={blockchainIcon}
                 style={{
                   width: "30px",
                   marginRight: "8px",
@@ -173,7 +182,7 @@ export default function Navbar() {
                 onClick={() => setIsMenuOpen(false)}>
                 <img
                   onContextMenu={(e) => e.preventDefault()}
-                  src="close.png"
+                  src={closeIcon}
                   style={{
                     width: "15px",
                     height: "15px",
@@ -183,12 +192,12 @@ export default function Navbar() {
               </button>
             </p>
             <Link
-              className={`navLink ${isActive("/") ? "activeNavLink" : ""}`}
-              to="/"
+              className={`navLink ${isActive("/financify/dashboard") ? "activeNavLink" : ""}`}
+              to="/financify/dashboard"
               onClick={() => setIsMenuOpen(false)}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
-                src="dashboard.png"
+                src={dashboardIcon}
                 style={{
                   width: "20px",
                   marginRight: "10px",
@@ -202,12 +211,12 @@ export default function Navbar() {
             </Link>
 
             <Link
-              className={`navLink ${isActive("/expenses") ? "activeNavLink" : ""}`}
-              to="/expenses"
+              className={`navLink ${isActive("/financify/expenses") ? "activeNavLink" : ""}`}
+              to="/financify/expenses"
               onClick={() => setIsMenuOpen(false)}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
-                src="expenses.png"
+                src={expensesIcon}
                 style={{
                   width: "20px",
                   marginRight: "10px",
@@ -221,12 +230,12 @@ export default function Navbar() {
             </Link>
 
             <Link
-              className={`navLink ${isActive("/reports") ? "activeNavLink" : ""}`}
-              to="/reports"
+              className={`navLink ${isActive("/financify/reports") ? "activeNavLink" : ""}`}
+              to="/financify/reports"
               onClick={() => setIsMenuOpen(false)}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
-                src="report.png"
+                src={reportIcon}
                 style={{
                   width: "20px",
                   marginRight: "10px",
@@ -240,14 +249,14 @@ export default function Navbar() {
             </Link>
 
             <Link
-              className={`navLink ${isActive("/settings") ? "activeNavLink" : ""}`}
-              to="/settings"
+              className={`navLink ${isActive("/financify/settings") ? "activeNavLink" : ""}`}
+              to="/financify/settings"
               onClick={() => {
                 setIsMenuOpen(false);
               }}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
-                src="setting.png"
+                src={settingIcon}
                 style={{
                   width: "20px",
                   marginRight: "10px",
@@ -261,7 +270,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              to="/login"
+              to="/financify/home"
               className="logout2"
               onClick={() => {
                 setIsMenuOpen(false);
@@ -269,7 +278,7 @@ export default function Navbar() {
               }}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
-                src="power-off.png"
+                src={powerOffIcon}
                 style={{width: "20px", marginRight: "10px", height: "20px", display: "inline"}}
                 alt=""
               />

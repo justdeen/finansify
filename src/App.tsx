@@ -47,15 +47,15 @@ export default function App() {
         </div>
         <div className="xl:col-span-5 xl:pr-4 p-2 pb-1">
           <Routes>
-            <Route path="/" element={user && <Dashboard user={user} />} />
-            <Route path="/expenses" element={user && <ExpensesFilters user={user} />} />
-            <Route path="/reports" element={user && <Reports user={user} />} />
-            <Route path="/settings" element={user && <Settings user={user} />} />
+            <Route path="/financify/dashboard" element={user && <Dashboard user={user} />} />
+            <Route path="/financify/expenses" element={user && <ExpensesFilters user={user} />} />
+            <Route path="/financify/reports" element={user && <Reports user={user} />} />
+            <Route path="/financify/settings" element={user && <Settings user={user} />} />
 
-            <Route path="/login" element={<Navigate to="/" replace />} />
-            <Route path="/register" element={<Navigate to="/" replace />} />
+            <Route path="/financify/login" element={<Navigate to="/finansify/dashboard" replace />} />
+            <Route path="/financify/register" element={<Navigate to="/finansify/dashboard" replace />} />
             {/* Catch-all redirect */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/financify/dashboard" replace />} />
           </Routes>
         </div>
       </div>
@@ -66,11 +66,11 @@ export default function App() {
   const UnauthenticatedApp = () => (
     <>
       <Routes>
-        <Route path="/home" element={<Home/>}></Route>
-        <Route path="/login" element={<Login/>} />
+        <Route path="/financify/home" element={<Home/>}></Route>
+        <Route path="/financify/login" element={<Login/>} />
         <Route path="/financify/register" element={<Register/>} />
-        <Route path="/passwordRst" element={<PasswordRst/>} />
-        <Route path="*" element={<Home/>} />
+        <Route path="/financify/passwordRst" element={<PasswordRst/>} />
+        <Route path="*" element={<Navigate to="/financify/home" replace />} />
       </Routes>
     </>
   );

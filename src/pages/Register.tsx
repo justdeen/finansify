@@ -5,6 +5,8 @@ import {auth, provider, db} from "../firebase";
 import {signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup} from "firebase/auth";
 import {doc, setDoc, where, query, collection, getDocs} from "firebase/firestore";
 import {ConfigProvider, theme, Form, Input, Button, message, Spin} from "antd";
+import blockchainIcon from "../assets/blockchain.png"
+import googleIcon from "../assets/google-logo.png"
 
 interface RegisterProps {
   setLogOrReg: (val: string) => void;
@@ -41,7 +43,7 @@ export default function register() {
       email: values.email,
       expenses: [],
     });
-    navigate("/");} catch{invalidEmail();} finally {setLoadState(false)}
+    navigate("/financify/dashboard");} catch{invalidEmail();} finally {setLoadState(false)}
   };
 
   async function googleLogin() {
@@ -62,7 +64,7 @@ export default function register() {
         {merge: true}
       );
     }
-    navigate("/");
+    navigate("/financify/dashboard");
   }
 
   return (
@@ -80,7 +82,8 @@ export default function register() {
       </ConfigProvider>
       <p className="my-6" style={{fontSize: "25px", fontWeight: "500", color: "#1677FF"}}>
         <img
-          src="blockchain.png"
+          onContextMenu={(e) => e.preventDefault()}
+          src={blockchainIcon}
           style={{
             width: "35px",
             marginRight: "8px",
@@ -100,7 +103,7 @@ export default function register() {
             algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
           }}>
           <div className="text-sm mb-4">
-            <Link to="/home">Back to home</Link>
+            <Link to="/financify/home">Back to home</Link>
           </div>
           <Form
             name="trigger"
@@ -181,7 +184,7 @@ export default function register() {
               icon={
                 <img
                   onContextMenu={(e) => e.preventDefault()}
-                  src="google-logo.png"
+                  src={googleIcon}
                   alt="Google"
                   style={{width: 20, height: 20,}}
                 />

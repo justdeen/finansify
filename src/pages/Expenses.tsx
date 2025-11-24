@@ -18,6 +18,9 @@ import {
   Spin
 } from "antd";
 import "./Expenses.css"
+import filter2Icon from "../assets/filter2.png";
+import binIcon from "../assets/bin.png";
+import pencilIcon from "../assets/pencil.png"
 
 interface Expense {
   id: string;
@@ -293,7 +296,7 @@ export default function Expenses({
             style={{}}>
             <img
               onContextMenu={(e) => e.preventDefault()}
-              src="filter2.png"
+              src={filter2Icon}
               style={{
                 width: "14px",
                 height: "14px",
@@ -314,7 +317,7 @@ export default function Expenses({
               {batchDeleteBtnText ? (
                 <img
                   onContextMenu={(e) => e.preventDefault()}
-                  src="bin.png"
+                  src={binIcon}
                   style={{
                     width: "14px",
                     height: "14px",
@@ -486,7 +489,7 @@ export default function Expenses({
                         }}>
                         <img
                           onContextMenu={(e) => e.preventDefault()}
-                          src="pencil.png"
+                          src={pencilIcon}
                           style={{
                             width: "14px",
                             height: "14px",
@@ -507,7 +510,7 @@ export default function Expenses({
                         danger>
                         <img
                           onContextMenu={(e) => e.preventDefault()}
-                          src="bin.png"
+                          src={binIcon}
                           style={{
                             width: "14px",
                             height: "14px",

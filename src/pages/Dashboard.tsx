@@ -22,6 +22,8 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 ChartJS.register(ArcElement, Tooltip, Legend,);
 import dayjs from "dayjs";
 import "./Dashboard.css"
+import filter2Icon from "../assets/filter2.png";
+import dashboardIcon from "../assets/dashboard.png";
 
 
 interface User {
@@ -383,7 +385,7 @@ export default function Dashboard({ user,}: DashboardProps) {
         <span>Dashboard</span>
         <img
           onContextMenu={(e) => e.preventDefault()}
-          src="dashboard.png"
+          src={dashboardIcon}
           style={{
             width: "26px",
             height: "26px",
@@ -415,7 +417,7 @@ export default function Dashboard({ user,}: DashboardProps) {
               fontSize: "17px",
             }}>
             <img
-              src="filter2.png"
+              src={filter2Icon}
               style={{
                 width: "14px",
                 height: "14px",

@@ -2,6 +2,9 @@ interface SettingsProps {
   user: any; // You can make this more strict if you have a User type
 }
 
+import reportIcon from "../assets/report.png"
+import blockchainIcon from "../assets/blockchain.png"
+
 export default function Reports({user}: SettingsProps) {
   return (
     <div className="px-2">
@@ -11,7 +14,7 @@ export default function Reports({user}: SettingsProps) {
         <span>Reports</span>
         <img
           onContextMenu={(e) => e.preventDefault()}
-          src="report.png"
+          src={reportIcon}
           style={{
             width: "26px",
             height: "26px",
@@ -26,7 +29,7 @@ export default function Reports({user}: SettingsProps) {
         <h2 className="text-center font-semibold mb-2">I promise I'll be back with more features 😊</h2>
         <img
           onContextMenu={(e) => e.preventDefault()}
-          src="blockchain.png"
+          src={blockchainIcon}
           style={{
             width: "150px",
             marginRight: "5px",
