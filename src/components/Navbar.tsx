@@ -40,7 +40,7 @@ export default function Navbar() {
         </p>
         <nav className="flex flex-col nav1">
           <div className="nav1con">
-            <Link to="/financify/dashboard" className={`navLink ${isActive("/financify/dashboard") ? "activeNavLink" : ""}`}>
+            <Link to="/finansify/dashboard" className={`navLink ${isActive("/finansify/dashboard") ? "activeNavLink" : ""}`}>
               <img
                 src={dashboardIcon}
                 style={{
@@ -55,8 +55,8 @@ export default function Navbar() {
               Dashboard
             </Link>
             <Link
-              to="/financify/expenses"
-              className={`navLink ${isActive("/financify/expenses") ? "activeNavLink" : ""}`}>
+              to="/finansify/expenses"
+              className={`navLink ${isActive("/finansify/expenses") ? "activeNavLink" : ""}`}>
               <img
                 src={expensesIcon}
                 style={{
@@ -71,8 +71,8 @@ export default function Navbar() {
               Expenses
             </Link>
             <Link
-              to="/financify/reports"
-              className={`navLink ${isActive("/financify/reports") ? "activeNavLink" : ""}`}>
+              to="/finansify/reports"
+              className={`navLink ${isActive("/finansify/reports") ? "activeNavLink" : ""}`}>
               <img
                 src={reportIcon}
                 style={{
@@ -87,8 +87,8 @@ export default function Navbar() {
               Reports
             </Link>
             <Link
-              to="/financify/settings"
-              className={`navLink ${isActive("/financify/settings") ? "activeNavLink" : ""}`}>
+              to="/finansify/settings"
+              className={`navLink ${isActive("/finansify/settings") ? "activeNavLink" : ""}`}>
               <img
                 src={settingIcon}
                 style={{
@@ -104,7 +104,7 @@ export default function Navbar() {
             </Link>
           </div>
         </nav>
-        <Link to="/financify/home" className="logout" onClick={() => signOut(auth)}>
+        <Link to="/finansify/home" className="logout" onClick={() => signOut(auth)}>
           <img
             src={powerOffIcon}
             style={{width: "20px", marginRight: "8px", height: "20px", display: "inline"}}
@@ -136,7 +136,7 @@ export default function Navbar() {
                 color: "#1677FF",
                 display: "inline",
               }}>
-              Financify
+              Finansify
             </div>
           </div>
           <button className="menu" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -192,8 +192,8 @@ export default function Navbar() {
               </button>
             </p>
             <Link
-              className={`navLink ${isActive("/financify/dashboard") ? "activeNavLink" : ""}`}
-              to="/financify/dashboard"
+              className={`navLink ${isActive("/finansify/dashboard") ? "activeNavLink" : ""}`}
+              to="/finansify/dashboard"
               onClick={() => setIsMenuOpen(false)}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
@@ -211,8 +211,8 @@ export default function Navbar() {
             </Link>
 
             <Link
-              className={`navLink ${isActive("/financify/expenses") ? "activeNavLink" : ""}`}
-              to="/financify/expenses"
+              className={`navLink ${isActive("/finansify/expenses") ? "activeNavLink" : ""}`}
+              to="/finansify/expenses"
               onClick={() => setIsMenuOpen(false)}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
@@ -230,8 +230,8 @@ export default function Navbar() {
             </Link>
 
             <Link
-              className={`navLink ${isActive("/financify/reports") ? "activeNavLink" : ""}`}
-              to="/financify/reports"
+              className={`navLink ${isActive("/finansify/reports") ? "activeNavLink" : ""}`}
+              to="/finansify/reports"
               onClick={() => setIsMenuOpen(false)}>
               <img
                 onContextMenu={(e) => e.preventDefault()}
@@ -249,8 +249,8 @@ export default function Navbar() {
             </Link>
 
             <Link
-              className={`navLink ${isActive("/financify/settings") ? "activeNavLink" : ""}`}
-              to="/financify/settings"
+              className={`navLink ${isActive("/finansify/settings") ? "activeNavLink" : ""}`}
+              to="/finansify/settings"
               onClick={() => {
                 setIsMenuOpen(false);
               }}>
@@ -270,7 +270,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              to="/financify/home"
+              to="/finansify/home"
               className="logout2"
               onClick={() => {
                 setIsMenuOpen(false);

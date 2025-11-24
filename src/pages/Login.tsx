@@ -60,7 +60,7 @@ export default function Login() {
           },
           {merge: true}
         );
-        navigate("/financify/dashboard");
+        navigate("/finansify/dashboard");
       }
     } catch (error: any) {
       console.error("Google sign-in error:", error.message);
@@ -71,7 +71,7 @@ export default function Login() {
     try {
       setLoadState(true)
       await signInWithEmailAndPassword(auth, values.email, values.password);
-      navigate("/financify/dashboard");
+      navigate("/finansify/dashboard");
     } catch{
       setLoadState(false)
       invalidPw();
@@ -118,7 +118,7 @@ export default function Login() {
             algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
           }}>
           <div className="text-sm mb-4">
-            <Link to="/financify/home">Back to home</Link>
+            <Link to="/finansify/home">Back to home</Link>
           </div>
           <Form
             name="trigger"
@@ -144,7 +144,7 @@ export default function Login() {
                 placeholder="Enter password"
               />
             </Form.Item>
-            <Link to="/financify/passwordRst">Forgot password?</Link>
+            <Link to="/finansify/passwordRst">Forgot password?</Link>
 
             <Button
               type="primary"

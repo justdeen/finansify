@@ -43,7 +43,7 @@ export default function register() {
       email: values.email,
       expenses: [],
     });
-    navigate("/financify/dashboard");} catch{invalidEmail();} finally {setLoadState(false)}
+    navigate("/finansify/dashboard");} catch{invalidEmail();} finally {setLoadState(false)}
   };
 
   async function googleLogin() {
@@ -64,7 +64,7 @@ export default function register() {
         {merge: true}
       );
     }
-    navigate("/financify/dashboard");
+    navigate("/finansify/dashboard");
   }
 
   return (
@@ -103,7 +103,7 @@ export default function register() {
             algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
           }}>
           <div className="text-sm mb-4">
-            <Link to="/financify/home">Back to home</Link>
+            <Link to="/finansify/home">Back to home</Link>
           </div>
           <Form
             name="trigger"

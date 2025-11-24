@@ -30,7 +30,7 @@ export default function Home(){
             theme={{
               algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
             }}>
-            <Link className="signin" to="/financify/login">
+            <Link className="signin" to="/finansify/login">
             <Button style={{borderRadius: "40px", padding: "2px 17px", outline: "none"}} variant="outlined" color="primary">
               
                 Sign In
@@ -70,7 +70,7 @@ export default function Home(){
               algorithm: theme.darkAlgorithm, // 👈 Enables dark mode
             }}>
             <div className="text-center mt-9">
-              <Link to="/financify/register" style={{}}>
+              <Link to="/finansify/register" style={{}}>
               <Button
                 style={{borderRadius: "40px", padding: "20px", fontSize: "14px", outline: "none"}}
                 variant="solid"
