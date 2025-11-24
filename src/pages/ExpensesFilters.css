@@ -1,10 +1,10 @@
 .popupBg{
-    background-color: #000000;
+    background-color: #020118;
     border: 1px solid #1677FF;
     width: 70%;
     padding: 10px;
     border-radius: 10px;
-    box-shadow: -15px -15px 100px rgb(0, 0, 0);
+    box-shadow: -8px -8px 100px rgb(0, 0, 0);
 }
 
 .formFilter{
