@@ -13,7 +13,7 @@ export default function PasswordRst() {
   const onFinish = async (values: any) => {
     const isLocalhost = window.location.hostname === "localhost";
     const actionCodeSettings = {
-      url: isLocalhost ? "http://localhost:3000/login" : "https://justdeen.github.io/login",
+      url: isLocalhost ? "http://localhost:3000/login" : "https://justdeen.github.io/finansify/",
       handleCodeInApp: false,
     };
 
