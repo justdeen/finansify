@@ -11,9 +11,14 @@ export default function PasswordRst() {
   const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
-    const isLocalhost = window.location.hostname === "localhost";
+    // const isLocalhost = window.location.hostname === "localhost";
+    // const actionCodeSettings = {
+    //   url: isLocalhost ? "http://localhost:3000/login" : "",
+    //   handleCodeInApp: false,
+    // };
+
     const actionCodeSettings = {
-      url: isLocalhost ? "http://localhost:3000/login" : "",
+      url: `${window.location.origin}/login`,
       handleCodeInApp: false,
     };
 
