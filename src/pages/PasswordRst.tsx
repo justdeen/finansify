@@ -25,7 +25,7 @@ export default function PasswordRst() {
     try {
       await sendPasswordResetEmail(auth, values.email, actionCodeSettings);
     } catch (e: any) {
-      console.log(e.message);
+      console.log("RESET ERROR:", e.code, e.message);
     }
     navigate("/login");
   };
