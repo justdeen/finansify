@@ -11,16 +11,16 @@ export default function PasswordRst() {
   const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
-    // const isLocalhost = window.location.hostname === "localhost";
-    // const actionCodeSettings = {
-    //   url: isLocalhost ? "http://localhost:3000/login" : "",
-    //   handleCodeInApp: false,
-    // };
-
+    const isLocalhost = window.location.hostname === "localhost";
     const actionCodeSettings = {
-      url: `${window.location.origin}/login`,
+      url: isLocalhost ? "http://localhost:3000/login" : "https://justdeen.github.io/login",
       handleCodeInApp: false,
     };
+
+    // const actionCodeSettings = {
+    //   url: `${window.location.origin}/login`,
+    //   handleCodeInApp: false,
+    // };
 
     try {
       await sendPasswordResetEmail(auth, values.email, actionCodeSettings);
