@@ -8,5 +8,5 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 5000,
   },
-  base: '/finansify/',
+  base: '/',
 })

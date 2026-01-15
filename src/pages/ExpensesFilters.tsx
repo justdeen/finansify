@@ -62,6 +62,7 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
   const filterButton = useRef<HTMLButtonElement | null>(null);
   const [formFilterSubmit] = Form.useForm()
   const [open, setOpen] = useState(false);
+  const [loadState, setLoadState] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,6 +94,8 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
 
       const total = updatedExpenses.reduce((sum: number, e: Expense) => sum + e.amount, 0);
       setTotalExpenses(total);
+
+       setLoadState(false) 
 
       setFiltered(updatedExpenses);
     };
@@ -427,7 +430,9 @@ export default function ExpensesFilters({ user,}: ExpensesFiltersProps) {
         batchDelete={batchDelete}
         setBatchDelete={setBatchDelete}
         setShowForm={setShowForm}
-        filterButton={filterButton}></Expenses>
+        filterButton={filterButton}
+        loadState={loadState}
+        setLoadState={setLoadState}></Expenses>
     </>
   );
 }

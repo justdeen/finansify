@@ -37,8 +37,10 @@ interface ExpensesProps {
   filtered: Expense[];
   totalExpenses: number;
   batchDelete: boolean;
+  loadState: boolean;
   setBatchDelete: React.Dispatch<React.SetStateAction<boolean>>
   setShowForm: React.Dispatch<React.SetStateAction<boolean>>
+  setLoadState: React.Dispatch<React.SetStateAction<boolean>>
   setExpenses: React.Dispatch<React.SetStateAction<Expense[]>>;
   setFiltered: React.Dispatch<React.SetStateAction<Expense[]>>;
   saveFilters: (updated: Expense[]) => void;
@@ -51,10 +53,12 @@ export default function Expenses({
   filtered,
   totalExpenses,
   batchDelete,
+  loadState,
   setBatchDelete,
   setShowForm,
   setExpenses,
   setFiltered,
+  setLoadState,
   saveFilters,
   filterButton
 }: ExpensesProps) {
@@ -71,7 +75,7 @@ export default function Expenses({
   const [formSubmit] = Form.useForm();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(6); // show 6 expenses per page
-  const [loadState, setLoadState] = useState(true)
+  // const [loadState, setLoadState] = useState(true)
   const [loadState2, setLoadState2] = useState(false)
 
   useEffect(() => {
